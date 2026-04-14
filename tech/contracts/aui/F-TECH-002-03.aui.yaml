@@ -1,0 +1,56 @@
+featureId: F-TECH-002-03
+name: "Render History"
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-data
+        description: "Load data and reference catalogs"
+      - task: interact
+        description: "User interacts with content"
+        operator: enabling
+        enabledBy: load-data
+      - task: submit
+        description: "Execute primary action"
+        operator: enabling
+        enabledBy: interact
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields: ["Back navigation (link)", "Page title (display)"]
+  - id: zone-core
+    name: "Core Content"
+    type: fixed
+    priority: 2
+    dataBinding: "content"
+    fields:
+      - "Job ID (display)"
+      - "Template (display)"
+      - "Status (display: REQUESTED|STARTED|COMPLETED|FAILED)"
+      - "Output (link to DMS)"
+      - "Duration (display)"
+      - "Error (display, if failed)"
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.customFields"
+    absentRule: panel-section-hidden
+  - id: zone-actions
+    name: "Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields: ["Cancel (action)", "Submit (action: primary)"]
+absentRules:
+  - zone: zone-extension
+    condition: "No extension"
+    rule: panel-section-hidden
+businessRules:
+  roleGates:
+    - zone: zone-actions
+      action: "Submit"
+      requiresRole: "PLATFORM_ADMIN"

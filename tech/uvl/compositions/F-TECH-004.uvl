@@ -1,0 +1,6 @@
+namespace tech.nfs
+features
+    F_TECH_004 { description "News Feed Administration" }
+        mandatory
+            F_TECH_004_01 { description "Browse Subscriptions" }
+            F_TECH_004_02 { description "Manage Subscriptions" }

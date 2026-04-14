@@ -1,0 +1,201 @@
+openapi: "3.1.0"
+info:
+  title: T2 Calendar & Planning Service API
+  version: "1.0.0"
+  description: REST API for the T2 Calendar & Planning (cap) domain.
+  contact:
+    name: team-t2
+    email: t2-team@openleap.io
+x-owner: team-t2
+x-suite: t2
+x-domain: cap
+servers:
+  - url: /api/t2/cap/v1
+    description: Base path
+security:
+  - bearerAuth: []
+paths:
+  /calendars:
+    get:
+      operationId: listCalendars
+      summary: List calendars with optional filters
+      tags: [Calendar]
+      responses:
+        "200":
+          description: Page of calendars
+    post:
+      operationId: createCalendar
+      summary: Create a new calendar
+      tags: [Calendar]
+      responses:
+        "201":
+          description: Calendar created
+  /calendars/{id}:
+    get:
+      operationId: getCalendar
+      summary: Get calendar by ID
+      tags: [Calendar]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Calendar details
+  /calendars/{id}/availability:
+    get:
+      operationId: getAvailability
+      summary: Query effective availability for a date range
+      tags: [Calendar]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - name: from
+          in: query
+          required: true
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          required: true
+          schema: { type: string, format: date }
+      responses:
+        "200":
+          description: Availability blocks
+  /working-patterns:
+    get:
+      operationId: listPatterns
+      summary: List working patterns
+      tags: [WorkingPattern]
+      responses:
+        "200":
+          description: List of patterns
+    post:
+      operationId: createPattern
+      summary: Create a working pattern
+      tags: [WorkingPattern]
+      responses:
+        "201":
+          description: Pattern created
+  /calendars/{id}/patterns/{patternId}/apply:
+    post:
+      operationId: applyPattern
+      summary: Apply a working pattern to a calendar
+      tags: [WorkingPattern]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - name: patternId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "202":
+          description: Pattern application in progress
+  /holidays:
+    get:
+      operationId: listHolidays
+      summary: List holidays with country/year filters
+      tags: [Holiday]
+      responses:
+        "200":
+          description: List of holidays
+    post:
+      operationId: createHoliday
+      summary: Create a holiday
+      tags: [Holiday]
+      responses:
+        "201":
+          description: Holiday created
+  /slots/search:
+    get:
+      operationId: searchSlots
+      summary: Search for available booking slots
+      tags: [Booking]
+      responses:
+        "200":
+          description: Available slots
+  /bookings:
+    post:
+      operationId: createBooking
+      summary: Create a booking for a slot
+      tags: [Booking]
+      responses:
+        "201":
+          description: Booking created
+  /bookings/{id}/confirm:
+    post:
+      operationId: confirmBooking
+      summary: Confirm a pending booking
+      tags: [Booking]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Booking confirmed
+  /bookings/{id}/cancel:
+    post:
+      operationId: cancelBooking
+      summary: Cancel a booking
+      tags: [Booking]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Booking cancelled
+  /booking-templates:
+    get:
+      operationId: listTemplates
+      summary: List booking templates
+      tags: [BookingTemplate]
+      responses:
+        "200":
+          description: List of templates
+    post:
+      operationId: createTemplate
+      summary: Create a booking template
+      tags: [BookingTemplate]
+      responses:
+        "201":
+          description: Template created
+  /calendars/{id}/periods:
+    get:
+      operationId: listPeriods
+      summary: List periods for a calendar
+      tags: [Period]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: List of periods
+    post:
+      operationId: createPeriod
+      summary: Create a period
+      tags: [Period]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "201":
+          description: Period created
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

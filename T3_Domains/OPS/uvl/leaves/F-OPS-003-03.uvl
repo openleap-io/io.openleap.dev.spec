@@ -1,0 +1,17 @@
+namespace ops.tsk
+
+features
+    F_OPS_003_03 {
+        description "Task Management"
+        optional
+            commentThread {
+                description "Enable per-task comment threads for team communication"
+                default true
+            }
+            taskDueDateReminder {
+                description "Days before due date to send reminder notification (0 = disabled)"
+                type Integer
+                values [0, 1, 2, 3]
+                default 1
+            }
+    }

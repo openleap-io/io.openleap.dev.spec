@@ -1,0 +1,195 @@
+# OpenAPI Contract — iam-audit-svc
+# Generated: 2026-04-03
+# Convention: contracts/http/iam/audit/openapi.yaml
+#
+# Machine-readable companion to domain-specs/iam_audit-spec.md §6.
+
+openapi: 3.1.0
+
+info:
+  title: "IAM Security Audit API"
+  version: "1.0.0"
+  description: |
+    REST API for the Security Audit domain within the IAM suite.
+    Captures and stores all security-relevant events for compliance and forensic analysis. Provides audit query, reporting, export, and SIEM integration capabilities.
+  contact:
+    name: IAM Team
+    email: iam-team@openleap.io
+  license:
+    name: Proprietary
+
+servers:
+  - url: http://localhost:8084
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+x-owner: team-iam
+x-suite: iam
+x-domain: audit
+
+tags:
+  - name: events
+  - name: exports
+  - name: reports
+  - name: siem
+
+paths:
+
+  /api/iam/audit/v1/events:
+    post:
+      operationId: ingest_audit_event_internal
+      summary: "Ingest audit event (internal)"
+      tags: [events]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/audit/v1/events:
+    get:
+      operationId: query_audit_events
+      summary: "Query audit events"
+      tags: [events]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/audit/v1/events/{id}:
+    get:
+      operationId: get_audit_event
+      summary: "Get audit event"
+      tags: [events]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/audit/v1/reports:
+    post:
+      operationId: generate_report
+      summary: "Generate report"
+      tags: [reports]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/audit/v1/exports:
+    post:
+      operationId: export_audit_data
+      summary: "Export audit data"
+      tags: [exports]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/audit/v1/siem/config:
+    put:
+      operationId: configure_siem
+      summary: "Configure SIEM"
+      tags: [siem]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/audit/v1/siem/test:
+    post:
+      operationId: test_siem_connection
+      summary: "Test SIEM connection"
+      tags: [siem]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearer: []

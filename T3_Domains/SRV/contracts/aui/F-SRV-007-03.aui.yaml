@@ -1,0 +1,95 @@
+# Screen Contract (AUI) — F-SRV-007-03 Reconciliation View
+featureId: F-SRV-007-03
+name: "Reconciliation View"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-reconciliation
+        description: "Fetch billing intents with cross-references"
+      - task: view-results
+        description: "Browse filtered intent table with session/case links"
+        operator: enabling
+        enabledBy: load-reconciliation
+      - task: drill-to-detail
+        description: "Navigate to intent detail, session, or case"
+        operator: optional
+
+zones:
+  - id: zone-filters
+    name: "Filter Bar"
+    type: fixed
+    priority: 1
+    fields:
+      - "customerFilter (input: lookup)"
+      - "statusFilter (select: DRAFT|CONFIRMED|READY_FOR_INVOICING|REVERSED|CANCELLED)"
+      - "typeFilter (select: SERVICE_DELIVERY|NO_SHOW_FEE|CANCELLATION_FEE)"
+      - "dateFrom (input: date)"
+      - "dateTo (input: date)"
+      - "searchAction (action: search)"
+
+  - id: zone-results
+    name: "Reconciliation Table"
+    type: fixed
+    priority: 2
+    dataBinding: "viewModel.intents[]"
+    fields:
+      - "intentId (display: text)"
+      - "customerName (display: text)"
+      - "intentType (display: badge)"
+      - "status (display: badge)"
+      - "lineItemSummary (display: text)"
+      - "sessionLink (display: link, featureGate: reconciliation.showSessionLink)"
+      - "caseLink (display: link, featureGate: reconciliation.showCaseLink)"
+      - "detailAction (action: navigate-to-detail)"
+
+  - id: zone-summary
+    name: "Status Summary"
+    type: fixed
+    priority: 3
+    dataBinding: "viewModel.summary"
+    fields:
+      - "total (display: number)"
+      - "draftCount (display: number)"
+      - "confirmedCount (display: number)"
+      - "readyCount (display: number)"
+      - "reversedCount (display: number)"
+
+  - id: zone-extension
+    name: "Extension Area"
+    type: variable
+    priority: 4
+    extensionPoint: "ext.reconciliation.customColumns"
+    absentRule: collapse-up
+
+  - id: zone-pagination
+    name: "Pagination"
+    type: fixed
+    priority: 5
+    dataBinding: "viewModel.pagination"
+
+absentRules:
+  - zoneId: zone-extension
+    condition: "No custom column extension"
+    rule: collapse-up
+
+businessRules:
+  - type: stateCondition
+    rule: "sessionLink hidden when reconciliation.showSessionLink == false"
+  - type: stateCondition
+    rule: "caseLink hidden when reconciliation.showCaseLink == false"
+  - type: stateCondition
+    rule: "If linked session not found, show intent without link, tooltip: 'Session not available'"
+  - type: actionConsequence
+    action: drill-to-detail
+    consequence: "Navigate to F-SRV-007-01 intent detail"
+  - type: actionConsequence
+    action: sessionLink-click
+    consequence: "Navigate to F-SRV-004-01 session detail"
+
+extensionZones:
+  - id: zone-extension
+    extensionPoint: "ext.reconciliation.customColumns"
+    description: "Custom columns (e.g., invoice reference if integrated with FI)"
+    renderPosition: "after zone-results, before zone-pagination"

@@ -1,0 +1,11 @@
+// F-IAM-002-03 — ABAC Policy Evaluation
+// Generated: 2026-04-03
+// Template: TPL-UVL-LEAF v1.0.0
+
+namespace F_IAM_002_03
+
+features
+    F_IAM_002_03
+        pagination {
+            Integer pageSize default 25
+        }

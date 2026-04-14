@@ -1,0 +1,12 @@
+namespace sd.bil
+
+features
+    F_SD_003 { description "Billing & Invoicing" }
+        mandatory
+            F_SD_003_01 { description "Billing Run" }
+            F_SD_003_02 { description "Invoice Review" }
+        optional
+            F_SD_003_03 { description "Credit Note Management" }
+
+constraints
+    F_SD_003_03 => F_SD_003_02

@@ -1,0 +1,13 @@
+// F-HR-002.uvl — Payroll & Leave (Composition)
+namespace hr.F_HR_002
+features
+    F_HR_002 { description "Payroll & Leave Management" }
+        mandatory
+            F_HR_002_01 { description "Leave Management"; domain "hr.lve" }
+        optional
+            F_HR_002_02 { description "Payroll Processing"; domain "hr.prl" }
+            F_HR_002_03 { description "Payslip Self-Service"; domain "hr.prl" }
+constraints
+    F_HR_002_01 => F_HR_001_01
+    F_HR_002_02 => F_HR_001_01
+    F_HR_002_03 => F_HR_002_02

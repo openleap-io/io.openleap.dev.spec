@@ -1,0 +1,10 @@
+namespace pps.im
+
+features
+    F_PPS_003_02 {
+        description "See feature-spec.md"
+    }
+
+        // Attributes
+        Boolean require_reference_document { default false, bindingTime deploy }
+        Boolean allow_backdated_posting { default false, bindingTime deploy }

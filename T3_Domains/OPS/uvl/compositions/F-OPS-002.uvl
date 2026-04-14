@@ -1,0 +1,13 @@
+namespace ops.sch
+
+features
+    F_OPS_002 { description "Resource & Scheduling" }
+        mandatory
+            F_OPS_002_01 { description "Resource Availability" }
+            F_OPS_002_02 { description "Schedule Assignment" }
+        optional
+            F_OPS_002_03 { description "Utilization Report" }
+
+constraints
+    F_OPS_002_02 => F_OPS_002_01
+    F_OPS_002_03 => F_OPS_002_01

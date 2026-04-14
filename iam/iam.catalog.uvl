@@ -1,0 +1,25 @@
+// IAM Suite — UI Feature Catalog (UVL Root)
+// File: iam.catalog.uvl
+// Generated: 2026-04-03
+// Template: TPL-UVL-CAT v1.0.0
+
+namespace iam
+
+imports
+    F_IAM_001 as F_IAM_001   from "uvl/compositions/F-IAM-001.uvl"
+    F_IAM_002 as F_IAM_002   from "uvl/compositions/F-IAM-002.uvl"
+    F_IAM_003 as F_IAM_003   from "uvl/compositions/F-IAM-003.uvl"
+    F_IAM_004 as F_IAM_004   from "uvl/compositions/F-IAM-004.uvl"
+    F_IAM_005 as F_IAM_005   from "uvl/compositions/F-IAM-005.uvl"
+
+features
+    IAM_UI
+        optional
+            F_IAM_001.F_IAM_001
+            F_IAM_002.F_IAM_002
+            F_IAM_003.F_IAM_003
+            F_IAM_004.F_IAM_004
+            F_IAM_005.F_IAM_005
+
+constraints
+    // IAM is foundational — no cross-suite constraints.

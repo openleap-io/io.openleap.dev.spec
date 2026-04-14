@@ -1,0 +1,17 @@
+namespace sd.shp.shipment-execution
+
+features
+    F_SD_002_02 {
+        description "Shipment Execution"
+        String label_format {
+            description "Format used when generating shipping labels"
+            default "PDF"
+        }
+        Boolean carrier_integration_enabled {
+            description "Enables automated carrier selection and tracking number retrieval via carrier API"
+            default false
+        }
+    }
+
+constraints
+    F_SD_002_02 => F_SD_002_01

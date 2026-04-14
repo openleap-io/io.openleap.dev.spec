@@ -1,0 +1,29 @@
+// F-FAC-001.uvl — Receivables Management (Composition)
+// Suite: fac | Composition: F-FAC-001
+// Template: feature-composition.uvl v1.0.0
+
+namespace fac.F_FAC_001
+
+features
+    F_FAC_001 {
+        description "Receivables Management — intake, eligibility validation, and assignment lifecycle"
+    }
+        mandatory
+            F_FAC_001_01 {
+                description "Receivable Intake & Worklist"
+                uvl "uvl/leaves/F-FAC-001-01.uvl"
+            }
+        optional
+            F_FAC_001_02 {
+                description "Eligibility Validation & Assignment"
+                domain "fac.rcv"
+            }
+            F_FAC_001_03 {
+                description "Receivable Lifecycle Tracking"
+                domain "fac.rcv"
+            }
+
+constraints
+    F_FAC_001_01 => IAM_UI
+    F_FAC_001_02 => F_FAC_001_01
+    F_FAC_001_03 => F_FAC_001_01

@@ -1,0 +1,10 @@
+// F-HR-003.uvl — Talent Management (Composition)
+namespace hr.F_HR_003
+features
+    F_HR_003 { description "Talent Management — recruitment and performance" }
+        optional
+            F_HR_003_01 { description "Recruitment Pipeline"; domain "hr.rcr" }
+            F_HR_003_02 { description "Performance Reviews & Goals"; domain "hr.prf" }
+constraints
+    F_HR_003_01 => F_HR_001_01
+    F_HR_003_02 => F_HR_001_01

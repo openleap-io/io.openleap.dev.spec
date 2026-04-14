@@ -1,0 +1,23 @@
+// Composition UVL: F-CRM-002 — Lead Management
+// Template: feature-composition.uvl v1.0.0
+// Generated: 2026-04-03
+
+namespace crm
+
+imports
+    crm.F_CRM_002_01
+    crm.F_CRM_002_02
+    crm.F_CRM_002_03
+    crm.F_CRM_002_04
+    crm.F_CRM_002_05
+    crm.F_CRM_002_06
+
+features
+    F_CRM_002
+        mandatory
+            F_CRM_002_01  // Lead List & Pipeline View
+            F_CRM_002_02  // Lead Detail View
+            F_CRM_002_03  // Lead Create/Edit Form
+            F_CRM_002_04  // Lead Qualification & Scoring
+            F_CRM_002_05  // Lead Conversion Wizard
+            F_CRM_002_06  // Lead Import

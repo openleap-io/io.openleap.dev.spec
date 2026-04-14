@@ -1,0 +1,77 @@
+# Screen Contract (AUI) — F-OPS-001-02
+# Feature: Work Order Execution
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-OPS-001-02
+name: "Work Order Execution"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-assigned-orders
+        description: "Load work orders assigned to the current user"
+      - task: interact
+        description: "User views and acts on work orders"
+        operator: enabling
+        enabledBy: load-assigned-orders
+
+zones:
+  - id: zone-header
+    name: "Page Header"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Page title (display)"
+      - "Date filter (select)"
+
+  - id: zone-core
+    name: "Work Order List"
+    type: fixed
+    priority: 2
+    dataBinding: "workOrders"
+    fields:
+      - "WO title (display)"
+      - "Location (display)"
+      - "Priority badge (display)"
+      - "SLA countdown (display)"
+      - "Status (display)"
+      - "Action buttons (Accept | En Route | Start Work | Complete)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.workOrderCardActions"
+    absentRule: panel-section-hidden
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-core
+      action: "Accept"
+      requiresRole: "TECHNICIAN|FIELD_ENGINEER"
+    - zone: zone-core
+      action: "Start Work"
+      requiresRole: "TECHNICIAN|FIELD_ENGINEER"
+    - zone: zone-core
+      action: "Complete"
+      requiresRole: "TECHNICIAN|FIELD_ENGINEER"
+  stateConditions:
+    - action: "Accept"
+      enabledWhen: "workOrder.status == ASSIGNED"
+    - action: "En Route"
+      enabledWhen: "workOrder.status == ACCEPTED"
+    - action: "Start Work"
+      enabledWhen: "workOrder.status == EN_ROUTE"
+    - action: "Complete"
+      enabledWhen: "workOrder.status == IN_PROGRESS"
+  actionConsequences:
+    - action: "Complete"
+      onSuccess: "navigate('work-order-close', workOrderId)"

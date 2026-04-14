@@ -1,0 +1,15 @@
+namespace fi.ar
+
+features
+    F_FI_002 { description "Receivables Management" }
+        mandatory
+            F_FI_002_01 { description "AR Invoice Management" }
+            F_FI_002_02 { description "Cash Application" }
+        optional
+            F_FI_002_03 { description "Aging & Collections" }
+            F_FI_002_04 { description "Dunning Management" }
+
+constraints
+    F_FI_002_02 => F_FI_002_01
+    F_FI_002_03 => F_FI_002_01
+    F_FI_002_04 => F_FI_002_03

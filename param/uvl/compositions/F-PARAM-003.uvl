@@ -1,0 +1,12 @@
+namespace param.cfg
+
+features
+    F_PARAM_003 { description "Configuration Management" }
+        mandatory
+            F_PARAM_003_01 { description "Browse Configuration" }
+            F_PARAM_003_02 { description "Edit Configuration Entry" }
+        optional
+            F_PARAM_003_03 { description "Configuration Audit Trail" }
+
+constraints
+    F_PARAM_003_03 => F_PARAM_003_01

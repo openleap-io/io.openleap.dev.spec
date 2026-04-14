@@ -1,0 +1,766 @@
+# OpenAPI Contract — ps-agl-svc
+# Generated: 2026-04-03
+# Convention: contracts/http/ps/agl/openapi.yaml
+#
+# This is the API contract for Agile & Boards (ps-agl-svc).
+# It is the machine-readable companion to ps_agl-spec.md §6.
+
+openapi: 3.1.0
+
+info:
+  title: "PS Agile & Boards API"
+  version: "1.0.0"
+  description: |
+    REST API for the Agile & Boards domain within the PS (Project Management) suite.
+    Provides agile project management capabilities on top of the work packages defined in ps.prj. Manages sprints (time-boxed iterations), product and sprint backlogs, Kanban boards, and agile metrics (st
+  contact:
+    name: PS Team
+    email: ps-team@openleap.io
+  license:
+    name: Proprietary
+
+servers:
+  - url: http://localhost:8411
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+x-owner: team-ps
+x-suite: ps
+x-domain: agl
+x-service: ps-agl-svc
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Sprint
+    description: "A fixed-length time box during which a set of backlog items is planned, executed, and reviewed. Spri"
+  - name: Backlog
+    description: "An ordered list of work packages representing planned work. Product backlog contains all known work;"
+  - name: Board
+    description: "A configurable columnar visualization of work packages organized by status, assignee, version, or cu"
+
+paths:
+
+  /api/ps/agl/v1/sprints:
+    get:
+      operationId: list_sprints
+      summary: "List all Sprint entities"
+      tags:
+        - Sprint
+      security:
+        - bearerAuth: [ps.agl:read]
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 25
+        - name: tenantId
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Paginated list of sprints
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Sprint'
+                  totalElements:
+                    type: integer
+                  page:
+                    type: integer
+                  size:
+                    type: integer
+    post:
+      operationId: create_sprint
+      summary: "Create a new Sprint"
+      tags:
+        - Sprint
+      security:
+        - bearerAuth: [ps.agl:write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SprintCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sprint'
+          headers:
+            Location:
+              schema:
+                type: string
+            ETag:
+              schema:
+                type: string
+        '400':
+          description: Validation error
+        '409':
+          description: Conflict (duplicate)
+
+  /api/ps/agl/v1/sprints/{id}:
+    get:
+      operationId: get_sprint
+      summary: "Get Sprint by ID"
+      tags:
+        - Sprint
+      security:
+        - bearerAuth: [ps.agl:read]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sprint'
+        '404':
+          description: Not found
+    patch:
+      operationId: update_sprint
+      summary: "Update Sprint attributes"
+      tags:
+        - Sprint
+      security:
+        - bearerAuth: [ps.agl:write]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: If-Match
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SprintUpdate'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sprint'
+        '404':
+          description: Not found
+        '409':
+          description: Optimistic lock conflict
+    delete:
+      operationId: delete_sprint
+      summary: "Delete Sprint"
+      tags:
+        - Sprint
+      security:
+        - bearerAuth: [ps.agl:admin]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: Not found
+
+  /api/ps/agl/v1/backlogs:
+    get:
+      operationId: list_backlogs
+      summary: "List all Backlog entities"
+      tags:
+        - Backlog
+      security:
+        - bearerAuth: [ps.agl:read]
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 25
+        - name: tenantId
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Paginated list of backlogs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Backlog'
+                  totalElements:
+                    type: integer
+                  page:
+                    type: integer
+                  size:
+                    type: integer
+    post:
+      operationId: create_backlog
+      summary: "Create a new Backlog"
+      tags:
+        - Backlog
+      security:
+        - bearerAuth: [ps.agl:write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BacklogCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Backlog'
+          headers:
+            Location:
+              schema:
+                type: string
+            ETag:
+              schema:
+                type: string
+        '400':
+          description: Validation error
+        '409':
+          description: Conflict (duplicate)
+
+  /api/ps/agl/v1/backlogs/{id}:
+    get:
+      operationId: get_backlog
+      summary: "Get Backlog by ID"
+      tags:
+        - Backlog
+      security:
+        - bearerAuth: [ps.agl:read]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Backlog'
+        '404':
+          description: Not found
+    patch:
+      operationId: update_backlog
+      summary: "Update Backlog attributes"
+      tags:
+        - Backlog
+      security:
+        - bearerAuth: [ps.agl:write]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: If-Match
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BacklogUpdate'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Backlog'
+        '404':
+          description: Not found
+        '409':
+          description: Optimistic lock conflict
+    delete:
+      operationId: delete_backlog
+      summary: "Delete Backlog"
+      tags:
+        - Backlog
+      security:
+        - bearerAuth: [ps.agl:admin]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: Not found
+
+  /api/ps/agl/v1/boards:
+    get:
+      operationId: list_boards
+      summary: "List all Board entities"
+      tags:
+        - Board
+      security:
+        - bearerAuth: [ps.agl:read]
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 25
+        - name: tenantId
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Paginated list of boards
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Board'
+                  totalElements:
+                    type: integer
+                  page:
+                    type: integer
+                  size:
+                    type: integer
+    post:
+      operationId: create_board
+      summary: "Create a new Board"
+      tags:
+        - Board
+      security:
+        - bearerAuth: [ps.agl:write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BoardCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Board'
+          headers:
+            Location:
+              schema:
+                type: string
+            ETag:
+              schema:
+                type: string
+        '400':
+          description: Validation error
+        '409':
+          description: Conflict (duplicate)
+
+  /api/ps/agl/v1/boards/{id}:
+    get:
+      operationId: get_board
+      summary: "Get Board by ID"
+      tags:
+        - Board
+      security:
+        - bearerAuth: [ps.agl:read]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Board'
+        '404':
+          description: Not found
+    patch:
+      operationId: update_board
+      summary: "Update Board attributes"
+      tags:
+        - Board
+      security:
+        - bearerAuth: [ps.agl:write]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: If-Match
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BoardUpdate'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Board'
+        '404':
+          description: Not found
+        '409':
+          description: Optimistic lock conflict
+    delete:
+      operationId: delete_board
+      summary: "Delete Board"
+      tags:
+        - Board
+      security:
+        - bearerAuth: [ps.agl:admin]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: Not found
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+
+    Sprint:
+      type: object
+      required:
+        - sprintId
+        - tenantId
+        - projectId
+        - name
+        - status
+        - startDate
+        - endDate
+        - version
+        - createdAt
+        - updatedAt
+      properties:
+        sprintId:
+          type: string
+          format: uuid
+          description: "Unique sprint identifier" 
+        tenantId:
+          type: string
+          format: uuid
+          description: "Owning tenant" 
+        projectId:
+          type: string
+          format: uuid
+          description: "Owning project (reference to ps-prj-svc)" 
+        name:
+          type: string
+          description: "Sprint name (e.g., 'Sprint 12')" 
+        goal:
+          type: string
+          description: "Sprint goal statement" 
+        status:
+          type: string
+          description: "Sprint status: PLANNED, ACTIVE, CLOSED" 
+        startDate:
+          type: string
+          format: date
+          description: "Sprint start date" 
+        endDate:
+          type: string
+          format: date
+          description: "Sprint end date" 
+        committedPoints:
+          type: integer
+          description: "Total story points committed at sprint start" 
+        completedPoints:
+          type: integer
+          description: "Total story points completed at sprint close" 
+        velocity:
+          type: number
+          description: "Rolling average velocity after sprint close" 
+        version:
+          type: integer
+          description: "Optimistic lock version" 
+        createdAt:
+          type: string
+          format: date-time
+          description: "Creation timestamp" 
+        updatedAt:
+          type: string
+          format: date-time
+          description: "Last update timestamp" 
+
+    SprintCreate:
+      type: object
+      description: "Request body for creating a Sprint"
+      properties:
+        # Writable fields only (excludes auto-generated IDs, timestamps, version)
+        name:
+          type: string
+
+    SprintUpdate:
+      type: object
+      description: "Request body for updating a Sprint"
+      properties:
+        # Subset of writable fields for partial update
+        name:
+          type: string
+
+    Backlog:
+      type: object
+      required:
+        - backlogId
+        - tenantId
+        - projectId
+        - type
+      properties:
+        backlogId:
+          type: string
+          format: uuid
+          description: "Unique backlog identifier" 
+        tenantId:
+          type: string
+          format: uuid
+          description: "Owning tenant" 
+        projectId:
+          type: string
+          format: uuid
+          description: "Owning project" 
+        type:
+          type: string
+          description: "Backlog type: PRODUCT, SPRINT" 
+        sprintId:
+          type: string
+          format: uuid
+          description: "Sprint reference (required if type=SPRINT)" 
+
+    BacklogCreate:
+      type: object
+      description: "Request body for creating a Backlog"
+      properties:
+        # Writable fields only (excludes auto-generated IDs, timestamps, version)
+        name:
+          type: string
+
+    BacklogUpdate:
+      type: object
+      description: "Request body for updating a Backlog"
+      properties:
+        # Subset of writable fields for partial update
+        name:
+          type: string
+
+    BacklogItem:
+      type: object
+      required:
+        - backlogItemId
+        - workPackageId
+        - position
+      properties:
+        backlogItemId:
+          type: string
+          format: uuid
+          description: "Unique item identifier" 
+        workPackageId:
+          type: string
+          format: uuid
+          description: "Reference to work package in ps-prj-svc" 
+        position:
+          type: integer
+          description: "Sort position in the backlog (lower = higher priority)" 
+        storyPoints:
+          type: integer
+          description: "Estimated story points" 
+
+    Board:
+      type: object
+      required:
+        - boardId
+        - tenantId
+        - projectId
+        - name
+        - type
+        - isDefault
+      properties:
+        boardId:
+          type: string
+          format: uuid
+          description: "Unique board identifier" 
+        tenantId:
+          type: string
+          format: uuid
+          description: "Owning tenant" 
+        projectId:
+          type: string
+          format: uuid
+          description: "Owning project" 
+        name:
+          type: string
+          description: "Board name" 
+        type:
+          type: string
+          description: "Board type: STATUS, ASSIGNEE, VERSION, CUSTOM" 
+        isDefault:
+          type: boolean
+          description: "Whether this is the project's default board" 
+
+    BoardCreate:
+      type: object
+      description: "Request body for creating a Board"
+      properties:
+        # Writable fields only (excludes auto-generated IDs, timestamps, version)
+        name:
+          type: string
+
+    BoardUpdate:
+      type: object
+      description: "Request body for updating a Board"
+      properties:
+        # Subset of writable fields for partial update
+        name:
+          type: string
+
+    BoardColumn:
+      type: object
+      required:
+        - columnId
+        - name
+        - filterCriteria
+        - sortOrder
+      properties:
+        columnId:
+          type: string
+          format: uuid
+          description: "Unique column identifier" 
+        name:
+          type: string
+          description: "Column display name" 
+        filterCriteria:
+          type: object
+          description: "Filter criteria determining which WPs appear (e.g., status=IN_PROGRESS)" 
+        wipLimit:
+          type: integer
+          description: "Maximum number of WPs allowed in this column (0 = unlimited)" 
+        sortOrder:
+          type: integer
+          description: "Column position on the board" 
+
+
+  parameters:
+    tenantId:
+      name: X-Tenant-ID
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Tenant identifier (from JWT or header)
+
+    pageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        default: 0
+      description: Page number (zero-based)
+
+    sizeParam:
+      name: size
+      in: query
+      schema:
+        type: integer
+        default: 25
+        maximum: 100
+      description: Page size

@@ -1,0 +1,36 @@
+// ============================================================
+// F-PS-004 — Project Time & Costs (Composition Node)
+// File: F-PS-004.uvl
+//
+// Companion document: features/compositions/F-PS-004.md
+//
+// Generated: 2026-04-03
+// Template: TPL-UVL-COMP v1.0.0
+// ============================================================
+
+namespace F_PS_004
+
+imports
+    F-PS-004-01 as Time_Booking_Entry
+    F-PS-004-02 as Cost_Entry
+    F-PS-004-03 as Time_Cost_Approval_Workflow
+    F-PS-004-04 as Time_Cost_Reports
+    F-PS-004-05 as My_Time_Personal_Dashboard
+
+features
+
+    F-PS-004
+
+        mandatory
+            F-PS-004-01
+            F-PS-004-02
+            F-PS-004-03
+            F-PS-004-04
+
+        optional
+            F-PS-004-05
+
+
+constraints
+
+    // Intra-composition constraints (if any)

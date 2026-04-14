@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sd.dlv.delivery.goods-issue.posted",
+  "title": "sd.dlv.delivery.goods-issue.posted",
+  "description": "Event published when goods issue is posted for a delivery, relieving inventory",
+  "type": "object",
+  "required": ["eventId", "eventType", "timestamp", "tenantId", "correlationId", "producer", "schemaVersion", "payload"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "eventType": { "type": "string", "const": "sd.dlv.delivery.goods-issue.posted" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "correlationId": { "type": "string", "format": "uuid" },
+    "causationId": { "type": "string", "format": "uuid" },
+    "producer": { "type": "string", "const": "sd-dlv-svc" },
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "payload": {
+      "type": "object",
+      "required": ["deliveryId", "salesOrderId", "customerId", "postedAt"],
+      "properties": {
+        "deliveryId": { "type": "string", "format": "uuid" },
+        "deliveryNumber": { "type": "string" },
+        "salesOrderId": { "type": "string", "format": "uuid" },
+        "customerId": { "type": "string", "format": "uuid" },
+        "warehouseId": { "type": "string", "format": "uuid" },
+        "postedAt": { "type": "string", "format": "date-time" },
+        "lines": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["productId", "quantity", "uomCode"],
+            "properties": {
+              "productId": { "type": "string", "format": "uuid" },
+              "quantity": { "type": "number" },
+              "uomCode": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

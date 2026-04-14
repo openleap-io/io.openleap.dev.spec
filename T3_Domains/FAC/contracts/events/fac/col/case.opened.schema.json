@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/fac/col/case.opened",
+  "title": "CollectionCaseOpened",
+  "description": "Emitted when a collection case is opened for an overdue receivable.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "caseId", "receivableId", "debtorPartyId", "dpd", "outstandingAmount"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "caseId": { "type": "string", "format": "uuid" },
+    "receivableId": { "type": "string", "format": "uuid" },
+    "fundingId": { "type": "string", "format": "uuid" },
+    "debtorPartyId": { "type": "string", "format": "uuid" },
+    "dpd": { "type": "integer", "minimum": 0, "description": "Days Past Due" },
+    "outstandingAmount": { "type": "number", "minimum": 0 },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "stage": { "type": "string", "enum": ["D0", "D7", "D14", "D30", "D60"] }
+  }
+}

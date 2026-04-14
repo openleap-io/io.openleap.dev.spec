@@ -1,0 +1,9 @@
+namespace srv.F-SRV-003-02
+features
+    F-SRV-003-02
+        display.defaultView             String "week"
+        display.defaultView.bindingTime String "deploy"
+        availability.minWindowMinutes             Integer 30
+        availability.minWindowMinutes.bindingTime String "deploy"
+constraints
+    // See parent composition for structural constraints

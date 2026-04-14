@@ -1,0 +1,11 @@
+# F-FI-001-01 AUI Screen Contract — PLACEHOLDER
+# Full contract authoring pending
+featureId: F-FI-001-01
+suite: fi
+screens:
+  - id: journal-entry-list
+    title: Journal Entries
+    zones: []
+  - id: journal-entry-form
+    title: Journal Entry Form
+    zones: []

@@ -1,0 +1,5 @@
+namespace tech
+features
+    F_TECH_003_01 { description "See feature-spec.md" }
+        Boolean pagination_enabled { default true, bindingTime deploy }
+        Integer pagination_pageSize { default 25, bindingTime runtime }

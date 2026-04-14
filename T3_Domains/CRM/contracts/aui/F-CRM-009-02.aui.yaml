@@ -1,0 +1,69 @@
+# AUI Screen Contract: F-CRM-009-02
+# Template: screen-contract-aui.yaml v1.0.0
+# Generated: 2026-04-03
+
+featureId: F-CRM-009-02
+featureName: Document Upload & Attach
+suite: crm
+version: 1.0.0
+
+taskModel:
+  rootOperator: sequential
+  description: User completes steps in order — input → validate → submit
+
+zones:
+  - name: header
+    type: fixed
+    priority: high
+    description: Page title, breadcrumb, action buttons
+    dataBinding: static
+
+  - name: mainContent
+    type: variable
+    priority: high
+    description: Primary content area — upload
+    dataBinding: api-response
+    fields: []  # Derived from feature-spec §3
+
+  - name: extensionZone
+    type: feature-gated
+    priority: low
+    description: Product customization extension point
+    dataBinding: none
+
+absentRules:
+  filterPanel: collapse-up
+  relatedPanels: tab-hidden
+  extensionZone: collapse-up
+
+screenStates:
+  loading:
+    description: Data fetching in progress
+    behaviour: Show skeleton loader in mainContent zone
+  empty:
+    description: No records match criteria
+    behaviour: Show empty state illustration with CTA in mainContent
+  populated:
+    description: Records available
+    behaviour: Render all zones normally
+  error:
+    description: Service unavailable or request failed
+    behaviour: Show error message with retry button in mainContent
+  partial:
+    description: Some data loaded, some service calls failed
+    behaviour: Show available data, inline error for failed zones
+
+businessRules:
+  roleGates:
+    - action: view
+      roles: [crm-readonly, crm-sales-rep, crm-sales-manager, crm-admin]
+    - action: create
+      roles: [crm-sales-rep, crm-sales-manager, crm-admin]
+    - action: edit
+      roles: [crm-sales-rep, crm-sales-manager, crm-admin]
+    - action: delete
+      roles: [crm-sales-manager, crm-admin]
+  stateConditions:
+    - attribute: F-CRM-009-02.readOnly
+      value: true
+      effect: Disable all mutation controls

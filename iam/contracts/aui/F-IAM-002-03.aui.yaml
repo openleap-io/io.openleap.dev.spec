@@ -1,0 +1,95 @@
+# Screen Contract (AUI) — F-IAM-002-03
+# Feature: ABAC Policy Evaluation
+# Generated: 2026-04-03
+# Template: screen-contract-aui.yaml v1.0.0
+#
+# Derived from F-IAM-002-03 feature-spec.md:
+#   §2 User Journey → Task Model
+#   §3 Interaction Requirements → Zones
+#   §4 Edge Cases → Absent Rules
+
+featureId: F-IAM-002-03
+name: "ABAC Policy Evaluation"
+
+# ──────────────────────────────────────────────
+# Task Model (from §2 User Journey)
+# ──────────────────────────────────────────────
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-reference-data
+        description: "Load reference catalogs and form defaults"
+      - task: fill-form
+        description: "User fills in required and optional fields"
+        operator: enabling
+        enabledBy: load-reference-data
+      - task: validate-and-submit
+        description: "Validate all fields and submit"
+        operator: enabling
+        enabledBy: fill-form
+
+# ──────────────────────────────────────────────
+# Zones (from §3 Interaction Requirements)
+# ──────────────────────────────────────────────
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Back navigation (link)"
+      - "Page title (display)"
+
+  - id: zone-core
+    name: "Core Details"
+    type: fixed
+    priority: 2
+    dataBinding: "form"
+    fields:
+      - "Policy Code (text)"
+      - "Policy Name (text)"
+      - "Condition (code editor)"
+      - "Effect (select)"
+      - "Priority (number)"
+      - "Target Permissions (multi-select)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.customFields"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Cancel (action)"
+      - "Submit (action: primary)"
+
+# ──────────────────────────────────────────────
+# Absent-Rules
+# ──────────────────────────────────────────────
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+# ──────────────────────────────────────────────
+# Business Rules (AUI)
+# ──────────────────────────────────────────────
+businessRules:
+  roleGates:
+    - zone: zone-actions
+      action: "Submit"
+      requiresRole: "IAM_AUTHZ_ADMIN"
+  stateConditions:
+    - action: "Submit"
+      enabledWhen: "form.isValid == true"
+  actionConsequences:
+    - action: "Submit"
+      onSuccess: "navigate('detail') + toast('iam.F-IAM-002-03.action.submit.success')"

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sd.agr.pricing-agreement.activated",
+  "title": "sd.agr.pricing-agreement.activated",
+  "description": "Event published when a pricing agreement is activated for a customer",
+  "type": "object",
+  "required": ["eventId", "eventType", "timestamp", "tenantId", "correlationId", "producer", "schemaVersion", "payload"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "eventType": { "type": "string", "const": "sd.agr.pricing-agreement.activated" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "correlationId": { "type": "string", "format": "uuid" },
+    "causationId": { "type": "string", "format": "uuid" },
+    "producer": { "type": "string", "const": "sd-agr-svc" },
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "payload": {
+      "type": "object",
+      "required": ["agreementId", "customerId", "validFrom", "validTo"],
+      "properties": {
+        "agreementId": { "type": "string", "format": "uuid" },
+        "agreementNumber": { "type": "string" },
+        "customerId": { "type": "string", "format": "uuid" },
+        "validFrom": { "type": "string", "format": "date" },
+        "validTo": { "type": "string", "format": "date" },
+        "discountType": { "type": "string", "enum": ["PERCENTAGE", "FIXED", "PRICE_LIST"] },
+        "discountValue": { "type": "number" }
+      }
+    }
+  }
+}

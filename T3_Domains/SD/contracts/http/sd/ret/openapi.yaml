@@ -1,0 +1,51 @@
+openapi: 3.1.0
+info:
+  title: SD Returns Service
+  version: 1.0.0
+  description: |
+    Customer return processing for the SD suite.
+
+    Full endpoint specification derived from domain-specs/sd_ret-spec.md §6.
+  contact:
+    name: team-sd
+    email: sd-team@openleap.io
+  x-owner: team-sd
+  x-suite: sd
+  x-domain: ret
+
+servers:
+  - url: http://localhost:8306
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+paths:
+  /api/sd/ret/v1:
+    get:
+      summary: Service root / health
+      operationId: getServiceInfo
+      tags: [health]
+      responses:
+        '200':
+          description: Service info
+
+  /api/sd/ret/v1/returns:
+    post:
+      summary: Create return request
+      operationId: createReturn
+      tags: [returns]
+      responses:
+        '201':
+          description: Return created
+
+  # Full paths defined in domain-specs/sd_ret-spec.md §6.
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

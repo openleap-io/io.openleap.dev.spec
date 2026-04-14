@@ -1,0 +1,82 @@
+# Screen Contract (AUI) — F-OPS-003-03
+# Feature: Task Management
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-OPS-003-03
+name: "Task Management"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-tasks
+        description: "Load tasks for selected project"
+      - task: manage
+        description: "Team member creates, assigns, and updates tasks"
+        operator: enabling
+        enabledBy: load-tasks
+
+zones:
+  - id: zone-header
+    name: "Page Header"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Page title (display)"
+      - "New Task button"
+      - "Project breadcrumb (link)"
+
+  - id: zone-core
+    name: "Task Kanban"
+    type: fixed
+    priority: 2
+    dataBinding: "tasks"
+    fields:
+      - "Status columns (TODO | IN_PROGRESS | BLOCKED | DONE)"
+      - "Task cards (title, assignee, due date)"
+      - "Overdue indicator"
+
+  - id: zone-detail
+    name: "Task Detail Panel"
+    type: variable
+    priority: 5
+    dataBinding: "selectedTask"
+    absentRule: panel-section-hidden
+    fields:
+      - "Title (editable)"
+      - "Assignee (typeahead)"
+      - "Due date (date picker)"
+      - "Milestone (select)"
+      - "Status (select)"
+      - "Comment thread (repeating)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.taskDetailPanel"
+    absentRule: panel-section-hidden
+
+absentRules:
+  - zone: zone-detail
+    condition: "No task selected"
+    rule: panel-section-hidden
+  - zone: zone-extension
+    condition: "No extension point filled"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-core
+      action: "Delete Task"
+      requiresRole: "PROJECT_MANAGER|OPERATIONS_MANAGER"
+  stateConditions:
+    - action: "New Task"
+      enabledWhen: "user.hasRole(PROJECT_MANAGER) OR user.hasRole(TEAM_MEMBER)"
+  actionConsequences:
+    - action: "New Task"
+      onSuccess: "reload-tasks + toast('ops.F-OPS-003-03.action.create.success')"
+    - action: "Add Comment"
+      onSuccess: "reload-comments"

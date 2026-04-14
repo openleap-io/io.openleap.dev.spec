@@ -1,0 +1,83 @@
+# Screen Contract (AUI) — F-SD-002-02
+# Feature: Shipment Execution
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-SD-002-02
+name: "Shipment Execution"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-shipments
+        description: "Load shipment list from sd-shp-svc"
+      - task: execute-shipment
+        description: "User assigns carrier, prints labels, posts goods issue"
+        operator: enabling
+        enabledBy: load-shipments
+      - task: confirm-dispatch
+        description: "Goods issue posted; shipment DISPATCHED"
+        operator: enabling
+        enabledBy: execute-shipment
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Page title (display)"
+      - "New Shipment (action)"
+
+  - id: zone-core
+    name: "Shipment List"
+    type: fixed
+    priority: 3
+    dataBinding: "shipments"
+    fields:
+      - "Shipment Number (display)"
+      - "Customer (display)"
+      - "Status (display: badge)"
+      - "Carrier (select — editable when READY)"
+      - "Service Level (select — editable when READY)"
+      - "Post Goods Issue (action: primary per row)"
+      - "Print Labels (action per row)"
+      - "Track (action when DISPATCHED)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.carrierIntegration"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Pagination"
+    type: fixed
+    priority: 99
+    dataBinding: "pagination"
+    fields:
+      - "Previous (action)"
+      - "Page indicator (display)"
+      - "Next (action)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "carrier_integration_enabled == false"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-core
+      action: "Post Goods Issue"
+      requiresRole: "SHIPPING_CLERK"
+  stateConditions:
+    - action: "Post Goods Issue"
+      enabledWhen: "shipment.status == 'READY' AND shipment.carrier != null"
+    - action: "Print Labels"
+      enabledWhen: "shipment.carrier != null"
+  actionConsequences:
+    - action: "Post Goods Issue"
+      onSuccess: "toast('sd.F-SD-002-02.action.postGI.success') + updateStatus('DISPATCHED')"

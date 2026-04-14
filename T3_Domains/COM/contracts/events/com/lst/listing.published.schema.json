@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/com/lst/listing.published",
+  "title": "ListingPublished",
+  "description": "Emitted when a listing is successfully published to a channel.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "listingId", "channelId"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "listingId": { "type": "string", "format": "uuid" },
+    "productViewId": { "type": "string", "format": "uuid" },
+    "channelId": { "type": "string" },
+    "externalRef": { "type": "string" }
+  }
+}

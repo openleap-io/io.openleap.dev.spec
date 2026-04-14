@@ -1,0 +1,662 @@
+# OpenAPI Contract — ps-bud-svc
+# Generated: 2026-04-03
+# Convention: contracts/http/ps/bud/openapi.yaml
+#
+# This is the API contract for Budget & Cost Control (ps-bud-svc).
+# It is the machine-readable companion to ps_bud-spec.md §6.
+
+openapi: 3.1.0
+
+info:
+  title: "PS Budget & Cost Control API"
+  version: "1.0.0"
+  description: |
+    REST API for the Budget & Cost Control domain within the PS (Project Management) suite.
+    Manages project-level financial planning and cost control. Enables creation of budgets with planned labor and unit costs, tracks actual spending against budgets, and provides Earned Value Management (
+  contact:
+    name: PS Team
+    email: ps-team@openleap.io
+  license:
+    name: Proprietary
+
+servers:
+  - url: http://localhost:8412
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+x-owner: team-ps
+x-suite: ps
+x-domain: bud
+x-service: ps-bud-svc
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Budget
+    description: "A financial plan tied to a project, containing planned labor and unit cost lines. Tracks actual cost"
+  - name: CostType
+    description: "A classification of costs with a unit name and effective-dated rate schedule. Shared with ps-tim-svc"
+
+paths:
+
+  /api/ps/bud/v1/budgets:
+    get:
+      operationId: list_budgets
+      summary: "List all Budget entities"
+      tags:
+        - Budget
+      security:
+        - bearerAuth: [ps.bud:read]
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 25
+        - name: tenantId
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Paginated list of budgets
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Budget'
+                  totalElements:
+                    type: integer
+                  page:
+                    type: integer
+                  size:
+                    type: integer
+    post:
+      operationId: create_budget
+      summary: "Create a new Budget"
+      tags:
+        - Budget
+      security:
+        - bearerAuth: [ps.bud:write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BudgetCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Budget'
+          headers:
+            Location:
+              schema:
+                type: string
+            ETag:
+              schema:
+                type: string
+        '400':
+          description: Validation error
+        '409':
+          description: Conflict (duplicate)
+
+  /api/ps/bud/v1/budgets/{id}:
+    get:
+      operationId: get_budget
+      summary: "Get Budget by ID"
+      tags:
+        - Budget
+      security:
+        - bearerAuth: [ps.bud:read]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Budget'
+        '404':
+          description: Not found
+    patch:
+      operationId: update_budget
+      summary: "Update Budget attributes"
+      tags:
+        - Budget
+      security:
+        - bearerAuth: [ps.bud:write]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: If-Match
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BudgetUpdate'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Budget'
+        '404':
+          description: Not found
+        '409':
+          description: Optimistic lock conflict
+    delete:
+      operationId: delete_budget
+      summary: "Delete Budget"
+      tags:
+        - Budget
+      security:
+        - bearerAuth: [ps.bud:admin]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: Not found
+
+  /api/ps/bud/v1/costtypes:
+    get:
+      operationId: list_costtypes
+      summary: "List all CostType entities"
+      tags:
+        - CostType
+      security:
+        - bearerAuth: [ps.bud:read]
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 25
+        - name: tenantId
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Paginated list of costtypes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CostType'
+                  totalElements:
+                    type: integer
+                  page:
+                    type: integer
+                  size:
+                    type: integer
+    post:
+      operationId: create_costtype
+      summary: "Create a new CostType"
+      tags:
+        - CostType
+      security:
+        - bearerAuth: [ps.bud:write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CostTypeCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CostType'
+          headers:
+            Location:
+              schema:
+                type: string
+            ETag:
+              schema:
+                type: string
+        '400':
+          description: Validation error
+        '409':
+          description: Conflict (duplicate)
+
+  /api/ps/bud/v1/costtypes/{id}:
+    get:
+      operationId: get_costtype
+      summary: "Get CostType by ID"
+      tags:
+        - CostType
+      security:
+        - bearerAuth: [ps.bud:read]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CostType'
+        '404':
+          description: Not found
+    patch:
+      operationId: update_costtype
+      summary: "Update CostType attributes"
+      tags:
+        - CostType
+      security:
+        - bearerAuth: [ps.bud:write]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: If-Match
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CostTypeUpdate'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CostType'
+        '404':
+          description: Not found
+        '409':
+          description: Optimistic lock conflict
+    delete:
+      operationId: delete_costtype
+      summary: "Delete CostType"
+      tags:
+        - CostType
+      security:
+        - bearerAuth: [ps.bud:admin]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: Not found
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+
+    Budget:
+      type: object
+      required:
+        - budgetId
+        - tenantId
+        - projectId
+        - name
+        - currency
+        - totalPlanned
+        - status
+        - version
+        - createdAt
+        - updatedAt
+      properties:
+        budgetId:
+          type: string
+          format: uuid
+          description: "Unique budget identifier" 
+        tenantId:
+          type: string
+          format: uuid
+          description: "Owning tenant" 
+        projectId:
+          type: string
+          format: uuid
+          description: "Owning project (reference to ps-prj-svc)" 
+        name:
+          type: string
+          description: "Budget name" 
+        currency:
+          type: string
+          description: "Budget currency (e.g., EUR, USD)" 
+        totalPlanned:
+          type: number
+          description: "Total planned amount (sum of all planned lines)" 
+        totalActual:
+          type: number
+          description: "Total actual amount (sum of all actual costs)" 
+        status:
+          type: string
+          description: "Budget status: DRAFT, ACTIVE, CLOSED, OVERSPENT" 
+        overspendThreshold:
+          type: number
+          description: "Percentage threshold for overspend alert (default 90%)" 
+        version:
+          type: integer
+          description: "Optimistic lock version" 
+        createdAt:
+          type: string
+          format: date-time
+          description: "Creation timestamp" 
+        updatedAt:
+          type: string
+          format: date-time
+          description: "Last update timestamp" 
+
+    BudgetCreate:
+      type: object
+      description: "Request body for creating a Budget"
+      properties:
+        # Writable fields only (excludes auto-generated IDs, timestamps, version)
+        name:
+          type: string
+
+    BudgetUpdate:
+      type: object
+      description: "Request body for updating a Budget"
+      properties:
+        # Subset of writable fields for partial update
+        name:
+          type: string
+
+    PlannedLaborCost:
+      type: object
+      required:
+        - lineId
+        - role
+        - plannedHours
+        - hourlyRate
+        - plannedAmount
+      properties:
+        lineId:
+          type: string
+          format: uuid
+          description: "Unique line identifier" 
+        workPackageId:
+          type: string
+          format: uuid
+          description: "Optional WP assignment" 
+        personaId:
+          type: string
+          format: uuid
+          description: "Reference to persona in ps-res-svc" 
+        role:
+          type: string
+          description: "Role description (e.g., 'Senior Developer')" 
+        plannedHours:
+          type: number
+          description: "Planned hours" 
+        hourlyRate:
+          type: number
+          description: "Hourly rate in budget currency" 
+        plannedAmount:
+          type: number
+          description: "Calculated: plannedHours × hourlyRate" 
+        actualHours:
+          type: number
+          description: "Actual hours accumulated" 
+        actualAmount:
+          type: number
+          description: "Actual cost accumulated" 
+
+    PlannedUnitCost:
+      type: object
+      required:
+        - lineId
+        - costTypeId
+        - plannedQuantity
+        - unitRate
+        - plannedAmount
+      properties:
+        lineId:
+          type: string
+          format: uuid
+          description: "Unique line identifier" 
+        workPackageId:
+          type: string
+          format: uuid
+          description: "Optional WP assignment" 
+        costTypeId:
+          type: string
+          format: uuid
+          description: "Reference to CostType" 
+        plannedQuantity:
+          type: number
+          description: "Planned quantity" 
+        unitRate:
+          type: number
+          description: "Rate per unit in budget currency" 
+        plannedAmount:
+          type: number
+          description: "Calculated: plannedQuantity × unitRate" 
+        actualQuantity:
+          type: number
+          description: "Actual quantity accumulated" 
+        actualAmount:
+          type: number
+          description: "Actual cost accumulated" 
+
+    EarnedValueSnapshot:
+      type: object
+      required:
+        - snapshotId
+        - snapshotDate
+        - plannedValue
+        - earnedValue
+        - actualCost
+        - scheduleVariance
+        - costVariance
+        - schedulePerformanceIndex
+        - costPerformanceIndex
+      properties:
+        snapshotId:
+          type: string
+          format: uuid
+          description: "Unique snapshot identifier" 
+        snapshotDate:
+          type: string
+          description: "Date of the snapshot" 
+        plannedValue:
+          type: number
+          description: "PV: budgeted cost of work scheduled" 
+        earnedValue:
+          type: number
+          description: "EV: budgeted cost of work performed" 
+        actualCost:
+          type: number
+          description: "AC: actual cost of work performed" 
+        scheduleVariance:
+          type: number
+          description: "SV = EV - PV" 
+        costVariance:
+          type: number
+          description: "CV = EV - AC" 
+        schedulePerformanceIndex:
+          type: number
+          description: "SPI = EV / PV" 
+        costPerformanceIndex:
+          type: number
+          description: "CPI = EV / AC" 
+        estimateAtCompletion:
+          type: number
+          description: "EAC forecast" 
+        estimateToComplete:
+          type: number
+          description: "ETC forecast" 
+
+    CostType:
+      type: object
+      required:
+        - costTypeId
+        - tenantId
+        - code
+        - name
+        - unit
+        - isActive
+      properties:
+        costTypeId:
+          type: string
+          format: uuid
+          description: "Unique cost type identifier" 
+        tenantId:
+          type: string
+          format: uuid
+          description: "Owning tenant" 
+        code:
+          type: string
+          description: "Short code (e.g., 'TRAVEL', 'HW', 'CONSULT')" 
+        name:
+          type: string
+          description: "Display name" 
+        description:
+          type: string
+          description: "Description" 
+        unit:
+          type: string
+          description: "Unit of measure (e.g., 'km', 'piece', 'hour', 'license')" 
+        isActive:
+          type: boolean
+          description: "Whether this cost type is currently usable" 
+
+    CostTypeCreate:
+      type: object
+      description: "Request body for creating a CostType"
+      properties:
+        # Writable fields only (excludes auto-generated IDs, timestamps, version)
+        name:
+          type: string
+
+    CostTypeUpdate:
+      type: object
+      description: "Request body for updating a CostType"
+      properties:
+        # Subset of writable fields for partial update
+        name:
+          type: string
+
+    RateScheduleEntry:
+      type: object
+      required:
+        - entryId
+        - effectiveFrom
+        - rate
+        - currency
+      properties:
+        entryId:
+          type: string
+          format: uuid
+          description: "Unique entry identifier" 
+        effectiveFrom:
+          type: string
+          description: "Rate effective from this date" 
+        effectiveTo:
+          type: string
+          description: "Rate effective until this date (null = open-ended)" 
+        rate:
+          type: number
+          description: "Rate per unit in the reference currency" 
+        currency:
+          type: string
+          description: "Currency of the rate" 
+
+
+  parameters:
+    tenantId:
+      name: X-Tenant-ID
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Tenant identifier (from JWT or header)
+
+    pageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        default: 0
+      description: Page number (zero-based)
+
+    sizeParam:
+      name: size
+      in: query
+      schema:
+        type: integer
+        default: 25
+        maximum: 100
+      description: Page size

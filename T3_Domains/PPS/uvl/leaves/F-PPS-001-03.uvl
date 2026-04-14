@@ -1,0 +1,10 @@
+namespace pps.aps
+
+features
+    F_PPS_001_03 {
+        description "See feature-spec.md"
+    }
+
+        // Attributes
+        Integer display_period_weeks { default 4, bindingTime runtime }
+        Integer overload_threshold_pct { default 100, bindingTime deploy }

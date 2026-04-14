@@ -1,0 +1,107 @@
+# Screen Contract (AUI) — F-SRV-002-04 No-Show Handling
+#
+# Companion of: F-SRV-002-04.md
+#
+# Note: This feature's UI is a dialog/action within F-SRV-002-02
+# (Booking Lifecycle). It does not have its own standalone screen.
+# The AUI describes the modal dialog and its integration point
+# within the parent feature's zone-actions.
+
+featureId: F-SRV-002-04
+name: "No-Show Handling"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: check-eligibility
+        description: "Verify appointment is CONFIRMED, past scheduled time, grace period elapsed"
+
+      - task: open-dialog
+        description: "User clicks 'Mark No-Show' → confirmation dialog opens"
+        operator: enabling
+        enabledBy: check-eligibility
+
+      - task: enter-reason
+        description: "User enters no-show reason (if required)"
+        operator: optional
+        featureGate: "noShow.requireReason"
+        absentRule: collapse-up
+
+      - task: preview-fee
+        description: "Show estimated fee (if enabled)"
+        operator: optional
+        featureGate: "noShow.showFeePreview"
+        absentRule: collapse-up
+
+      - task: confirm-no-show
+        description: "User confirms → API call → appointment becomes NO_SHOW"
+        operator: enabling
+        enabledBy: open-dialog
+
+zones:
+  # This feature renders as a modal dialog, not a standalone page.
+  # The zones describe the dialog's internal structure.
+
+  - id: zone-dialog-header
+    name: "Dialog Header"
+    type: fixed
+    priority: 1
+    fields:
+      - "title (display: 'Mark this appointment as No-Show?')"
+
+  - id: zone-dialog-reason
+    name: "Reason Input"
+    type: feature-gated
+    featureGate: "noShow.requireReason"
+    priority: 2
+    absentRule: collapse-up
+    fields:
+      - "reason (textarea: optional or required based on attribute, max 1000 chars)"
+
+  - id: zone-dialog-fee-preview
+    name: "Fee Preview"
+    type: feature-gated
+    featureGate: "noShow.showFeePreview"
+    priority: 3
+    absentRule: collapse-up
+    dataBinding: "viewModel.feePreview"
+    fields:
+      - "feeAmount (display: estimated fee from catalog/billing)"
+      - "feeUnavailable (display: fallback message if service down)"
+
+  - id: zone-dialog-actions
+    name: "Dialog Actions"
+    type: fixed
+    priority: 99
+    fields:
+      - "confirmNoShow (action: mark-no-show, enabled when: reason provided if required, role: SRV_APT_EDITOR)"
+      - "cancelDialog (action: close dialog, always enabled)"
+
+absentRules:
+  - zoneId: zone-dialog-reason
+    condition: "noShow.requireReason = false"
+    rule: collapse-up
+    description: "Reason field hidden when not required"
+
+  - zoneId: zone-dialog-fee-preview
+    condition: "noShow.showFeePreview = false"
+    rule: collapse-up
+    description: "Fee preview hidden when not enabled"
+
+businessRules:
+  - type: stateCondition
+    rule: "'Mark No-Show' visible only when status = CONFIRMED AND current time > scheduled start + noShow.graceMinutes"
+
+  - type: roleGate
+    rule: "Mark No-Show requires SRV_APT_EDITOR; absent from DOM for SRV_APT_VIEWER"
+
+  - type: roleGate
+    rule: "Override grace period (mark before grace) requires SRV_APT_ADMIN"
+
+  - type: actionConsequence
+    action: "confirmNoShow"
+    consequence: "POST /api/srv/apt/v1/appointments/{id}/no-show → status = NO_SHOW, event: srv.apt.appointment.no_show_marked"
+
+extensionZones:
+  # No extension zones in dialog — extension is via rule slot (ext.noShow.preMarkValidation)

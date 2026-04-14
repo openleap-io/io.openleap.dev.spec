@@ -1,0 +1,69 @@
+apiVersion: aui/v1
+kind: ScreenContract
+metadata:
+  featureId: F-FAC-001-01
+  screenId: SCR-FAC-001-01-A
+  name: Receivable Worklist
+  suite: fac
+  domain: rcv
+  version: 1.0.0
+
+spec:
+  layout: list
+  title: Receivables
+  description: Paginated worklist of factoring receivables from fi.ar
+
+  dataSource:
+    service: fac-rcv-svc
+    endpoint: GET /api/fac/rcv/v1/receivables
+    pagination: true
+
+  filters:
+    - field: status
+      type: enum
+      options: [OPEN, ASSIGNED, FUNDED, PARTLY_PAID, CLOSED, REJECTED, DISPUTED]
+    - field: debtorPartyId
+      type: uuid-search
+      label: Debtor
+    - field: dueDateFrom
+      type: date
+      label: Due Date From
+    - field: dueDateTo
+      type: date
+      label: Due Date To
+
+  columns:
+    - field: invoiceRef
+      label: Invoice Ref
+      sortable: true
+    - field: debtorName
+      label: Debtor
+      sortable: true
+    - field: amount
+      label: Amount
+      type: currency
+      sortable: true
+    - field: dueDate
+      label: Due Date
+      type: date
+      sortable: true
+    - field: status
+      label: Status
+      type: badge
+    - field: eligibilityStatus
+      label: Eligibility
+      type: badge
+
+  actions:
+    row:
+      - id: view
+        label: View
+        permission: FAC_RCV_VIEWER
+      - id: assign
+        label: Assign
+        permission: FAC_RCV_EDITOR
+        enabledWhen: "status == 'OPEN'"
+      - id: reject
+        label: Reject
+        permission: FAC_RCV_EDITOR
+        enabledWhen: "status == 'OPEN'"

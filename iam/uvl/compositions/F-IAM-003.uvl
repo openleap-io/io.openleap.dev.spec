@@ -1,0 +1,14 @@
+// F-IAM-003 — Tenant Management
+// Generated: 2026-04-03
+
+namespace F_IAM_003
+
+features
+    F_IAM_003 {
+        mandatory
+            F_IAM_003_01
+            F_IAM_003_03
+        optional
+            F_IAM_003_02
+            F_IAM_003_04
+    }

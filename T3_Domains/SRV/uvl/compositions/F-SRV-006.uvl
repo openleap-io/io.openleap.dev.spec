@@ -1,0 +1,10 @@
+namespace srv.F-SRV-006
+features
+    F-SRV-006
+        mandatory
+            F-SRV-006-01   // Entitlement Management
+            F-SRV-006-02   // Eligibility Check
+            F-SRV-006-03   // Quota Consumption
+
+constraints
+    // Cross-node constraints — see F-SRV-006.md SS2.2

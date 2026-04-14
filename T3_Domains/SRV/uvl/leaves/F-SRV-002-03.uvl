@@ -1,0 +1,28 @@
+// ============================================================
+// Leaf Feature UVL — F-SRV-002-03
+// Name: Waitlist Management
+// Suite: srv
+// Parent: F-SRV-002
+//
+// Companion document: F-SRV-002-03.md
+// ============================================================
+
+namespace srv.F-SRV-002-03
+
+features
+
+    F-SRV-002-03
+
+        waitlist.maxPerCustomer             Integer 1     // deploy — max entries per customer per offering
+        waitlist.maxPerCustomer.bindingTime String "deploy"
+
+        waitlist.showPosition               Boolean true  // deploy — show position in list
+        waitlist.showPosition.bindingTime   String "deploy"
+
+        waitlist.autoExpireDays             Integer 30    // deploy — days until auto-expiry
+        waitlist.autoExpireDays.bindingTime String "deploy"
+
+
+constraints
+
+    F-SRV-002-03 => srv.F-SRV-001    // Service Catalog — offering lookup

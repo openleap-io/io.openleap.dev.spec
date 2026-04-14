@@ -1,0 +1,82 @@
+openapi: 3.1.0
+info:
+  title: OPS Resource Management Service
+  version: 1.0.0
+  description: |
+    Resource management — maintain resource master data, availability, and utilization.
+
+    Full endpoint specification derived from domain-specs/ops_res-spec.md §6.
+  contact:
+    name: team-ops
+    email: ops-engineering@openleap.io
+  x-owner: team-ops
+  x-suite: ops
+  x-domain: res
+
+servers:
+  - url: http://localhost:8212
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+paths:
+  /api/ops/res/v1:
+    get:
+      summary: Service root / health
+      operationId: getServiceInfo
+      tags: [health]
+      responses:
+        '200':
+          description: Service info
+
+  /api/ops/res/v1/availability:
+    get:
+      summary: Get resource availability
+      operationId: getAvailability
+      tags: [availability]
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          required: true
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: Resource availability grid
+
+  /api/ops/res/v1/availability/block:
+    post:
+      summary: Block resource availability
+      operationId: blockAvailability
+      tags: [availability]
+      responses:
+        '201':
+          description: Availability block created
+
+  /api/ops/res/v1/utilization:
+    get:
+      summary: Get resource utilization report
+      operationId: getUtilization
+      tags: [utilization]
+      parameters:
+        - name: period
+          in: query
+          schema: { type: string, example: "2026-04" }
+      responses:
+        '200':
+          description: Utilization report
+
+  # Full paths defined in domain-specs/ops_res-spec.md §6.
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

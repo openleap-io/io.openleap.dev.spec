@@ -1,0 +1,89 @@
+# Screen Contract (AUI) — F-SD-001-03
+# Feature: Order Amendment
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-SD-001-03
+name: "Order Amendment"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-order
+        description: "Load current order data for pre-fill"
+      - task: fill-amendment
+        description: "User modifies order fields"
+        operator: enabling
+        enabledBy: load-order
+      - task: submit-amendment
+        description: "Submit amended order"
+        operator: enabling
+        enabledBy: fill-amendment
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Back navigation (link)"
+      - "Page title (display)"
+      - "Order reference (display)"
+
+  - id: zone-order-header
+    name: "Order Header (Amendment)"
+    type: fixed
+    priority: 2
+    dataBinding: "order"
+    fields:
+      - "Customer (display — read-only)"
+      - "Delivery Date (date picker — editable)"
+
+  - id: zone-core
+    name: "Line Items (Amendment)"
+    type: fixed
+    priority: 3
+    dataBinding: "order.lines"
+    fields:
+      - "Product (display)"
+      - "Quantity (number — editable)"
+      - "Unit Price (display)"
+      - "Remove Line (action)"
+      - "Add Line (action)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.amendmentFields"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Cancel (action)"
+      - "Submit Amendment (action: primary)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-actions
+      action: "Submit Amendment"
+      requiresRole: "SALES_MANAGER"
+  stateConditions:
+    - action: "Submit Amendment"
+      enabledWhen: "form.isValid == true AND order.isAmendable == true"
+  actionConsequences:
+    - action: "Submit Amendment"
+      onSuccess: "navigate('order-status', orderId) + toast('sd.F-SD-001-03.action.submit.success')"
+    - action: "Cancel"
+      onSuccess: "navigate('order-detail', orderId)"

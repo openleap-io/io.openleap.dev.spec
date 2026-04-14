@@ -1,0 +1,86 @@
+# Screen Contract (AUI) — F-CO-001-01
+# Feature: Browse Cost Centers
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-CO-001-01
+name: "Browse Cost Centers"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-cost-centers
+        description: "Load cost center list and filter defaults"
+      - task: fill-filters
+        description: "User applies search and filter criteria"
+        operator: enabling
+        enabledBy: load-cost-centers
+      - task: navigate-to-detail
+        description: "User selects a cost center to view detail"
+        operator: enabling
+        enabledBy: fill-filters
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Back navigation (link)"
+      - "Page title (display)"
+
+  - id: zone-filters
+    name: "Filter Bar"
+    type: fixed
+    priority: 2
+    dataBinding: "filters"
+    fields:
+      - "Search (text input)"
+      - "Controlling Area filter (select)"
+      - "Status filter (select)"
+
+  - id: zone-core
+    name: "Core Content"
+    type: fixed
+    priority: 3
+    dataBinding: "content"
+    fields:
+      - "Cost Center ID (display)"
+      - "Name (display)"
+      - "Controlling Area (display)"
+      - "Responsible (display)"
+      - "Status (display: ACTIVE|INACTIVE)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.costCenterListActions"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Cancel (action)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-core
+      action: "Navigate"
+      requiresRole: "ANY_AUTHENTICATED"
+  stateConditions:
+    - action: "Navigate"
+      enabledWhen: "row.selected == true"
+  actionConsequences:
+    - action: "Navigate"
+      onSuccess: "navigate('cost-center-detail', { costCenterId: row.costCenterId })"

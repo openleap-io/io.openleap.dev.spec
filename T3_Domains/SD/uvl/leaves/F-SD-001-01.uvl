@@ -1,0 +1,14 @@
+namespace sd.ord.create-order
+
+features
+    F_SD_001_01 {
+        description "Create Sales Order"
+        Boolean credit_check_enabled {
+            description "Enables automatic customer credit limit check on order confirmation"
+            default true
+        }
+        String default_payment_terms {
+            description "Default payment terms applied to new orders"
+            default "NET30"
+        }
+    }

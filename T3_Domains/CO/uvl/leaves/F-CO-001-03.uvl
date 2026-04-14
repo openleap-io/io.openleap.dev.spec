@@ -1,0 +1,11 @@
+namespace co
+
+features
+    F_CO_001_03 {
+        description "See feature-spec.md"
+    }
+
+        // Attributes
+        Boolean pagination_enabled { default true, bindingTime deploy }
+        Integer pagination_pageSize { default 25, bindingTime runtime }
+        Boolean showSecondary { default true, bindingTime runtime }

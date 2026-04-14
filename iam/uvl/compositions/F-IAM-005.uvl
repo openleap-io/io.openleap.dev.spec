@@ -1,0 +1,11 @@
+// F-IAM-005 — GDPR Compliance
+// Generated: 2026-04-03
+
+namespace F_IAM_005
+
+features
+    F_IAM_005 {
+        mandatory
+            F_IAM_005_01
+            F_IAM_005_02
+    }

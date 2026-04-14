@@ -1,0 +1,43 @@
+// com.catalog.uvl — Catalog Root
+// Suite: com (Commerce)
+// Generated: 2026-04-04
+// Template: suite-catalog.uvl v1.0.0
+
+namespace com
+
+features
+    COM_UI {
+        description "Commerce suite features — catalog, listings, search, checkout, marketplace, compliance, promotions"
+    }
+
+        mandatory
+            F_COM_001 {
+                description "Channel Catalog Management"
+                uvl "uvl/compositions/F-COM-001.uvl"
+            }
+            F_COM_002 {
+                description "Commerce Search & Discovery"
+                uvl "uvl/compositions/F-COM-002.uvl"
+            }
+            F_COM_003 {
+                description "Checkout & Promotions"
+                uvl "uvl/compositions/F-COM-003.uvl"
+            }
+
+        optional
+            F_COM_004 {
+                description "Marketplace & Compliance"
+                uvl "uvl/compositions/F-COM-004.uvl"
+            }
+
+constraints
+    F_COM_001 => IAM_UI
+    F_COM_002 => IAM_UI
+    F_COM_003 => IAM_UI
+    F_COM_004 => IAM_UI
+    // Search requires catalog content
+    F_COM_002 => F_COM_001
+    // Checkout requires catalog (for cart items)
+    F_COM_003 => F_COM_001
+    // Marketplace requires listings
+    F_COM_004 => F_COM_001

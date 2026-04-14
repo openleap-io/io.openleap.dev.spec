@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pps.mrp.mrp-run.completed",
+  "title": "pps.mrp.mrp-run.completed",
+  "description": "Event published when an MRP run has completed successfully",
+  "type": "object",
+  "required": ["eventId", "eventType", "timestamp", "tenantId", "correlationId", "producer", "schemaVersion", "payload"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "eventType": { "type": "string", "const": "pps.mrp.mrp-run.completed" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "correlationId": { "type": "string", "format": "uuid" },
+    "causationId": { "type": "string", "format": "uuid" },
+    "producer": { "type": "string", "const": "pps-mrp-svc" },
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "payload": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "runId": { "type": "string" },
+        "runType": { "type": "string", "enum": ["FULL", "NET_CHANGE"] },
+        "plant": { "type": "string" },
+        "startedAt": { "type": "string", "format": "date-time" },
+        "completedAt": { "type": "string", "format": "date-time" },
+        "ordersCreated": { "type": "integer" },
+        "ordersDeleted": { "type": "integer" },
+        "ordersRescheduled": { "type": "integer" }
+      }
+    }
+  }
+}

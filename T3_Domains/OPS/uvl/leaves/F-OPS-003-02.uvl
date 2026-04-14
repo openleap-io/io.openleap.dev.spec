@@ -1,0 +1,20 @@
+namespace ops.prj
+
+features
+    F_OPS_003_02 {
+        description "Project Status Board"
+        optional
+            boardViewType {
+                description "Default board rendering mode"
+                type String
+                values ["KANBAN", "GANTT"]
+                default "KANBAN"
+            }
+            milestoneCountPerBoard {
+                description "Maximum milestones displayed per board before pagination"
+                type Integer
+                values [5, 10, 0]
+                default 10
+                // 0 = unlimited
+            }
+    }

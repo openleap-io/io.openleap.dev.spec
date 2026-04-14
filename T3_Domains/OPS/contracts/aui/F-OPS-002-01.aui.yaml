@@ -1,0 +1,70 @@
+# Screen Contract (AUI) — F-OPS-002-01
+# Feature: Resource Availability
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-OPS-002-01
+name: "Resource Availability"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-availability
+        description: "Load resource availability for selected period"
+      - task: interact
+        description: "User browses, filters, and blocks availability"
+        operator: enabling
+        enabledBy: load-availability
+
+zones:
+  - id: zone-header
+    name: "Page Header"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Page title (display)"
+      - "Period selector (date range)"
+      - "Navigation arrows (prev/next)"
+
+  - id: zone-filters
+    name: "Filter Bar"
+    type: fixed
+    priority: 2
+    dataBinding: "filters"
+    fields:
+      - "Skill filter (multi-select)"
+      - "Location filter (select)"
+      - "Resource type filter (select)"
+
+  - id: zone-core
+    name: "Availability Grid"
+    type: fixed
+    priority: 3
+    dataBinding: "resources"
+    fields:
+      - "Resource name (display)"
+      - "Availability cells (day columns: AVAILABLE|BLOCKED|PARTIAL)"
+      - "Skills (display)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.resourceCalendarColumns"
+    absentRule: panel-section-hidden
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-core
+      action: "Block Availability"
+      requiresRole: "RESOURCE_PLANNER|OPERATIONS_MANAGER"
+  actionConsequences:
+    - action: "Block Availability"
+      onSuccess: "reload-grid + toast('ops.F-OPS-002-01.action.block.success')"

@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/hr/emp/employee.onboarded",
+  "title": "EmployeeOnboarded",
+  "description": "Emitted when a new employee is onboarded and their employment record is created.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "employeeId", "employeeNumber", "positionId", "startDate"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "employeeId": { "type": "string", "format": "uuid" },
+    "employeeNumber": { "type": "string" },
+    "email": { "type": "string", "format": "email" },
+    "positionId": { "type": "string", "format": "uuid" },
+    "departmentId": { "type": "string", "format": "uuid" },
+    "startDate": { "type": "string", "format": "date" },
+    "contractType": { "type": "string" }
+  }
+}

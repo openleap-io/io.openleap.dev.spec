@@ -1,0 +1,10 @@
+namespace co
+
+features
+    F_CO_004_01 {
+        description "See feature-spec.md"
+    }
+
+        // Attributes
+        String defaultDimension { default "COMPANY", bindingTime deploy }
+        Integer pagination_pageSize { default 25, bindingTime runtime }

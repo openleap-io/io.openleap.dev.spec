@@ -1,0 +1,186 @@
+# Screen Contract (AUI) — F-SRV-001-01 Offering CRUD
+#
+# Conceptual Stack Layer: Platform-Feature (Screen Contract)
+# Companion of: F-SRV-001-01.md
+# Derived from: §2 (journey → task model), §3 (fields → zones), §4 (edge cases → absent-rules)
+
+featureId: F-SRV-001-01
+name: "Offering CRUD"
+
+# ──────────────────────────────────────────────
+# Task Model
+# ──────────────────────────────────────────────
+taskModel:
+  root:
+    operator: alternative
+    children:
+      # --- List View Path ---
+      - task: list-path
+        operator: sequential
+        children:
+          - task: load-list
+            description: "Fetch paginated offerings with filters"
+          - task: view-list
+            description: "Browse offering list with search, filter, sort"
+            operator: enabling
+            enabledBy: load-list
+          - task: create-new
+            description: "Open empty offering form"
+            operator: optional
+            featureGate: "role == SRV_CAT_EDITOR"
+            absentRule: collapse-up
+      # --- Detail / Edit Path ---
+      - task: detail-path
+        operator: sequential
+        children:
+          - task: load-detail
+            description: "Fetch offering by ID"
+          - task: view-detail
+            description: "View offering details (read-only)"
+            operator: enabling
+            enabledBy: load-detail
+          - task: edit-fields
+            description: "Edit offering fields"
+            operator: optional
+            featureGate: "role == SRV_CAT_EDITOR"
+            absentRule: collapse-up
+          - task: save
+            description: "Persist offering changes"
+            operator: enabling
+            enabledBy: edit-fields
+
+# ──────────────────────────────────────────────
+# Zones
+# ──────────────────────────────────────────────
+zones:
+  # --- List View Zones ---
+  - id: zone-list-header
+    name: "Search & Filter Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "viewModel.filters"
+    fields:
+      - "searchText (input: text, placeholder: srv.cat.crud.searchPlaceholder)"
+      - "categoryFilter (select: viewModel.categories)"
+      - "statusFilter (select: DRAFT|ACTIVE|INACTIVE|ARCHIVED)"
+      - "searchAction (action: search)"
+      - "createAction (action: navigate-to-create, roleGate: SRV_CAT_EDITOR)"
+
+  - id: zone-list
+    name: "Offering Table"
+    type: fixed
+    priority: 2
+    dataBinding: "viewModel.offerings[]"
+    fields:
+      - "name (display: text, sortable)"
+      - "category (display: text, sortable)"
+      - "status (display: badge)"
+      - "durationMinutes (display: number, suffix: min)"
+      - "editAction (action: navigate-to-detail, roleGate: SRV_CAT_EDITOR)"
+
+  - id: zone-pagination
+    name: "Pagination"
+    type: fixed
+    priority: 3
+    dataBinding: "viewModel.pagination"
+    fields:
+      - "pageInfo (display: text, template: '{start}-{end} of {total}')"
+      - "prevPage (action: paginate-prev)"
+      - "nextPage (action: paginate-next)"
+
+  # --- Detail / Form View Zones ---
+  - id: zone-form-header
+    name: "Offering Header"
+    type: fixed
+    priority: 1
+    dataBinding: "viewModel.offering"
+    fields:
+      - "name (display: text, prominent)"
+      - "status (display: badge)"
+      - "createdAt (display: datetime)"
+      - "updatedAt (display: datetime)"
+
+  - id: zone-form
+    name: "Offering Form"
+    type: fixed
+    priority: 2
+    dataBinding: "viewModel.offering"
+    fields:
+      - "name (input: text, required, maxLength: 255, label: srv.cat.crud.nameLabel)"
+      - "category (select: viewModel.categories, required, label: srv.cat.crud.categoryLabel)"
+      - "description (input: textarea, maxLength: 2000, label: srv.cat.crud.descriptionLabel)"
+      - "durationMinutes (input: number, required, min: 1, label: srv.cat.crud.durationLabel)"
+
+  - id: zone-pricing
+    name: "Pricing Hints"
+    type: feature-gated
+    featureGate: "display.showPricingHints == true"
+    priority: 3
+    absentRule: panel-section-hidden
+    dataBinding: "viewModel.offering"
+    fields:
+      - "priceHint (input: number, min: 0, label: srv.cat.crud.priceHintLabel)"
+      - "currencyCode (select: ISO-4217, label: Currency)"
+      - "billingUnitCode (select: SESSION|HOUR|FLAT, label: Billing Unit)"
+
+  - id: zone-extension
+    name: "Extension Area"
+    type: variable
+    priority: 4
+    extensionPoint: "ext.offering.customFields"
+    absentRule: collapse-up
+
+  - id: zone-actions
+    name: "Actions"
+    type: fixed
+    priority: 99
+    fields:
+      - "save (action: save-offering, enabled when: allRequiredFieldsValid, roleGate: SRV_CAT_EDITOR)"
+      - "cancel (action: navigate-back, always enabled)"
+
+# ──────────────────────────────────────────────
+# Absent-Rules
+# ──────────────────────────────────────────────
+absentRules:
+  - zoneId: zone-pricing
+    condition: "display.showPricingHints == false"
+    rule: panel-section-hidden
+    description: "Pricing hint fields hidden; form ends after duration"
+
+  - zoneId: zone-extension
+    condition: "No extension point filled for ext.offering.customFields"
+    rule: collapse-up
+    description: "Extension area hidden — actions zone moves up"
+
+# ──────────────────────────────────────────────
+# Business Rules
+# ──────────────────────────────────────────────
+businessRules:
+  - type: stateCondition
+    rule: "save disabled until all required fields (name, category, durationMinutes) are valid"
+
+  - type: stateCondition
+    rule: "createAction hidden if feature mode == read-only or excluded"
+
+  - type: roleGate
+    rule: "save requires SRV_CAT_EDITOR"
+
+  - type: roleGate
+    rule: "createAction requires SRV_CAT_EDITOR; absent from DOM for SRV_CAT_VIEWER"
+
+  - type: actionConsequence
+    action: save
+    consequence: "POST/PATCH /api/srv/cat/v1/offerings → event srv.cat.offering.created/updated → toast notification"
+
+  - type: actionConsequence
+    action: search
+    consequence: "GET /api/srv/cat/v1/offerings?... → refresh zone-list"
+
+# ──────────────────────────────────────────────
+# Extension Zones
+# ──────────────────────────────────────────────
+extensionZones:
+  - id: zone-extension
+    extensionPoint: "ext.offering.customFields"
+    description: "Product-specific offering metadata (e.g., regulatory codes, industry attributes)"
+    renderPosition: "after zone-form / zone-pricing, before zone-actions"

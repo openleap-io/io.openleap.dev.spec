@@ -1,0 +1,10 @@
+namespace co
+
+features
+    F_CO_003_01 {
+        description "See feature-spec.md"
+    }
+
+        // Attributes
+        Boolean costingVariantEditable { default false, bindingTime deploy }
+        Integer bomExplosionDepth { default 5, bindingTime deploy }

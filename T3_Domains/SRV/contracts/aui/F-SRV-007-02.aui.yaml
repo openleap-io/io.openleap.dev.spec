@@ -1,0 +1,98 @@
+# Screen Contract (AUI) — F-SRV-007-02 Correction & Reversal
+featureId: F-SRV-007-02
+name: "Correction & Reversal"
+
+taskModel:
+  root:
+    operator: alternative
+    children:
+      - task: reverse-path
+        operator: sequential
+        children:
+          - task: open-reversal-dialog
+            description: "Open reversal dialog from intent detail"
+          - task: enter-reason
+            description: "Provide reversal reason"
+            operator: enabling
+            enabledBy: open-reversal-dialog
+          - task: confirm-reversal
+            description: "Submit reversal"
+            operator: enabling
+            enabledBy: enter-reason
+      - task: correct-path
+        operator: sequential
+        children:
+          - task: open-correction-dialog
+            description: "Open correction dialog from intent detail"
+          - task: edit-line-items
+            description: "Adjust line item quantities and descriptions"
+            operator: enabling
+            enabledBy: open-correction-dialog
+          - task: confirm-correction
+            description: "Submit correction"
+            operator: enabling
+            enabledBy: edit-line-items
+
+zones:
+  - id: zone-reversal-dialog
+    name: "Reversal Dialog (modal)"
+    type: fixed
+    priority: 1
+    dataBinding: "viewModel.intent"
+    fields:
+      - "dialogTitle (display: text, label: srv.bil.correction.reverseAction)"
+      - "originalSummary (display: text, template: 'Original: {lineItems}')"
+      - "reversalPreview (display: text, template: 'Reversal will negate: -{lineItems}')"
+      - "reason (input: textarea, required when: correction.requireReason == true, label: srv.bil.correction.reasonLabel)"
+      - "confirmReversal (action: confirm-reversal, roleGate: SRV_BIL_EDITOR)"
+      - "cancel (action: dismiss-dialog)"
+
+  - id: zone-correction-dialog
+    name: "Correction Dialog (modal)"
+    type: fixed
+    priority: 1
+    dataBinding: "viewModel.intent.lineItems"
+    fields:
+      - "dialogTitle (display: text, label: srv.bil.correction.correctAction)"
+      - "lineItems (input: table, editable columns: description|quantity|billingUnit)"
+      - "reason (input: textarea, required when: correction.requireReason == true)"
+      - "confirmCorrection (action: confirm-correction, roleGate: SRV_BIL_EDITOR)"
+      - "cancel (action: dismiss-dialog)"
+
+  - id: zone-extension
+    name: "Extension Area"
+    type: variable
+    priority: 2
+    extensionPoint: "ext.correction.customApproval"
+    absentRule: collapse-up
+
+absentRules:
+  - zoneId: zone-extension
+    condition: "No custom approval workflow"
+    rule: collapse-up
+
+businessRules:
+  - type: stateCondition
+    rule: "reverse available when status IN [CONFIRMED, READY_FOR_INVOICING] AND not already REVERSED"
+  - type: stateCondition
+    rule: "correct available when status IN [CONFIRMED, READY_FOR_INVOICING]"
+  - type: stateCondition
+    rule: "reason required when correction.requireReason == true"
+  - type: stateCondition
+    rule: "If correction.requireApproval == true, correction enters DRAFT awaiting admin approval"
+  - type: roleGate
+    rule: "reverse/correct require SRV_BIL_EDITOR"
+  - type: roleGate
+    rule: "approve corrections requires SRV_BIL_ADMIN"
+  - type: actionConsequence
+    action: confirm-reversal
+    consequence: "POST /billing-intents/{id}/reverse → new REVERSAL intent → original REVERSED → event"
+  - type: actionConsequence
+    action: confirm-correction
+    consequence: "POST /billing-intents/{id}/correct → new CORRECTION intent"
+
+extensionZones:
+  - id: zone-extension
+    extensionPoint: "ext.correction.customApproval"
+    description: "Custom approval workflow for corrections"
+    renderPosition: "within dialog, before confirm button"

@@ -1,0 +1,16 @@
+// Leaf UVL: F-CRM-004-01 — Activity Timeline View
+// Template: feature-leaf.uvl v1.0.0
+// Generated: 2026-04-03
+
+namespace crm
+
+features
+    F_CRM_004_01
+        Boolean enabled  // deploy-time: feature toggle
+            {default true}
+        Boolean readOnly  // runtime: read-only mode
+            {default false}
+
+constraints
+    // Parent composition must be selected
+    F_CRM_004_01 => F_CRM_004

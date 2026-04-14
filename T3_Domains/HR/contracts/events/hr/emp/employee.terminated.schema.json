@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/hr/emp/employee.terminated",
+  "title": "EmployeeTerminated",
+  "description": "Emitted when an employee's employment is terminated.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "employeeId", "terminationDate"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "employeeId": { "type": "string", "format": "uuid" },
+    "employeeNumber": { "type": "string" },
+    "terminationDate": { "type": "string", "format": "date" },
+    "reason": { "type": "string" }
+  }
+}

@@ -1,0 +1,15 @@
+namespace fi.ap
+
+features
+    F_FI_003 { description "Payables Management" }
+        mandatory
+            F_FI_003_01 { description "AP Invoice Management" }
+            F_FI_003_02 { description "Payment Execution" }
+        optional
+            F_FI_003_03 { description "Procurement Matching (3-Way)" }
+            F_FI_003_04 { description "Payment Run Scheduling" }
+
+constraints
+    F_FI_003_02 => F_FI_003_01
+    F_FI_003_03 => F_FI_003_01
+    F_FI_003_04 => F_FI_003_02

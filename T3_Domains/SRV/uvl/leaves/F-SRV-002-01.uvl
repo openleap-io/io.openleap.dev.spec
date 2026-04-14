@@ -1,0 +1,41 @@
+// ============================================================
+// Leaf Feature UVL — F-SRV-002-01
+// Name: Slot Discovery
+// Suite: srv
+// Parent: F-SRV-002 (Appointment & Booking)
+//
+// Companion document: F-SRV-002-01.md
+// ============================================================
+
+namespace srv.F-SRV-002-01
+
+imports
+    // No cross-suite imports — all dependencies are intra-suite.
+    // Cross-suite requires (if any) would be imported here.
+
+features
+
+    F-SRV-002-01
+
+        // --- View configuration ---
+        view.defaultMode            String  "week"    // deploy — "day" or "week"
+        view.defaultMode.bindingTime String "deploy"
+
+        // --- Search behaviour ---
+        search.lookaheadDays            Integer 14    // deploy — max days forward
+        search.lookaheadDays.bindingTime String "deploy"
+
+        // --- Display options ---
+        display.showResourceName            Boolean true  // deploy — show/hide resource names
+        display.showResourceName.bindingTime String "deploy"
+
+        // --- Pagination (list view) ---
+        pagination.pageSize             Integer 20    // deploy — records per page in list view
+        pagination.pageSize.bindingTime String "deploy"
+
+
+constraints
+
+    // Intra-suite requires (from F-SRV-002-01.md §9.1)
+    F-SRV-002-01 => srv.F-SRV-003    // Resource Scheduling — availability queries
+    F-SRV-002-01 => srv.F-SRV-001    // Service Catalog — offering lookup

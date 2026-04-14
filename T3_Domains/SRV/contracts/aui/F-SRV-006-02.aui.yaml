@@ -1,0 +1,56 @@
+# Screen Contract (AUI) — F-SRV-006-02 Eligibility Check
+featureId: F-SRV-006-02
+name: "Eligibility Check"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: check-eligibility
+        description: "System automatically checks eligibility when booking form loads"
+      - task: display-result
+        description: "Show eligibility status inline"
+        operator: enabling
+        enabledBy: check-eligibility
+
+zones:
+  - id: zone-eligibility-indicator
+    name: "Eligibility Status Indicator (inline within booking UI)"
+    type: fixed
+    priority: 1
+    dataBinding: "viewModel.eligibility"
+    fields:
+      - "statusIcon (display: icon, values: check|warning|block)"
+      - "statusMessage (display: text, template per status)"
+      - "remainingQuota (display: text, template: '{remaining} of {total}', featureGate: eligibility.showRemainingQuota)"
+
+  - id: zone-extension
+    name: "Extension Area"
+    type: variable
+    priority: 2
+    extensionPoint: "ext.eligibility.customRule"
+    absentRule: collapse-up
+
+absentRules:
+  - zoneId: zone-extension
+    condition: "No custom eligibility rules"
+    rule: collapse-up
+
+businessRules:
+  - type: stateCondition
+    rule: "If eligible: green check icon, show remaining quota"
+  - type: stateCondition
+    rule: "If exhausted AND eligibility.blockOnIneligible == false: warning icon, booking proceeds"
+  - type: stateCondition
+    rule: "If exhausted AND eligibility.blockOnIneligible == true: block icon, booking disabled"
+  - type: stateCondition
+    rule: "If srv-ent-svc unavailable: neutral warning, booking proceeds"
+  - type: actionConsequence
+    action: check-eligibility
+    consequence: "POST /entitlements/check-eligibility → populate zone-eligibility-indicator"
+
+extensionZones:
+  - id: zone-extension
+    extensionPoint: "ext.eligibility.customRule"
+    description: "Custom eligibility logic (e.g., insurance coverage verification)"
+    renderPosition: "after zone-eligibility-indicator"

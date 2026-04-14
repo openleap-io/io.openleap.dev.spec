@@ -1,0 +1,89 @@
+# Screen Contract (AUI) — F-PPS-002-03
+# Feature: Quality Inspection
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-PPS-002-03
+name: "Quality Inspection"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-reference-data
+        description: "Load inspection lot and characteristic definitions"
+      - task: fill-form
+        description: "User enters characteristic results and usage decision"
+        operator: enabling
+        enabledBy: load-reference-data
+      - task: validate-and-submit
+        description: "Validate results and submit usage decision"
+        operator: enabling
+        enabledBy: fill-form
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Back navigation (link)"
+      - "Page title (display)"
+      - "Lot context: material, batch, work order (display)"
+
+  - id: zone-core
+    name: "Characteristics"
+    type: fixed
+    priority: 2
+    dataBinding: "characteristics"
+    fields:
+      - "Characteristic Name (display)"
+      - "Spec Min (display)"
+      - "Spec Max (display)"
+      - "Actual Value (input)"
+      - "Out-of-spec indicator (display)"
+
+  - id: zone-filters
+    name: "Usage Decision"
+    type: fixed
+    priority: 3
+    dataBinding: "usageDecision"
+    fields:
+      - "Decision (radio: ACCEPT|REJECT|CONDITIONAL)"
+      - "Defect Code (select, conditional)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.inspectionCharacteristics"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Cancel (action)"
+      - "Submit Usage Decision (action: primary)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-actions
+      action: "Submit Usage Decision"
+      requiresRole: "QUALITY_INSPECTOR"
+  stateConditions:
+    - action: "Submit Usage Decision"
+      enabledWhen: "form.isValid == true AND allCharacteristicsRecorded == true"
+    - field: "Defect Code"
+      visibleWhen: "usageDecision.decision == 'REJECT'"
+  actionConsequences:
+    - action: "Submit Usage Decision"
+      onSuccess: "navigate('list') + toast('pps.F-PPS-002-03.action.submit.success')"

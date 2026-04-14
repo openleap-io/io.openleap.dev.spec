@@ -1,0 +1,69 @@
+openapi: 3.1.0
+info:
+  title: SD Billing Service
+  version: 1.0.0
+  description: |
+    Billing runs, invoice management, and credit notes for the SD suite.
+
+    Full endpoint specification derived from domain-specs/sd_bil-spec.md §6.
+  contact:
+    name: team-sd
+    email: sd-team@openleap.io
+  x-owner: team-sd
+  x-suite: sd
+  x-domain: bil
+
+servers:
+  - url: http://localhost:8302
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+paths:
+  /api/sd/bil/v1:
+    get:
+      summary: Service root / health
+      operationId: getServiceInfo
+      tags: [health]
+      responses:
+        '200':
+          description: Service info
+
+  /api/sd/bil/v1/billing-runs:
+    post:
+      summary: Schedule a billing run
+      operationId: scheduleBillingRun
+      tags: [billing-runs]
+      responses:
+        '201':
+          description: Billing run created
+
+  /api/sd/bil/v1/invoices:
+    get:
+      summary: List invoices
+      operationId: listInvoices
+      tags: [invoices]
+      responses:
+        '200':
+          description: Invoice list
+
+  /api/sd/bil/v1/credit-notes:
+    post:
+      summary: Create credit note
+      operationId: createCreditNote
+      tags: [credit-notes]
+      responses:
+        '201':
+          description: Credit note created
+
+  # Full paths defined in domain-specs/sd_bil-spec.md §6.
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

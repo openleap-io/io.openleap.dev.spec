@@ -1,0 +1,88 @@
+# Screen Contract (AUI) — F-SRV-006-03 Quota Consumption
+featureId: F-SRV-006-03
+name: "Quota Consumption"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-balance
+        description: "Fetch entitlement balance and transaction history"
+      - task: view-transactions
+        description: "View transaction log with consumption, reversals, adjustments"
+        operator: enabling
+        enabledBy: load-balance
+      - task: manual-adjust
+        description: "Admin manually adjusts balance"
+        operator: optional
+        featureGate: "consumption.allowManualAdjust == true AND role == SRV_ENT_ADMIN"
+        absentRule: collapse-up
+
+zones:
+  - id: zone-balance
+    name: "Balance Summary"
+    type: fixed
+    priority: 1
+    dataBinding: "viewModel.balance"
+    fields:
+      - "remaining (display: number, prominent)"
+      - "total (display: number)"
+      - "progressBar (display: progress-bar)"
+
+  - id: zone-transactions
+    name: "Transaction Log"
+    type: feature-gated
+    featureGate: "consumption.showTransactionLog == true"
+    priority: 2
+    absentRule: panel-section-hidden
+    dataBinding: "viewModel.transactions[]"
+    fields:
+      - "date (display: datetime, sortable)"
+      - "type (display: badge, values: CONSUMPTION|REVERSAL|ADJUSTMENT)"
+      - "quantity (display: number, signed)"
+      - "sessionRef (display: link, nullable)"
+      - "reason (display: text)"
+
+  - id: zone-adjustment-form
+    name: "Manual Adjustment Form"
+    type: feature-gated
+    featureGate: "consumption.allowManualAdjust == true"
+    priority: 3
+    absentRule: panel-section-hidden
+    fields:
+      - "adjustmentQty (input: number, required)"
+      - "reason (input: text, required, maxLength: 500)"
+      - "submitAdjustment (action: submit-adjustment, roleGate: SRV_ENT_ADMIN)"
+
+  - id: zone-extension
+    name: "Extension Area"
+    type: variable
+    priority: 4
+    extensionPoint: "ext.consumption.customTransaction"
+    absentRule: collapse-up
+
+absentRules:
+  - zoneId: zone-transactions
+    condition: "consumption.showTransactionLog == false"
+    rule: panel-section-hidden
+  - zoneId: zone-adjustment-form
+    condition: "consumption.allowManualAdjust == false"
+    rule: panel-section-hidden
+  - zoneId: zone-extension
+    condition: "No extension point filled"
+    rule: collapse-up
+
+businessRules:
+  - type: stateCondition
+    rule: "adjustmentQty must not cause balance < 0"
+  - type: roleGate
+    rule: "submitAdjustment requires SRV_ENT_ADMIN"
+  - type: actionConsequence
+    action: submitAdjustment
+    consequence: "POST /entitlements/{id}/consume (manual flag) → transaction logged → balance updated"
+
+extensionZones:
+  - id: zone-extension
+    extensionPoint: "ext.consumption.customTransaction"
+    description: "Custom transaction types"
+    renderPosition: "after zone-adjustment-form"

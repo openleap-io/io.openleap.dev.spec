@@ -1,0 +1,61 @@
+apiVersion: aui/v1
+kind: ScreenContract
+metadata:
+  featureId: F-HR-001-01
+  screenId: SCR-HR-001-01-A
+  name: Employee Roster
+  suite: hr
+  domain: emp
+  version: 1.0.0
+
+spec:
+  layout: list
+  title: Employees
+  description: HR employee roster with lifecycle management
+
+  dataSource:
+    service: hr-emp-svc
+    endpoint: GET /api/hr/emp/v1/employees
+    pagination: true
+
+  filters:
+    - field: status
+      type: enum
+      options: [ONBOARDING, ACTIVE, ON_LEAVE, SUSPENDED, TERMINATED]
+    - field: departmentId
+      type: select
+      label: Department
+    - field: positionId
+      type: select
+      label: Position
+
+  columns:
+    - field: employeeNumber
+      label: Employee #
+      sortable: true
+    - field: fullName
+      label: Name
+      sortable: true
+    - field: positionTitle
+      label: Position
+    - field: departmentName
+      label: Department
+    - field: startDate
+      label: Start Date
+      type: date
+    - field: status
+      label: Status
+      type: badge
+
+  actions:
+    row:
+      - id: view
+        label: View Profile
+        permission: HR_EMP_VIEWER
+      - id: edit
+        label: Edit
+        permission: HR_EMP_EDITOR
+      - id: terminate
+        label: Terminate
+        permission: HR_EMP_TERMINATOR
+        enabledWhen: "status == 'ACTIVE'"

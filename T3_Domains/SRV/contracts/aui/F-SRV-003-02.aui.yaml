@@ -1,0 +1,102 @@
+# Screen Contract (AUI) — F-SRV-003-02 Availability Management
+featureId: F-SRV-003-02
+name: "Availability Management"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-calendar
+        description: "Fetch availability windows for resource and date range"
+      - task: view-calendar
+        description: "View weekly/daily/monthly calendar with availability blocks"
+        operator: enabling
+        enabledBy: load-calendar
+      - task: navigate-calendar
+        description: "Change date range or view mode"
+        operator: enabling
+        enabledBy: load-calendar
+      - task: add-window
+        description: "Click empty slot or 'Add' to create availability window"
+        operator: optional
+        featureGate: "role == SRV_RES_EDITOR"
+        absentRule: collapse-up
+      - task: save-window
+        description: "Persist availability window"
+        operator: enabling
+        enabledBy: add-window
+
+zones:
+  - id: zone-calendar-header
+    name: "Calendar Header"
+    type: fixed
+    priority: 1
+    dataBinding: "viewModel.resource, viewModel.viewRange"
+    fields:
+      - "resourceName (display: text, prominent)"
+      - "resourceType (display: badge)"
+      - "viewMode (select: Day|Week|Month, default: display.defaultView)"
+      - "dateNavigator (action: navigate-date, prev/next)"
+      - "addWindow (action: open-window-form, roleGate: SRV_RES_EDITOR)"
+
+  - id: zone-calendar
+    name: "Availability Calendar"
+    type: fixed
+    priority: 2
+    dataBinding: "viewModel.windows[]"
+    fields:
+      - "calendarGrid (display: time-grid, clickToSelect: true)"
+      - "availableBlock (display: filled-block, color: available)"
+      - "unavailableBlock (display: empty-block, color: unavailable)"
+
+  - id: zone-window-form
+    name: "Availability Window Form (overlay/modal)"
+    type: fixed
+    priority: 3
+    dataBinding: "viewModel.currentWindow"
+    fields:
+      - "from (input: datetime, required, label: srv.res.availability.fromLabel)"
+      - "to (input: datetime, required, label: srv.res.availability.toLabel)"
+      - "capacity (input: number, min: 1, default: 1, label: srv.res.availability.capacityLabel)"
+      - "saveWindow (action: save-window, roleGate: SRV_RES_EDITOR)"
+      - "deleteWindow (action: delete-window, visible when: editing, roleGate: SRV_RES_EDITOR)"
+      - "cancel (action: dismiss-form)"
+
+  - id: zone-extension
+    name: "Extension Area"
+    type: variable
+    priority: 4
+    extensionPoint: "ext.availability.customPanel"
+    absentRule: collapse-up
+
+  - id: zone-actions
+    name: "Actions"
+    type: fixed
+    priority: 99
+    fields:
+      - "backToResource (action: navigate-back)"
+
+absentRules:
+  - zoneId: zone-extension
+    condition: "No extension point filled"
+    rule: collapse-up
+
+businessRules:
+  - type: stateCondition
+    rule: "saveWindow disabled until from < to AND duration >= availability.minWindowMinutes"
+  - type: stateCondition
+    rule: "overlap check: if availability.allowOverlap == false, block on overlap"
+  - type: roleGate
+    rule: "addWindow/saveWindow/deleteWindow require SRV_RES_EDITOR"
+  - type: actionConsequence
+    action: saveWindow
+    consequence: "POST /resources/{id}/availability → event srv.res.availability.changed → calendar refresh"
+  - type: actionConsequence
+    action: deleteWindow
+    consequence: "DELETE /availability/{wid} → warning if bookings exist → calendar refresh"
+
+extensionZones:
+  - id: zone-extension
+    extensionPoint: "ext.availability.customPanel"
+    description: "Custom panel (e.g., HR calendar sync status)"
+    renderPosition: "after zone-calendar, before zone-actions"

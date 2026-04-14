@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/fac/fnd/funding.created",
+  "title": "FundingCreated",
+  "description": "Emitted when a new funding is created from assigned receivables.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "fundingId", "clientPartyId", "totalFaceValue", "totalAdvance", "totalFees"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "fundingId": { "type": "string", "format": "uuid" },
+    "clientPartyId": { "type": "string", "format": "uuid" },
+    "receivableIds": { "type": "array", "items": { "type": "string", "format": "uuid" } },
+    "totalFaceValue": { "type": "number", "minimum": 0 },
+    "totalAdvance": { "type": "number", "minimum": 0 },
+    "totalReserve": { "type": "number", "minimum": 0 },
+    "totalFees": { "type": "number", "minimum": 0 },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" }
+  }
+}

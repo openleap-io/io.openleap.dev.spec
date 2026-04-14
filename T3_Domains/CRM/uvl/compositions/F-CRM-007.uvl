@@ -1,0 +1,19 @@
+// Composition UVL: F-CRM-007 — Email Communication
+// Template: feature-composition.uvl v1.0.0
+// Generated: 2026-04-03
+
+namespace crm
+
+imports
+    crm.F_CRM_007_01
+    crm.F_CRM_007_02
+    crm.F_CRM_007_03
+    crm.F_CRM_007_04
+
+features
+    F_CRM_007
+        optional
+            F_CRM_007_01  // Email Compose & Send
+            F_CRM_007_02  // Email Inbox & Thread View
+            F_CRM_007_03  // Email Template Manager
+            F_CRM_007_04  // Email Tracking Dashboard

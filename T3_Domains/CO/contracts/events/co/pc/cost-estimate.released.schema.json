@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "co.pc.cost-estimate.released",
+  "title": "co.pc.cost-estimate.released",
+  "description": "Event published when a cost estimate has been released and the standard price becomes active",
+  "type": "object",
+  "required": ["eventId", "eventType", "timestamp", "tenantId", "correlationId", "producer", "schemaVersion", "payload"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "eventType": { "type": "string", "const": "co.pc.cost-estimate.released" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "correlationId": { "type": "string", "format": "uuid" },
+    "causationId": { "type": "string", "format": "uuid" },
+    "producer": { "type": "string", "const": "co-pc-svc" },
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "payload": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "estimateId": { "type": "string" },
+        "materialId": { "type": "string" },
+        "costingVariant": { "type": "string" },
+        "validFrom": { "type": "string", "format": "date" },
+        "standardCost": { "type": "number" },
+        "currency": { "type": "string", "maxLength": 3 },
+        "releasedBy": { "type": "string" },
+        "releasedAt": { "type": "string", "format": "date-time" },
+        "previousStandardCost": { "type": "number" }
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+// param.catalog.uvl — Catalog Root
+// Suite: param (Platform Parameterization)
+// Generated: 2026-04-03
+// Template: suite-catalog.uvl v1.0.0
+
+namespace param
+
+features
+    PARAM_UI {
+        description "Platform Parameterization administrative features"
+    }
+
+        mandatory
+            F_PARAM_001 {
+                description "Reference Data Management"
+                uvl "uvl/compositions/F-PARAM-001.uvl"
+            }
+            F_PARAM_002 {
+                description "Translation Management"
+                uvl "uvl/compositions/F-PARAM-002.uvl"
+            }
+            F_PARAM_003 {
+                description "Configuration Management"
+                uvl "uvl/compositions/F-PARAM-003.uvl"
+            }
+
+        optional
+            F_PARAM_004 {
+                description "Unit Management"
+                uvl "uvl/compositions/F-PARAM-004.uvl"
+            }
+
+constraints
+    // All PARAM features require IAM authentication
+    F_PARAM_001 => IAM_UI
+    F_PARAM_002 => IAM_UI
+    F_PARAM_003 => IAM_UI
+    F_PARAM_004 => IAM_UI

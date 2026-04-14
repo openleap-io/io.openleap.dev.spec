@@ -1,0 +1,14 @@
+namespace F-T2-003-01
+
+features
+
+    F-T2-003-01 "Slot & Booking"
+        mandatory
+        attributes
+            pagination_pageSize Integer 20
+            mode_readOnly Boolean false
+
+constraints
+
+    // Cross-suite: requires T1 reference data
+    // F-T2-003-01 => ref.F-T1-REF-001

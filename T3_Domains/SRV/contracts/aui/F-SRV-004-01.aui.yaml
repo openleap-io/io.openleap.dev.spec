@@ -1,0 +1,147 @@
+# Screen Contract (AUI) — F-SRV-004-01 Session Lifecycle
+featureId: F-SRV-004-01
+name: "Session Lifecycle"
+
+taskModel:
+  root:
+    operator: alternative
+    children:
+      - task: list-path
+        operator: sequential
+        children:
+          - task: load-sessions
+            description: "Fetch today's sessions for current resource"
+          - task: view-list
+            description: "Browse session list with status indicators"
+            operator: enabling
+            enabledBy: load-sessions
+      - task: detail-path
+        operator: sequential
+        children:
+          - task: load-session
+            description: "Fetch session by ID"
+          - task: view-detail
+            description: "View session detail with customer, offering, resource, status"
+            operator: enabling
+            enabledBy: load-session
+          - task: start-session
+            description: "Transition PLANNED → IN_PROGRESS"
+            operator: optional
+            featureGate: "session.status == PLANNED AND role == SRV_SES_EDITOR"
+          - task: complete-session
+            description: "Transition IN_PROGRESS → COMPLETED (opens outcome dialog from F-SRV-004-02)"
+            operator: optional
+            featureGate: "session.status == IN_PROGRESS AND role == SRV_SES_EDITOR"
+          - task: cancel-session
+            description: "Transition PLANNED/IN_PROGRESS → CANCELLED with reason"
+            operator: optional
+            featureGate: "session.status IN [PLANNED, IN_PROGRESS] AND role == SRV_SES_EDITOR"
+
+zones:
+  - id: zone-list-header
+    name: "Session List Header"
+    type: fixed
+    priority: 1
+    dataBinding: "viewModel.filters"
+    fields:
+      - "dateFilter (input: date, default: today)"
+      - "resourceFilter (select: viewModel.myResources)"
+      - "statusFilter (select: ALL|PLANNED|IN_PROGRESS|COMPLETED|CANCELLED)"
+      - "searchAction (action: search)"
+
+  - id: zone-list
+    name: "Session Table"
+    type: fixed
+    priority: 2
+    dataBinding: "viewModel.sessions[]"
+    fields:
+      - "scheduledStart (display: time)"
+      - "customerName (display: text)"
+      - "offeringName (display: text)"
+      - "status (display: badge)"
+      - "startAction (action: start-session, visible when: status == PLANNED, roleGate: SRV_SES_EDITOR)"
+      - "completeAction (action: complete-session, visible when: status == IN_PROGRESS, roleGate: SRV_SES_EDITOR)"
+      - "detailAction (action: navigate-to-detail)"
+
+  - id: zone-session-header
+    name: "Session Detail Header"
+    type: fixed
+    priority: 1
+    dataBinding: "viewModel.session"
+    fields:
+      - "sessionId (display: text)"
+      - "status (display: badge)"
+      - "startedAt (display: datetime, visible when: startedAt != null)"
+      - "durationTimer (display: timer, visible when: status == IN_PROGRESS)"
+
+  - id: zone-session-details
+    name: "Session Details"
+    type: fixed
+    priority: 2
+    dataBinding: "viewModel.session"
+    fields:
+      - "customerName (display: text)"
+      - "offeringName (display: text)"
+      - "resourceName (display: text)"
+      - "appointmentTime (display: datetime-range)"
+
+  - id: zone-case-context
+    name: "Case Context"
+    type: feature-gated
+    featureGate: "display.showCaseContext == true AND session.caseId != null"
+    priority: 3
+    absentRule: panel-section-hidden
+    dataBinding: "viewModel.session"
+    fields:
+      - "caseName (display: text)"
+      - "caseSessionNumber (display: text, template: 'Session {n} of {total}')"
+
+  - id: zone-extension
+    name: "Extension Area"
+    type: variable
+    priority: 4
+    extensionPoint: "ext.session.customPanel"
+    absentRule: collapse-up
+
+  - id: zone-actions
+    name: "Actions"
+    type: fixed
+    priority: 99
+    fields:
+      - "start (action: start-session, visible when: PLANNED, roleGate: SRV_SES_EDITOR)"
+      - "complete (action: open-completion-dialog, visible when: IN_PROGRESS, roleGate: SRV_SES_EDITOR)"
+      - "cancel (action: cancel-session, visible when: PLANNED|IN_PROGRESS, roleGate: SRV_SES_EDITOR)"
+      - "back (action: navigate-back)"
+
+absentRules:
+  - zoneId: zone-case-context
+    condition: "display.showCaseContext == false OR session.caseId == null"
+    rule: panel-section-hidden
+  - zoneId: zone-extension
+    condition: "No extension point filled"
+    rule: collapse-up
+
+businessRules:
+  - type: stateCondition
+    rule: "start visible only when status == PLANNED"
+  - type: stateCondition
+    rule: "complete visible only when status == IN_PROGRESS"
+  - type: stateCondition
+    rule: "cancel visible when status IN [PLANNED, IN_PROGRESS]"
+  - type: roleGate
+    rule: "start/complete/cancel require SRV_SES_EDITOR"
+  - type: actionConsequence
+    action: start-session
+    consequence: "POST /sessions/{id}/start → event srv.ses.session.started → badge update + timer start"
+  - type: actionConsequence
+    action: complete-session
+    consequence: "Opens F-SRV-004-02 outcome dialog → POST /sessions/{id}/complete → event srv.ses.session.completed"
+  - type: actionConsequence
+    action: cancel-session
+    consequence: "POST /sessions/{id}/cancel → event srv.ses.session.cancelled → entitlement reversal"
+
+extensionZones:
+  - id: zone-extension
+    extensionPoint: "ext.session.customPanel"
+    description: "Industry-specific panels (e.g., clinical notes, inspection checklists)"
+    renderPosition: "after zone-case-context, before zone-actions"

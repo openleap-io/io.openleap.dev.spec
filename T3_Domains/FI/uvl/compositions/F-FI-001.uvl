@@ -1,0 +1,13 @@
+namespace fi.gl
+
+features
+    F_FI_001 { description "GL Journal Entry Management" }
+        mandatory
+            F_FI_001_01 { description "Journal Entry CRUD" }
+        optional
+            F_FI_001_02 { description "Journal Entry Reversal" }
+            F_FI_001_03 { description "Recurring Journal Entries" }
+
+constraints
+    F_FI_001_02 => F_FI_001_01
+    F_FI_001_03 => F_FI_001_01

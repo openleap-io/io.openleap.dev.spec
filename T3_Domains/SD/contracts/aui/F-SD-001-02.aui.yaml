@@ -1,0 +1,90 @@
+# Screen Contract (AUI) — F-SD-001-02
+# Feature: Order Status Tracking
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-SD-001-02
+name: "Order Status Tracking"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-orders
+        description: "Load paginated order list from sd-ord-svc"
+      - task: browse-and-filter
+        description: "User filters and browses orders"
+        operator: enabling
+        enabledBy: load-orders
+      - task: view-detail
+        description: "User selects an order to view its timeline"
+        operator: enabling
+        enabledBy: browse-and-filter
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Page title (display)"
+      - "Export (action)"
+
+  - id: zone-filters
+    name: "Filter Bar"
+    type: fixed
+    priority: 2
+    dataBinding: "filters"
+    fields:
+      - "Customer search (text input)"
+      - "Status filter (select)"
+      - "Date range (date range picker)"
+
+  - id: zone-core
+    name: "Order List"
+    type: fixed
+    priority: 3
+    dataBinding: "orders"
+    fields:
+      - "Order Number (display)"
+      - "Customer Name (display)"
+      - "Status (display: badge)"
+      - "Delivery Date (display)"
+      - "Order Total (display)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.orderListColumns"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Pagination"
+    type: fixed
+    priority: 99
+    dataBinding: "pagination"
+    fields:
+      - "Previous (action)"
+      - "Page indicator (display)"
+      - "Next (action)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-core
+      action: "View"
+      requiresRole: "SALES_REP"
+  stateConditions:
+    - action: "Export"
+      enabledWhen: "orders.length >= 1"
+  actionConsequences:
+    - action: "Row Click"
+      onSuccess: "navigate('order-detail', orderId)"
+    - action: "Export"
+      onSuccess: "download(exportFormat)"

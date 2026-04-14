@@ -1,0 +1,234 @@
+# OpenAPI Contract — iam-tenant-svc
+# Generated: 2026-04-03
+# Convention: contracts/http/iam/tenant/openapi.yaml
+#
+# Machine-readable companion to domain-specs/iam_tenant-spec.md §6.
+
+openapi: 3.1.0
+
+info:
+  title: "IAM Tenant Management API"
+  version: "1.0.0"
+  description: |
+    REST API for the Tenant Management domain within the IAM suite.
+    Manages multi-tenant lifecycle, organizational hierarchy, tenant configuration, and resource quotas. Every platform request operates within a tenant context resolved from this service.
+  contact:
+    name: IAM Team
+    email: iam-team@openleap.io
+  license:
+    name: Proprietary
+
+servers:
+  - url: http://localhost:8081
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+x-owner: team-iam
+x-suite: iam
+x-domain: tenant
+
+tags:
+  - name: tenants
+
+paths:
+
+  /api/iam/tenant/v1/tenants:
+    post:
+      operationId: create_tenant
+      summary: "Create tenant"
+      tags: [tenants]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/tenant/v1/tenants:
+    get:
+      operationId: list_tenants
+      summary: "List tenants"
+      tags: [tenants]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/tenant/v1/tenants/{id}:
+    get:
+      operationId: get_tenant
+      summary: "Get tenant"
+      tags: [tenants]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/tenant/v1/tenants/{id}/status:
+    patch:
+      operationId: change_tenant_status
+      summary: "Change tenant status"
+      tags: [tenants]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/tenant/v1/tenants/{tenantId}/organizations:
+    post:
+      operationId: create_organization
+      summary: "Create organization"
+      tags: [tenants]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/tenant/v1/tenants/{tenantId}/organizations:
+    get:
+      operationId: list_organizations
+      summary: "List organizations"
+      tags: [tenants]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/tenant/v1/tenants/{tenantId}/config:
+    put:
+      operationId: update_config
+      summary: "Update config"
+      tags: [tenants]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/tenant/v1/tenants/{tenantId}/quotas:
+    put:
+      operationId: update_quotas
+      summary: "Update quotas"
+      tags: [tenants]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/tenant/v1/tenants/{tenantId}/quotas/usage:
+    get:
+      operationId: get_quota_usage
+      summary: "Get quota usage"
+      tags: [tenants]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearer: []

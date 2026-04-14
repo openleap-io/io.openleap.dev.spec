@@ -1,0 +1,13 @@
+namespace pps.mes
+
+features
+    F_PPS_002 { description "Shop Floor Execution" }
+        mandatory
+            F_PPS_002_01 { description "Work Order Management" }
+            F_PPS_002_02 { description "MES Recording" }
+        optional
+            F_PPS_002_03 { description "Quality Inspection" }
+
+constraints
+    F_PPS_002_02 => F_PPS_002_01
+    F_PPS_002_03 => F_PPS_002_01

@@ -1,0 +1,10 @@
+namespace pps.mrp
+
+features
+    F_PPS_001_01 {
+        description "See feature-spec.md"
+    }
+
+        // Attributes
+        Boolean full_regeneration { default false, bindingTime runtime }
+        Integer max_planning_horizon_days { default 90, bindingTime runtime }

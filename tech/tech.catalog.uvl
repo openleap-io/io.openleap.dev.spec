@@ -1,0 +1,14 @@
+namespace tech
+features
+    TECH_UI { description "Technical Infrastructure administrative features" }
+        mandatory
+            F_TECH_001 { description "Document Management" }
+            F_TECH_002 { description "Report Management" }
+            F_TECH_003 { description "Job Control" }
+        optional
+            F_TECH_004 { description "News Feed Administration" }
+            F_TECH_005 { description "E-Invoicing" }
+constraints
+    F_TECH_001 => IAM_UI
+    F_TECH_002 => IAM_UI
+    F_TECH_003 => IAM_UI

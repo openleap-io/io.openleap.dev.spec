@@ -1,0 +1,90 @@
+# Screen Contract (AUI) — F-SD-002-03
+# Feature: Proof of Delivery
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-SD-002-03
+name: "Proof of Delivery"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-dispatched-deliveries
+        description: "Load deliveries awaiting POD confirmation"
+      - task: record-pod
+        description: "User enters receipt details or rejection reason"
+        operator: enabling
+        enabledBy: load-dispatched-deliveries
+      - task: confirm-or-reject
+        description: "Submit POD confirmation or rejection"
+        operator: enabling
+        enabledBy: record-pod
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Page title (display)"
+
+  - id: zone-awaiting
+    name: "Deliveries Awaiting POD"
+    type: fixed
+    priority: 2
+    dataBinding: "awaitingPod"
+    fields:
+      - "Delivery Number (display)"
+      - "Customer (display)"
+      - "Dispatched Date (display)"
+      - "Record POD (action per row)"
+
+  - id: zone-core
+    name: "POD Form"
+    type: fixed
+    priority: 3
+    dataBinding: "podForm"
+    fields:
+      - "Received By (text input)"
+      - "Receipt Date (date picker)"
+      - "Notes (text area)"
+      - "Rejection Reason (text area — conditional)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.podFields"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Record Rejection (action)"
+      - "Confirm Delivery (action: primary)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-actions
+      action: "Confirm Delivery"
+      requiresRole: "LOGISTICS_COORDINATOR"
+  stateConditions:
+    - action: "Confirm Delivery"
+      enabledWhen: "podForm.receivedBy != null AND podForm.receiptDate != null AND (signature_required == false OR podForm.signature != null)"
+    - action: "Record Rejection"
+      enabledWhen: "podForm.rejectionReason != null"
+  actionConsequences:
+    - action: "Confirm Delivery"
+      onSuccess: "navigate('pod-history') + toast('sd.F-SD-002-03.action.confirm.success')"
+    - action: "Record Rejection"
+      onSuccess: "navigate('deliveries') + toast('sd.F-SD-002-03.action.reject.success')"

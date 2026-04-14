@@ -1,0 +1,21 @@
+// Composition UVL: F-CRM-015 — Marketing & Campaigns
+// Template: feature-composition.uvl v1.0.0
+// Generated: 2026-04-03
+
+namespace crm
+
+imports
+    crm.F_CRM_015_01
+    crm.F_CRM_015_02
+    crm.F_CRM_015_03
+    crm.F_CRM_015_04
+    crm.F_CRM_015_05
+
+features
+    F_CRM_015
+        optional
+            F_CRM_015_01  // Campaign List & Manager
+            F_CRM_015_02  // Campaign Builder
+            F_CRM_015_03  // Campaign Execution Monitor
+            F_CRM_015_04  // Lead Nurturing Workflows
+            F_CRM_015_05  // Campaign Performance Dashboard

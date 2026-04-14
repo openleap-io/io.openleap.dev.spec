@@ -1,0 +1,46 @@
+openapi: 3.1.0
+info:
+  title: CO Profitability Analysis Service
+  version: 1.0.0
+  description: |
+    Profitability Analysis (PA) domain service for the Controlling suite.
+    Calculates and provides multi-dimensional profitability reports, contribution margins,
+    and profit segment data combining revenue and cost dimensions.
+
+    Full endpoint specification derived from domain-specs/co_pa-spec.md §6.
+  contact:
+    name: team-co
+    email: co-team@openleap.io
+  x-owner: team-co
+  x-suite: co
+  x-domain: pa
+
+servers:
+  - url: http://localhost:TBD
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+paths:
+  /api/co/pa/v1:
+    get:
+      summary: Service root / health
+      operationId: getServiceInfo
+      tags: [health]
+      responses:
+        '200':
+          description: Service info
+
+  # Full paths defined in domain-specs/co_pa-spec.md §6.
+  # This stub provides the OpenAPI metadata contract per blueprint §2.3.1.
+  # Implementation-complete OpenAPI MUST be generated from the domain spec.
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

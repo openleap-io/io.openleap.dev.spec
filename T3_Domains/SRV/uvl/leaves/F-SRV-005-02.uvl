@@ -1,0 +1,7 @@
+namespace srv.F-SRV-005-02
+features
+    F-SRV-005-02
+        linking.autoLinkFromBooking             Boolean true
+        linking.autoLinkFromBooking.bindingTime String "deploy"
+constraints
+    // See parent composition for structural constraints

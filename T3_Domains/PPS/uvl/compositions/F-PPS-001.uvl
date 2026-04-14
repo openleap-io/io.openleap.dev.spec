@@ -1,0 +1,12 @@
+namespace pps.mrp
+
+features
+    F_PPS_001 { description "Production Planning Core" }
+        mandatory
+            F_PPS_001_01 { description "MRP Run" }
+            F_PPS_001_02 { description "Production Order Browse" }
+        optional
+            F_PPS_001_03 { description "Capacity Planning" }
+
+constraints
+    F_PPS_001_03 => F_PPS_001_02

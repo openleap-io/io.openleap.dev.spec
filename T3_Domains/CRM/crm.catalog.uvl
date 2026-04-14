@@ -1,0 +1,89 @@
+// CRM Suite — Catalog UVL
+// Template: suite-catalog.uvl v1.0.0
+// Generated: 2026-04-03
+// Companion to: _crm_suite.md SS6
+
+namespace crm
+
+imports
+    crm.F_CRM_001
+    crm.F_CRM_002
+    crm.F_CRM_003
+    crm.F_CRM_004
+    crm.F_CRM_005
+    crm.F_CRM_006
+    crm.F_CRM_007
+    crm.F_CRM_008
+    crm.F_CRM_009
+    crm.F_CRM_010
+    crm.F_CRM_011
+    crm.F_CRM_012
+    crm.F_CRM_013
+    crm.F_CRM_014
+    crm.F_CRM_015
+    crm.F_CRM_016
+    crm.F_CRM_017
+    crm.F_CRM_018
+
+features
+    CRM_UI
+        optional
+            F_CRM_001  // Contact & Account Management
+            F_CRM_002  // Lead Management
+            F_CRM_003  // Opportunity Management
+            F_CRM_004  // Activities & Timeline
+            F_CRM_005  // Product & Pricing
+            F_CRM_006  // Global Search & Views
+            F_CRM_007  // Email Communication
+            F_CRM_008  // Calendar & Scheduling
+            F_CRM_009  // Document Management
+            F_CRM_010  // Dashboards & Reporting
+            F_CRM_011  // Workflow Automation
+            F_CRM_012  // Notifications & Alerts
+            F_CRM_013  // Integrations & Connectors
+            F_CRM_014  // Analytics & Forecasting
+            F_CRM_015  // Marketing & Campaigns
+            F_CRM_016  // Customer Support
+            F_CRM_017  // Configure-Price-Quote
+            F_CRM_018  // Customer Projects
+
+constraints
+    // === Mandatory compositions (always included when CRM_UI is selected) ===
+    CRM_UI => F_CRM_001   // Contact & Account Management is mandatory
+    CRM_UI => F_CRM_002   // Lead Management is mandatory
+    CRM_UI => F_CRM_003   // Opportunity Management is mandatory
+    CRM_UI => F_CRM_004   // Activities & Timeline is mandatory
+    CRM_UI => F_CRM_006   // Global Search is mandatory (all screens depend on it)
+
+    // === Intra-suite dependencies ===
+    // Opportunity Line Items require Product Catalog
+    F_CRM_003 => F_CRM_005  // Opportunity needs Product & Pricing for line items
+
+    // CPQ requires Product Catalog and Opportunity Management
+    F_CRM_017 => F_CRM_005  // CPQ needs products for quote lines
+    F_CRM_017 => F_CRM_003  // CPQ links quotes to opportunities
+
+    // Marketing requires Contacts and Leads as campaign members
+    F_CRM_015 => F_CRM_001  // Marketing targets contacts
+    F_CRM_015 => F_CRM_002  // Marketing targets leads
+
+    // Support requires Contact Management for ticket reporters
+    F_CRM_016 => F_CRM_001  // Support tickets reference contacts
+
+    // Analytics requires Opportunity data for forecasting
+    F_CRM_014 => F_CRM_003  // Analytics needs pipeline data
+
+    // Dashboards & Reporting depends on Search for data queries
+    F_CRM_010 => F_CRM_006  // Reporting queries via search service
+
+    // Lead Nurturing in Marketing uses Workflow engine
+    F_CRM_015 => F_CRM_011  // Marketing nurturing uses workflow automation
+
+    // Quote Approval uses Workflow engine
+    F_CRM_017 => F_CRM_011  // CPQ approval chain uses workflow
+
+    // === Cross-suite dependencies ===
+    // CRM requires IAM for authentication (all features)
+    // CRM_UI requires IAM.IAM_UI  (expressed at platform catalog level)
+    // F_CRM_001 Contact Management requires BP sync
+    // F_CRM_001 requires BP.BP_UI  (expressed at platform catalog level)

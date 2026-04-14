@@ -1,0 +1,19 @@
+// Composition UVL: F-CRM-018 — Customer Projects
+// Template: feature-composition.uvl v1.0.0
+// Generated: 2026-04-03
+
+namespace crm
+
+imports
+    crm.F_CRM_018_01
+    crm.F_CRM_018_02
+    crm.F_CRM_018_03
+    crm.F_CRM_018_04
+
+features
+    F_CRM_018
+        optional
+            F_CRM_018_01  // Project Board & List
+            F_CRM_018_02  // Project Detail & Timeline
+            F_CRM_018_03  // Onboarding Checklist
+            F_CRM_018_04  // Project Task Management

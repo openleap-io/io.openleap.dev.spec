@@ -1,0 +1,21 @@
+// Composition Node UVL — F-SRV-001
+// Name: Service Catalog Management
+// Suite: srv | Parent: SRV_UI
+// Companion document: F-SRV-001.md
+
+namespace srv.F-SRV-001
+
+features
+
+    F-SRV-001
+
+        mandatory
+            F-SRV-001-01   // Offering CRUD
+            F-SRV-001-02   // Offering Lifecycle
+
+        optional
+            F-SRV-001-03   // Variant & Requirement Mgmt
+
+constraints
+
+    F-SRV-001-03 => F-SRV-001-01   // Variants need offering editor

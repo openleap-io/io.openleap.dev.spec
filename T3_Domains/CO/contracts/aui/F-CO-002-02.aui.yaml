@@ -1,0 +1,95 @@
+# Screen Contract (AUI) — F-CO-002-02
+# Feature: Run Allocation Cycle
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-CO-002-02
+name: "Run Allocation Cycle"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-cycles
+        description: "Load recent allocation cycles"
+      - task: configure-cycle
+        description: "User selects period and cycle type"
+        operator: enabling
+        enabledBy: load-cycles
+      - task: execute-cycle
+        description: "Execute or reverse allocation cycle"
+        operator: enabling
+        enabledBy: configure-cycle
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Back navigation (link)"
+      - "Page title (display)"
+      - "Run Cycle (action: primary)"
+
+  - id: zone-filters
+    name: "Filter Bar"
+    type: fixed
+    priority: 2
+    dataBinding: "filters"
+    fields:
+      - "Period filter (month/year)"
+      - "Status filter (select)"
+
+  - id: zone-core
+    name: "Cycle List"
+    type: fixed
+    priority: 3
+    dataBinding: "content"
+    fields:
+      - "Cycle ID (display)"
+      - "Period (display)"
+      - "Run Date (display)"
+      - "Status (display: RUNNING|COMPLETED|FAILED|REVERSED)"
+      - "Posting Count (display)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.cycleActions"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Cancel (action)"
+      - "Reverse (action)"
+      - "Run (action: primary)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-actions
+      action: "Run"
+      requiresRole: "CO_CONTROLLER"
+    - zone: zone-actions
+      action: "Reverse"
+      requiresRole: "CO_ADMIN"
+  stateConditions:
+    - action: "Run"
+      enabledWhen: "form.period != null && !cycles.hasActiveForPeriod"
+    - action: "Reverse"
+      enabledWhen: "selectedCycle.status == 'COMPLETED'"
+  actionConsequences:
+    - action: "Run"
+      onSuccess: "refreshList() + toast('co.F-CO-002-02.action.run.success')"
+    - action: "Reverse"
+      onSuccess: "refreshList() + toast('co.F-CO-002-02.action.reverse.success')"

@@ -1,0 +1,79 @@
+# Screen Contract (AUI) — F-OPS-002-03
+# Feature: Utilization Report
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-OPS-002-03
+name: "Utilization Report"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-utilization
+        description: "Load utilization data for selected period and filters"
+      - task: interact
+        description: "Manager views report and exports"
+        operator: enabling
+        enabledBy: load-utilization
+
+zones:
+  - id: zone-header
+    name: "Page Header"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Page title (display)"
+      - "Period selector (month picker)"
+
+  - id: zone-filters
+    name: "Filter Bar"
+    type: fixed
+    priority: 2
+    dataBinding: "filters"
+    fields:
+      - "Team filter (select)"
+      - "Skill filter (multi-select)"
+
+  - id: zone-core
+    name: "Utilization Table"
+    type: fixed
+    priority: 3
+    dataBinding: "resources"
+    fields:
+      - "Resource name (display)"
+      - "Available hours (display)"
+      - "Booked hours (display)"
+      - "Utilization % (display with status indicator)"
+      - "vs. target indicator (display: OVER|ON|UNDER)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.utilizationCharts"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Export Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Export CSV (action)"
+      - "Export PDF (action)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-core
+      action: "View"
+      requiresRole: "OPERATIONS_MANAGER|RESOURCE_PLANNER"
+    - zone: zone-actions
+      action: "Export CSV"
+      requiresRole: "OPERATIONS_MANAGER|RESOURCE_PLANNER"

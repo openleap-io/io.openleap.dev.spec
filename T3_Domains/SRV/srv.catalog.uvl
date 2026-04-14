@@ -1,0 +1,100 @@
+// ============================================================
+// SRV Suite — UI Feature Catalog (UVL Root)
+// File: srv.catalog.uvl
+//
+// This is the machine-readable root of the SRV suite's
+// UI feature tree. It imports all composition node UVL files
+// and assembles them under a single suite root feature.
+//
+// This file is imported by catalog.uvl (the platform root).
+//
+// Companion document: _srv_suite.md §6 (Feature Catalog)
+//
+// Authoring rules:
+//   - Add an import line for every composition .uvl in this suite.
+//   - Add the corresponding feature reference under the
+//     suite root's group.
+//   - The group type at the suite root is `optional` —
+//     ProductConfigs select which composition nodes to include.
+//   - Mandatory suite-level cross-tree constraints go in
+//     the constraints block here.
+//   - Feature-level constraints stay in individual .uvl files.
+// ============================================================
+
+namespace srv
+
+imports
+    F-SRV-001 as catalog_mgmt    from "features/F-SRV-001/F-SRV-001.uvl"
+    F-SRV-002 as appointment     from "features/F-SRV-002/F-SRV-002.uvl"
+    F-SRV-003 as resource_sched  from "features/F-SRV-003/F-SRV-003.uvl"
+    F-SRV-004 as session_exec    from "features/F-SRV-004/F-SRV-004.uvl"
+    F-SRV-005 as case_mgmt       from "features/F-SRV-005/F-SRV-005.uvl"
+    F-SRV-006 as entitlements    from "features/F-SRV-006/F-SRV-006.uvl"
+    F-SRV-007 as billing_intent  from "features/F-SRV-007/F-SRV-007.uvl"
+
+features
+
+    // Suite root — the top-level feature representing the SRV
+    // suite's entire UI capability.
+    // This is the node that the platform catalog.uvl references.
+    SRV_UI
+
+        optional
+            // Products select which capability areas they need.
+            // Mandatory compositions are enforced via constraints below,
+            // not via UVL group type — this keeps the tree flexible
+            // while constraints enforce minimum viable suite.
+            F-SRV-001
+            F-SRV-002
+            F-SRV-003
+            F-SRV-004
+            F-SRV-005
+            F-SRV-006
+            F-SRV-007
+
+
+constraints
+
+    // --------------------------------------------------------
+    // Suite-level mandatory composition enforcement.
+    // Any product that selects SRV_UI MUST include these
+    // compositions (from _srv_suite.md §6.2).
+    // --------------------------------------------------------
+
+    SRV_UI => F-SRV-001   // Service Catalog — all SRV domains depend on offering definitions
+    SRV_UI => F-SRV-002   // Appointment & Booking — core booking lifecycle
+    SRV_UI => F-SRV-003   // Resource Scheduling — availability/conflict prerequisites
+    SRV_UI => F-SRV-004   // Session Execution — core purpose of SRV
+    SRV_UI => F-SRV-007   // Billing Intent — required to monetize services
+
+    // --------------------------------------------------------
+    // Cross-composition dependencies within SRV.
+    // --------------------------------------------------------
+
+    // Booking depends on resource scheduling (slot discovery needs availability)
+    F-SRV-002 => F-SRV-003
+
+    // Session depends on booking (sessions are created from appointments)
+    F-SRV-004 => F-SRV-002
+
+    // Case management depends on session execution
+    F-SRV-005 => F-SRV-004
+
+    // Entitlements depend on session execution (consumption triggers)
+    // and service catalog (eligibility checks)
+    F-SRV-006 => F-SRV-004
+    F-SRV-006 => F-SRV-001
+
+    // Billing intent depends on session execution (delivery facts)
+    // and booking (fee triggers)
+    F-SRV-007 => F-SRV-004
+    F-SRV-007 => F-SRV-002
+
+    // --------------------------------------------------------
+    // Cross-suite dependencies (from _srv_suite.md §6.3).
+    // Feature-level cross-suite requires are in individual
+    // leaf .uvl files. These are suite-level constraints.
+    // --------------------------------------------------------
+
+    // Any SRV product needs business partner data for customer references.
+    // SRV_UI => bp.F-BP-001   // OPEN QUESTION: exact BP feature ID

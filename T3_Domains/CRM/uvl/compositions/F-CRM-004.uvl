@@ -1,0 +1,21 @@
+// Composition UVL: F-CRM-004 — Activities & Timeline
+// Template: feature-composition.uvl v1.0.0
+// Generated: 2026-04-03
+
+namespace crm
+
+imports
+    crm.F_CRM_004_01
+    crm.F_CRM_004_02
+    crm.F_CRM_004_03
+    crm.F_CRM_004_04
+    crm.F_CRM_004_05
+
+features
+    F_CRM_004
+        mandatory
+            F_CRM_004_01  // Activity Timeline View
+            F_CRM_004_02  // Task Management
+            F_CRM_004_03  // Meeting Scheduler
+            F_CRM_004_04  // Call Logging
+            F_CRM_004_05  // Note Editor

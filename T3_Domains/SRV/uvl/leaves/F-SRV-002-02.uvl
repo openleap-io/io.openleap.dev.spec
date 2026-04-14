@@ -1,0 +1,37 @@
+// ============================================================
+// Leaf Feature UVL — F-SRV-002-02
+// Name: Booking Lifecycle
+// Suite: srv
+// Parent: F-SRV-002 (Appointment & Booking)
+//
+// Companion document: F-SRV-002-02.md
+// ============================================================
+
+namespace srv.F-SRV-002-02
+
+features
+
+    F-SRV-002-02
+
+        // --- Reservation display ---
+        reservation.showCountdown            Boolean true   // deploy — show TTL countdown
+        reservation.showCountdown.bindingTime String "deploy"
+
+        // --- Cancellation behaviour ---
+        cancellation.requireReason            Boolean false  // deploy — require reason text
+        cancellation.requireReason.bindingTime String "deploy"
+
+        // --- Reschedule behaviour ---
+        reschedule.allowAfterConfirm            Boolean true   // deploy — allow reschedule post-confirm
+        reschedule.allowAfterConfirm.bindingTime String "deploy"
+
+        // --- Display options ---
+        display.showCustomerContact            Boolean true   // deploy — show customer phone/email
+        display.showCustomerContact.bindingTime String "deploy"
+
+
+constraints
+
+    // Intra-suite requires
+    F-SRV-002-02 => srv.F-SRV-001    // Service Catalog — offering name lookup
+    F-SRV-002-02 => srv.F-SRV-003    // Resource Scheduling — resource name lookup

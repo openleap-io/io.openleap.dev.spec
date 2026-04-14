@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sd.ord.sales-order.confirmed",
+  "title": "sd.ord.sales-order.confirmed",
+  "description": "Event published when a sales order is confirmed by a sales representative",
+  "type": "object",
+  "required": ["eventId", "eventType", "timestamp", "tenantId", "correlationId", "producer", "schemaVersion", "payload"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "eventType": { "type": "string", "const": "sd.ord.sales-order.confirmed" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "correlationId": { "type": "string", "format": "uuid" },
+    "causationId": { "type": "string", "format": "uuid" },
+    "producer": { "type": "string", "const": "sd-ord-svc" },
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "payload": {
+      "type": "object",
+      "required": ["orderId", "orderNumber", "customerId", "deliveryDate", "confirmedAt"],
+      "properties": {
+        "orderId": { "type": "string", "format": "uuid" },
+        "orderNumber": { "type": "string" },
+        "customerId": { "type": "string", "format": "uuid" },
+        "deliveryDate": { "type": "string", "format": "date" },
+        "paymentTerms": { "type": "string" },
+        "totalAmount": { "type": "number" },
+        "currency": { "type": "string" },
+        "confirmedAt": { "type": "string", "format": "date-time" },
+        "lines": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["lineId", "productId", "quantity"],
+            "properties": {
+              "lineId": { "type": "string", "format": "uuid" },
+              "productId": { "type": "string", "format": "uuid" },
+              "quantity": { "type": "number" },
+              "unitPrice": { "type": "number" },
+              "lineTotal": { "type": "number" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

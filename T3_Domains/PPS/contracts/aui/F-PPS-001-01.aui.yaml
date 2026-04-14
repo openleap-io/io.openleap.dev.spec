@@ -1,0 +1,92 @@
+# Screen Contract (AUI) — F-PPS-001-01
+# Feature: MRP Run
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-PPS-001-01
+name: "MRP Run"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-reference-data
+        description: "Load MRP run history and current run status"
+      - task: fill-form
+        description: "User selects run type and planning horizon"
+        operator: enabling
+        enabledBy: load-reference-data
+      - task: validate-and-submit
+        description: "Validate parameters and start MRP run"
+        operator: enabling
+        enabledBy: fill-form
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Back navigation (link)"
+      - "Page title (display)"
+
+  - id: zone-core
+    name: "Run Configuration"
+    type: fixed
+    priority: 2
+    dataBinding: "runConfig"
+    fields:
+      - "Run Type (radio: FULL | NET_CHANGE)"
+      - "Planning Horizon (integer input)"
+
+  - id: zone-filters
+    name: "Run History"
+    type: fixed
+    priority: 3
+    dataBinding: "runs"
+    fields:
+      - "Run ID (display)"
+      - "Type (display)"
+      - "Started At (display)"
+      - "Status (display: QUEUED|RUNNING|COMPLETED|FAILED|CANCELLED)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.mrpRunActions"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Cancel (action)"
+      - "Start MRP Run (action: primary)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-actions
+      action: "Start MRP Run"
+      requiresRole: "PLANNER"
+    - zone: zone-actions
+      action: "Cancel Run"
+      requiresRole: "PLANNER"
+  stateConditions:
+    - action: "Start MRP Run"
+      enabledWhen: "form.isValid == true AND currentRun == null"
+    - action: "Cancel Run"
+      enabledWhen: "currentRun.status == 'RUNNING'"
+  actionConsequences:
+    - action: "Start MRP Run"
+      onSuccess: "showProgress() + toast('pps.F-PPS-001-01.action.start.success')"
+    - action: "Cancel Run"
+      onSuccess: "refreshList() + toast('pps.F-PPS-001-01.action.cancel.success')"

@@ -1,0 +1,31 @@
+// ops.catalog.uvl — Catalog Root
+// Suite: ops (Operational Services)
+// Generated: 2026-04-04
+// Template: suite-catalog.uvl v1.0.0
+
+namespace ops
+
+features
+    OPS_UI {
+        description "Operational Services features"
+    }
+
+        mandatory
+            F_OPS_001 {
+                description "Work Order Management"
+                uvl "uvl/compositions/F-OPS-001.uvl"
+            }
+            F_OPS_002 {
+                description "Resource & Scheduling"
+                uvl "uvl/compositions/F-OPS-002.uvl"
+            }
+            F_OPS_003 {
+                description "Time & Project Tracking"
+                uvl "uvl/compositions/F-OPS-003.uvl"
+            }
+
+constraints
+    F_OPS_001 => IAM_UI
+    F_OPS_002 => IAM_UI
+    F_OPS_003 => IAM_UI
+    F_OPS_002 => F_OPS_001

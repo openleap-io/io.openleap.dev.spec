@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sd.ret.return.approved",
+  "title": "sd.ret.return.approved",
+  "description": "Event published when a customer return request is approved",
+  "type": "object",
+  "required": ["eventId", "eventType", "timestamp", "tenantId", "correlationId", "producer", "schemaVersion", "payload"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "eventType": { "type": "string", "const": "sd.ret.return.approved" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "correlationId": { "type": "string", "format": "uuid" },
+    "causationId": { "type": "string", "format": "uuid" },
+    "producer": { "type": "string", "const": "sd-ret-svc" },
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "payload": {
+      "type": "object",
+      "required": ["returnId", "customerId", "originalOrderId", "approvedAt"],
+      "properties": {
+        "returnId": { "type": "string", "format": "uuid" },
+        "returnNumber": { "type": "string" },
+        "customerId": { "type": "string", "format": "uuid" },
+        "originalOrderId": { "type": "string", "format": "uuid" },
+        "returnReason": { "type": "string", "enum": ["DAMAGED", "WRONG_ITEM", "QUALITY", "CHANGE_OF_MIND", "OTHER"] },
+        "refundAmount": { "type": "number" },
+        "currency": { "type": "string" },
+        "approvedAt": { "type": "string", "format": "date-time" },
+        "lines": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["productId", "quantity"],
+            "properties": {
+              "productId": { "type": "string", "format": "uuid" },
+              "quantity": { "type": "number" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+namespace pps.mes
+
+features
+    F_PPS_002_01 {
+        description "See feature-spec.md"
+    }
+
+        // Attributes
+        Boolean show_completed_orders { default false, bindingTime runtime }
+        Boolean auto_post_goods_issue { default false, bindingTime deploy }

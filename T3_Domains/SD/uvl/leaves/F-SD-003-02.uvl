@@ -1,0 +1,13 @@
+namespace sd.bil.invoice-review
+
+features
+    F_SD_003_02 {
+        description "Invoice Review"
+        Boolean dual_approval_required {
+            description "Requires two distinct Finance Manager approvals before an invoice is eligible for posting"
+            default false
+        }
+    }
+
+constraints
+    F_SD_003_02 => F_SD_003_01

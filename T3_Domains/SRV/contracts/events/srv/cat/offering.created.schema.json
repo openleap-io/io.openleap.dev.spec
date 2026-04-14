@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/srv/cat/offering.created",
+  "title": "OfferingCreated",
+  "description": "Raised when a service offering has been created in the catalog.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "offeringId"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "offeringId": { "type": "string", "format": "uuid" }
+  }
+}

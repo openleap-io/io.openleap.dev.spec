@@ -1,0 +1,36 @@
+// ============================================================
+// F-PS-005 — Project Staffing (Composition Node)
+// File: F-PS-005.uvl
+//
+// Companion document: features/compositions/F-PS-005.md
+//
+// Generated: 2026-04-03
+// Template: TPL-UVL-COMP v1.0.0
+// ============================================================
+
+namespace F_PS_005
+
+imports
+    F-PS-005-01 as Persona_Management
+    F-PS-005-02 as Staffing_Slot_Management
+    F-PS-005-03 as Team_Planner_View
+    F-PS-005-04 as Demand_Aggregation_Dashboard
+    F-PS-005-05 as Scenario_Planning
+
+features
+
+    F-PS-005
+
+        mandatory
+            F-PS-005-01
+            F-PS-005-02
+            F-PS-005-03
+
+        optional
+            F-PS-005-04
+            F-PS-005-05
+
+
+constraints
+
+    // Intra-composition constraints (if any)

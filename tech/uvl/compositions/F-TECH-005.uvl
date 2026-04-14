@@ -1,0 +1,5 @@
+namespace tech.zugferd
+features
+    F_TECH_005 { description "E-Invoicing" }
+        mandatory
+            F_TECH_005_01 { description "Service Health & Info" }

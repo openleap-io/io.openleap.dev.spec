@@ -1,0 +1,9 @@
+namespace srv.F-SRV-003-03
+features
+    F-SRV-003-03
+        conflict.showDetails             Boolean true
+        conflict.showDetails.bindingTime String "deploy"
+        conflict.allowOverride             Boolean false
+        conflict.allowOverride.bindingTime String "deploy"
+constraints
+    // See parent composition for structural constraints

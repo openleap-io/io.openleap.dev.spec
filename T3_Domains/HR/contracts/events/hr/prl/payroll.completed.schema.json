@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/hr/prl/payroll.completed",
+  "title": "PayrollCompleted",
+  "description": "Emitted when a payroll run is approved and completed — triggers fi.slc accounting postings.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "payrollRunId", "year", "month", "totalNetSalary", "currency"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "payrollRunId": { "type": "string", "format": "uuid" },
+    "year": { "type": "integer" },
+    "month": { "type": "integer", "minimum": 1, "maximum": 12 },
+    "employeeCount": { "type": "integer" },
+    "totalGrossSalary": { "type": "number" },
+    "totalDeductions": { "type": "number" },
+    "totalNetSalary": { "type": "number" },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" }
+  }
+}

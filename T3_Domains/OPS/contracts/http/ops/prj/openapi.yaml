@@ -1,0 +1,74 @@
+openapi: 3.1.0
+info:
+  title: OPS Project Management Service
+  version: 1.0.0
+  description: |
+    Project management — project hierarchy, milestones, and work packages for project-based operations.
+
+    Full endpoint specification derived from domain-specs/ops_prj-spec.md §6.
+  contact:
+    name: team-ops
+    email: ops-engineering@openleap.io
+  x-owner: team-ops
+  x-suite: ops
+  x-domain: prj
+
+servers:
+  - url: http://localhost:8215
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+paths:
+  /api/ops/prj/v1:
+    get:
+      summary: Service root / health
+      operationId: getServiceInfo
+      tags: [health]
+      responses:
+        '200':
+          description: Service info
+
+  /api/ops/prj/v1/projects/{id}/board:
+    get:
+      summary: Get project status board
+      operationId: getProjectBoard
+      tags: [projects]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Project board with milestones and tasks
+
+  /api/ops/prj/v1/projects/{id}/milestones/{mId}:
+    patch:
+      summary: Update milestone status
+      operationId: updateMilestone
+      tags: [milestones]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - name: mId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Milestone updated
+
+  # Full paths defined in domain-specs/ops_prj-spec.md §6.
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

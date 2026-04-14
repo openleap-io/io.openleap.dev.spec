@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/fi/ap/payment.posted",
+  "title": "PaymentPosted",
+  "description": "Emitted when an AP payment is posted to the general ledger.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "paymentId"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "paymentId": { "type": "string", "format": "uuid" }
+  }
+}

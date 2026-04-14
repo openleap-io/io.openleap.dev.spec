@@ -1,0 +1,9 @@
+namespace srv.F-SRV-006-01
+features
+    F-SRV-006-01
+        pagination.pageSize             Integer 20
+        pagination.pageSize.bindingTime String "deploy"
+        entitlement.showBalance             Boolean true
+        entitlement.showBalance.bindingTime String "deploy"
+constraints
+    // See parent composition for structural constraints

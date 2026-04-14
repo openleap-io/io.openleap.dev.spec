@@ -1,0 +1,71 @@
+openapi: 3.1.0
+info:
+  title: OPS Time Tracking Service
+  version: 1.0.0
+  description: |
+    Time tracking — capture working times against work orders, projects, and tasks for billing and payroll.
+
+    Full endpoint specification derived from domain-specs/ops_tim-spec.md §6.
+  contact:
+    name: team-ops
+    email: ops-engineering@openleap.io
+  x-owner: team-ops
+  x-suite: ops
+  x-domain: tim
+
+servers:
+  - url: http://localhost:8214
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+paths:
+  /api/ops/tim/v1:
+    get:
+      summary: Service root / health
+      operationId: getServiceInfo
+      tags: [health]
+      responses:
+        '200':
+          description: Service info
+
+  /api/ops/tim/v1/time-entries:
+    get:
+      summary: List time entries
+      operationId: listTimeEntries
+      tags: [time-entries]
+      parameters:
+        - name: week
+          in: query
+          schema: { type: string, example: "2026-W15" }
+      responses:
+        '200':
+          description: Time entries for week
+    post:
+      summary: Create time entry
+      operationId: createTimeEntry
+      tags: [time-entries]
+      responses:
+        '201':
+          description: Time entry created
+
+  /api/ops/tim/v1/time-entries/submit:
+    post:
+      summary: Submit timesheet for approval
+      operationId: submitTimesheet
+      tags: [time-entries]
+      responses:
+        '200':
+          description: Timesheet submitted
+
+  # Full paths defined in domain-specs/ops_tim-spec.md §6.
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,56 @@
+openapi: 3.1.0
+info:
+  title: SD Customer Data Management Service
+  version: 1.0.0
+  description: |
+    Customer master data management for the SD suite.
+
+    Full endpoint specification derived from domain-specs/sd_cdm-spec.md §6.
+  contact:
+    name: team-sd
+    email: sd-team@openleap.io
+  x-owner: team-sd
+  x-suite: sd
+  x-domain: cdm
+
+servers:
+  - url: http://localhost:8303
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+paths:
+  /api/sd/cdm/v1:
+    get:
+      summary: Service root / health
+      operationId: getServiceInfo
+      tags: [health]
+      responses:
+        '200':
+          description: Service info
+
+  /api/sd/cdm/v1/customers:
+    get:
+      summary: Search customers
+      operationId: searchCustomers
+      tags: [customers]
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Customer list
+
+  # Full paths defined in domain-specs/sd_cdm-spec.md §6.
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

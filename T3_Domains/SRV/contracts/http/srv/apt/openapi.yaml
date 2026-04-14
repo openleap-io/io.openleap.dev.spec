@@ -1,0 +1,8 @@
+openapi: "3.0.3"
+info:
+  title: "SRV Appointment API"
+  description: "OpenAPI contract for srv.apt service"
+  version: "1.0.0"
+paths: {}
+components:
+  schemas: {}

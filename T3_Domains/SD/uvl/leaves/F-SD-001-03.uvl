@@ -1,0 +1,13 @@
+namespace sd.ord.order-amendment
+
+features
+    F_SD_001_03 {
+        description "Order Amendment"
+        Boolean amendment_reason_required {
+            description "Requires a written reason when amending a confirmed order"
+            default false
+        }
+    }
+
+constraints
+    F_SD_001_03 => F_SD_001_02

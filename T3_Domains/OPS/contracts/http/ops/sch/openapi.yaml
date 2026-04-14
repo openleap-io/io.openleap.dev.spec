@@ -1,0 +1,74 @@
+openapi: 3.1.0
+info:
+  title: OPS Scheduling Service
+  version: 1.0.0
+  description: |
+    Scheduling — assign resources to work orders on a calendar board and dispatch notifications.
+
+    Full endpoint specification derived from domain-specs/ops_sch-spec.md §6.
+  contact:
+    name: team-ops
+    email: ops-engineering@openleap.io
+  x-owner: team-ops
+  x-suite: ops
+  x-domain: sch
+
+servers:
+  - url: http://localhost:8213
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+paths:
+  /api/ops/sch/v1:
+    get:
+      summary: Service root / health
+      operationId: getServiceInfo
+      tags: [health]
+      responses:
+        '200':
+          description: Service info
+
+  /api/ops/sch/v1/board:
+    get:
+      summary: Get schedule board data
+      operationId: getBoard
+      tags: [board]
+      responses:
+        '200':
+          description: Schedule board with unassigned WOs and assignments
+
+  /api/ops/sch/v1/assignments:
+    post:
+      summary: Create resource assignment
+      operationId: createAssignment
+      tags: [assignments]
+      responses:
+        '201':
+          description: Assignment created
+
+  /api/ops/sch/v1/assignments/{id}/dispatch:
+    post:
+      summary: Dispatch assignment
+      operationId: dispatchAssignment
+      tags: [assignments]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Notification dispatched
+
+  # Full paths defined in domain-specs/ops_sch-spec.md §6.
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

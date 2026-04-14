@@ -1,0 +1,77 @@
+# Screen Contract (AUI) — F-SRV-001-02 Offering Lifecycle
+featureId: F-SRV-001-02
+name: "Offering Lifecycle"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: view-offering-status
+        description: "View current offering status and available lifecycle actions"
+      - task: select-action
+        description: "Choose lifecycle transition (activate/deactivate/archive)"
+        operator: enabling
+        enabledBy: view-offering-status
+      - task: confirm-transition
+        description: "Confirm lifecycle transition via dialog"
+        operator: enabling
+        enabledBy: select-action
+
+zones:
+  - id: zone-lifecycle-actions
+    name: "Lifecycle Action Bar"
+    type: fixed
+    priority: 50
+    dataBinding: "viewModel.allowedLifecycleActions"
+    fields:
+      - "activate (action: activate-offering, visible when: status IN [DRAFT, INACTIVE], roleGate: SRV_CAT_EDITOR)"
+      - "deactivate (action: deactivate-offering, visible when: status == ACTIVE, roleGate: SRV_CAT_EDITOR)"
+      - "archive (action: archive-offering, visible when: status IN [ACTIVE, INACTIVE], roleGate: SRV_CAT_ADMIN)"
+      - "submitForApproval (action: submit-approval, visible when: lifecycle.requireApproval == true AND status == DRAFT, roleGate: SRV_CAT_EDITOR)"
+
+  - id: zone-confirmation-dialog
+    name: "Transition Confirmation"
+    type: fixed
+    priority: 60
+    fields:
+      - "confirmationMessage (display: text, template per action)"
+      - "appointmentWarning (display: warning, visible when: activeAppointmentCount > 0)"
+      - "confirm (action: confirm-transition)"
+      - "cancel (action: dismiss-dialog)"
+
+absentRules:
+  - zoneId: zone-lifecycle-actions
+    condition: "feature mode == read-only OR excluded"
+    rule: panel-section-hidden
+    description: "Lifecycle actions hidden in read-only mode"
+
+businessRules:
+  - type: stateCondition
+    rule: "activate visible only when status IN [DRAFT, INACTIVE]"
+  - type: stateCondition
+    rule: "deactivate visible only when status == ACTIVE"
+  - type: stateCondition
+    rule: "archive visible only when status IN [ACTIVE, INACTIVE]"
+  - type: stateCondition
+    rule: "submitForApproval replaces activate when lifecycle.requireApproval == true"
+
+  - type: roleGate
+    rule: "activate/deactivate requires SRV_CAT_EDITOR"
+  - type: roleGate
+    rule: "archive requires SRV_CAT_ADMIN"
+
+  - type: actionConsequence
+    action: activate
+    consequence: "POST /offerings/{id}/activate → event srv.cat.offering.activated → badge update + toast"
+  - type: actionConsequence
+    action: deactivate
+    consequence: "POST /offerings/{id}/deactivate → event srv.cat.offering.deactivated → badge update + toast"
+  - type: actionConsequence
+    action: archive
+    consequence: "POST /offerings/{id}/archive → event srv.cat.offering.archived → badge update + toast"
+
+extensionZones:
+  - id: zone-pre-activate-validation
+    extensionPoint: "ext.lifecycle.preActivateValidation"
+    description: "Custom validation before activation (e.g., completeness check)"
+    renderPosition: "within zone-confirmation-dialog, before confirm button"

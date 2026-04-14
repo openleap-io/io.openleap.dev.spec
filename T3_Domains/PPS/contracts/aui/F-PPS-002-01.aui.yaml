@@ -1,0 +1,94 @@
+# Screen Contract (AUI) — F-PPS-002-01
+# Feature: Work Order Management
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-PPS-002-01
+name: "Work Order Management"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-reference-data
+        description: "Load assigned work orders and filter options"
+      - task: fill-form
+        description: "User confirms operations and enters time/scrap"
+        operator: enabling
+        enabledBy: load-reference-data
+      - task: validate-and-submit
+        description: "Validate and complete work order"
+        operator: enabling
+        enabledBy: fill-form
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Back navigation (link)"
+      - "Page title (display)"
+
+  - id: zone-filters
+    name: "Filter Bar"
+    type: fixed
+    priority: 2
+    dataBinding: "filters"
+    fields:
+      - "Search (text input)"
+      - "Status filter (select: READY|IN_PROGRESS|COMPLETED|All)"
+      - "Work Center filter (select)"
+
+  - id: zone-core
+    name: "Work Order List"
+    type: fixed
+    priority: 3
+    dataBinding: "workOrders"
+    fields:
+      - "Work Order Number (display)"
+      - "Operation (display)"
+      - "Work Center (display)"
+      - "Status (display)"
+      - "Confirm action (button)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.workOrderActions"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Cancel (action)"
+      - "Complete Order (action: primary)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-actions
+      action: "Complete Order"
+      requiresRole: "OPERATOR"
+    - zone: zone-core
+      action: "Confirm"
+      requiresRole: "OPERATOR"
+  stateConditions:
+    - action: "Complete Order"
+      enabledWhen: "workOrder.allOperationsConfirmed == true"
+    - action: "Confirm"
+      enabledWhen: "operation.status == 'READY'"
+  actionConsequences:
+    - action: "Confirm"
+      onSuccess: "updateStatus('IN_PROGRESS') + toast('pps.F-PPS-002-01.action.confirm.success')"
+    - action: "Complete Order"
+      onSuccess: "navigate('list') + toast('pps.F-PPS-002-01.action.complete.success')"

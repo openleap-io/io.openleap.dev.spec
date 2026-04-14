@@ -1,0 +1,46 @@
+// ============================================================
+// F-PS-001 — Project Management (Composition Node)
+// File: F-PS-001.uvl
+//
+// Companion document: features/compositions/F-PS-001.md
+//
+// Generated: 2026-04-03
+// Template: TPL-UVL-COMP v1.0.0
+// ============================================================
+
+namespace F_PS_001
+
+imports
+    F-PS-001-01 as Project_List_Dashboard
+    F-PS-001-02 as Project_Create_Edit
+    F-PS-001-03 as WBS_Editor
+    F-PS-001-04 as Gantt_Chart_Scheduling
+    F-PS-001-05 as Work_Package_Detail_View
+    F-PS-001-06 as Dependency_Management
+    F-PS-001-07 as Milestone_Tracking
+    F-PS-001-08 as Baseline_Management
+    F-PS-001-09 as Project_Templates
+    F-PS-001-10 as Work_Package_Relations_View
+
+features
+
+    F-PS-001
+
+        mandatory
+            F-PS-001-01
+            F-PS-001-02
+            F-PS-001-03
+            F-PS-001-04
+            F-PS-001-05
+            F-PS-001-06
+            F-PS-001-07
+
+        optional
+            F-PS-001-08
+            F-PS-001-09
+            F-PS-001-10
+
+
+constraints
+
+    // Intra-composition constraints (if any)

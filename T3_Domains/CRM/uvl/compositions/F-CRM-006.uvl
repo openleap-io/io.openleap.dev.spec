@@ -1,0 +1,17 @@
+// Composition UVL: F-CRM-006 — Global Search & Views
+// Template: feature-composition.uvl v1.0.0
+// Generated: 2026-04-03
+
+namespace crm
+
+imports
+    crm.F_CRM_006_01
+    crm.F_CRM_006_02
+    crm.F_CRM_006_03
+
+features
+    F_CRM_006
+        mandatory
+            F_CRM_006_01  // Global Search Bar
+            F_CRM_006_02  // Advanced Search & Filters
+            F_CRM_006_03  // Saved Views & Segments

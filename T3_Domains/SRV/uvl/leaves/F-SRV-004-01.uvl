@@ -1,0 +1,9 @@
+namespace srv.F-SRV-004-01
+features
+    F-SRV-004-01
+        session.autoStartOnCheckin             Boolean false
+        session.autoStartOnCheckin.bindingTime String "deploy"
+        pagination.pageSize             Integer 20
+        pagination.pageSize.bindingTime String "deploy"
+constraints
+    // See parent composition for structural constraints

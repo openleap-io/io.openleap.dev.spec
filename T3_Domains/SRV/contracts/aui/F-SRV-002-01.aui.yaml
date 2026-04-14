@@ -1,0 +1,144 @@
+# Screen Contract (AUI) — F-SRV-002-01 Slot Discovery
+#
+# Conceptual Stack Layer: Platform-Feature (Screen Contract)
+# Space: Platform
+# Owner: Domain Engineering Team
+# Companion of: F-SRV-002-01.md
+# Derived from: §2 (journey → task model), §3 (fields → zones), §4 (edge cases → absent-rules)
+
+featureId: F-SRV-002-01
+name: "Slot Discovery"
+
+# ──────────────────────────────────────────────
+# Task Model (from §2 User Journey)
+# ──────────────────────────────────────────────
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-filters
+        description: "Load active offerings and optional resource list for filter panel"
+
+      - task: search-slots
+        description: "User selects offering + date range + optional resource, triggers search"
+        operator: enabling
+        enabledBy: load-filters
+
+      - task: select-slot
+        description: "User selects an available slot from results"
+        operator: enabling
+        enabledBy: search-slots
+
+      - task: navigate-to-booking
+        description: "User clicks 'Book Selected Slot' to proceed to F-SRV-002-02"
+        operator: enabling
+        enabledBy: select-slot
+
+      - task: join-waitlist
+        description: "If no slots and F-SRV-002-03 active, user can join waitlist"
+        operator: optional
+        featureGate: "F-SRV-002-03"
+        absentRule: panel-section-hidden
+
+# ──────────────────────────────────────────────
+# Zones (from §2.2 Screen Layout + §3 Fields)
+# ──────────────────────────────────────────────
+zones:
+  - id: zone-header
+    name: "Filter Panel"
+    type: fixed
+    priority: 1
+    dataBinding: "viewModel.offerings, viewModel.resources"
+    fields:
+      - "serviceOffering (lookup: required, source: srv-cat-svc active offerings)"
+      - "dateFrom (date-input: required, default: today)"
+      - "dateTo (date-input: required, default: today + search.lookaheadDays)"
+      - "resourceFilter (lookup: optional, source: srv-res-svc)"
+      - "searchAction (action: search, enabled when: offering selected + date range valid)"
+
+  - id: zone-results
+    name: "Slot Results"
+    type: fixed
+    priority: 2
+    dataBinding: "viewModel.slots[]"
+    fields:
+      - "viewModeToggle (radio: Day | Week | List, default: view.defaultMode)"
+      - "slotCard (display: date, time, duration, resourceName if display.showResourceName)"
+      - "selectedSlotSummary (display: shown when slot highlighted)"
+
+  - id: zone-waitlist-hint
+    name: "Waitlist Hint"
+    type: feature-gated
+    featureGate: "F-SRV-002-03"
+    priority: 3
+    absentRule: panel-section-hidden
+    fields:
+      - "noSlotsMessage (display: 'No available slots in this period.')"
+      - "joinWaitlistLink (action: navigate to F-SRV-002-03)"
+
+  - id: zone-extension
+    name: "Extension Area"
+    type: variable
+    priority: 4
+    extensionPoint: "ext.slotDiscovery.customPanel"
+    absentRule: collapse-up
+
+  - id: zone-actions
+    name: "Actions"
+    type: fixed
+    priority: 99
+    fields:
+      - "bookSelectedSlot (action: navigate to F-SRV-002-02, enabled when: slot selected, role: SRV_APT_EDITOR)"
+      - "cancel (action: cancel, always enabled)"
+
+# ──────────────────────────────────────────────
+# Absent-Rules (from §4 Edge Cases)
+# ──────────────────────────────────────────────
+absentRules:
+  - zoneId: zone-waitlist-hint
+    condition: "F-SRV-002-03 not selected in ProductConfig"
+    rule: panel-section-hidden
+    description: "Waitlist hint hidden when waitlist feature is not active"
+
+  - zoneId: zone-extension
+    condition: "No extension point filled for ext.slotDiscovery.customPanel"
+    rule: collapse-up
+    description: "Extension area hidden — results zone expands to fill"
+
+  - zoneId: zone-results
+    condition: "srv-apt-svc unavailable"
+    rule: collapse-up
+    description: "Results zone replaced by error banner"
+
+# ──────────────────────────────────────────────
+# Business Rules (from §3 + §5)
+# ──────────────────────────────────────────────
+businessRules:
+  - type: stateCondition
+    rule: "Search disabled until offerings loaded (load-filters complete)"
+
+  - type: stateCondition
+    rule: "Book disabled until a slot is selected"
+
+  - type: roleGate
+    rule: "bookSelectedSlot requires SRV_APT_EDITOR; absent from DOM for SRV_APT_VIEWER"
+
+  - type: roleGate
+    rule: "joinWaitlistLink requires SRV_APT_EDITOR"
+
+  - type: actionConsequence
+    action: "bookSelectedSlot"
+    consequence: "Navigate to F-SRV-002-02 with context: { slotStart, slotEnd, resourceId, serviceOfferingId }"
+
+  - type: actionConsequence
+    action: "joinWaitlistLink"
+    consequence: "Navigate to F-SRV-002-03 with context: { serviceOfferingId, dateRange }"
+
+# ──────────────────────────────────────────────
+# Extension Zones
+# ──────────────────────────────────────────────
+extensionZones:
+  - id: zone-extension
+    extensionPoint: "ext.slotDiscovery.customPanel"
+    description: "Product teams can add panels below results (e.g., insurance eligibility, customer history)"
+    renderPosition: "after zone-results, before zone-actions"

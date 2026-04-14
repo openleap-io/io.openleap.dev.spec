@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.openleap.io/iam/authz/role.created.schema.json",
+  "title": "iam.authz.role.created",
+  "description": "New role defined",
+  "type": "object",
+  "required": [
+    "eventId",
+    "eventType",
+    "timestamp",
+    "tenantId",
+    "correlationId",
+    "producer",
+    "schemaVersion",
+    "payload"
+  ],
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique event identifier"
+    },
+    "eventType": {
+      "type": "string",
+      "const": "iam.authz.role.created",
+      "description": "Event type routing key"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 event timestamp"
+    },
+    "tenantId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Tenant context"
+    },
+    "correlationId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Correlation ID for tracing"
+    },
+    "causationId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "ID of the causing event or command"
+    },
+    "producer": {
+      "type": "string",
+      "const": "iam-authz-svc",
+      "description": "Producing service"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Schema version"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Event-specific payload for iam.authz.role.created",
+      "properties": {
+        "roleId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Affected role identifier"
+        },
+        "principalId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Acting principal"
+        }
+      },
+      "required": [
+        "roleId"
+      ]
+    }
+  }
+}

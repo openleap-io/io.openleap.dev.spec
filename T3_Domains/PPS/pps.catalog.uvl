@@ -1,0 +1,31 @@
+// pps.catalog.uvl — Catalog Root
+// Suite: pps (Production Planning & Scheduling)
+// Generated: 2026-04-04
+// Template: suite-catalog.uvl v1.0.0
+
+namespace pps
+
+features
+    PPS_UI {
+        description "Production Planning & Scheduling administrative features"
+    }
+
+        mandatory
+            F_PPS_001 {
+                description "Production Planning Core"
+                uvl "uvl/compositions/F-PPS-001.uvl"
+            }
+            F_PPS_002 {
+                description "Shop Floor Execution"
+                uvl "uvl/compositions/F-PPS-002.uvl"
+            }
+            F_PPS_003 {
+                description "Inventory & Warehouse"
+                uvl "uvl/compositions/F-PPS-003.uvl"
+            }
+
+constraints
+    F_PPS_001 => IAM_UI
+    F_PPS_002 => IAM_UI
+    F_PPS_003 => IAM_UI
+    F_PPS_002 => F_PPS_001

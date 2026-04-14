@@ -1,0 +1,11 @@
+// F-IAM-001-02 — Create Service Principal
+// Generated: 2026-04-03
+// Template: TPL-UVL-LEAF v1.0.0
+
+namespace F_IAM_001_02
+
+features
+    F_IAM_001_02
+        pagination {
+            Integer pageSize default 25
+        }

@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/srv/ent/entitlement.activated",
+  "title": "EntitlementActivated",
+  "description": "Raised when a customer entitlement has been activated.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "entitlementId"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "entitlementId": { "type": "string", "format": "uuid" }
+  }
+}

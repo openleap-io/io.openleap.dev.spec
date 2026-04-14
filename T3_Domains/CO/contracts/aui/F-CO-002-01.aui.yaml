@@ -1,0 +1,87 @@
+# Screen Contract (AUI) — F-CO-002-01
+# Feature: Define Overhead Keys
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-CO-002-01
+name: "Define Overhead Keys"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-overhead-keys
+        description: "Load overhead key list"
+      - task: fill-form
+        description: "User creates or edits an overhead key"
+        operator: enabling
+        enabledBy: load-overhead-keys
+      - task: validate-and-submit
+        description: "Validate and save overhead key"
+        operator: enabling
+        enabledBy: fill-form
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Back navigation (link)"
+      - "Page title (display)"
+      - "Add Key (action: primary)"
+
+  - id: zone-filters
+    name: "Filter Bar"
+    type: fixed
+    priority: 2
+    dataBinding: "filters"
+    fields:
+      - "Search (text input)"
+      - "Status filter (select: ACTIVE|INACTIVE|All)"
+
+  - id: zone-core
+    name: "Core Content"
+    type: fixed
+    priority: 3
+    dataBinding: "content"
+    fields:
+      - "Key ID (display)"
+      - "Key Name (display)"
+      - "Base Cost Element (display)"
+      - "Rate % (display)"
+      - "Status (display: ACTIVE|INACTIVE)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.overheadKeyActions"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Cancel (action)"
+      - "Save (action: primary)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-actions
+      action: "Save"
+      requiresRole: "CO_CONTROLLER"
+  stateConditions:
+    - action: "Save"
+      enabledWhen: "form.isValid == true"
+  actionConsequences:
+    - action: "Save"
+      onSuccess: "navigate('list') + toast('co.F-CO-002-01.action.save.success')"

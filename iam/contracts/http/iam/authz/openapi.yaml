@@ -1,0 +1,258 @@
+# OpenAPI Contract — iam-authz-svc
+# Generated: 2026-04-03
+# Convention: contracts/http/iam/authz/openapi.yaml
+#
+# Machine-readable companion to domain-specs/iam_authz-spec.md §6.
+
+openapi: 3.1.0
+
+info:
+  title: "IAM Authorization API"
+  version: "1.0.0"
+  description: |
+    REST API for the Authorization domain within the IAM suite.
+    Provides fine-grained RBAC and ABAC authorization. Manages roles, permissions, policies, and role assignments. Answers 'Can principal X do action Y on resource Z?' with sub-10ms latency.
+  contact:
+    name: IAM Team
+    email: iam-team@openleap.io
+  license:
+    name: Proprietary
+
+servers:
+  - url: http://localhost:8082
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+x-owner: team-iam
+x-suite: iam
+x-domain: authz
+
+tags:
+  - name: check
+  - name: delegations
+  - name: policies
+  - name: roles
+
+paths:
+
+  /api/iam/authz/v1/roles:
+    post:
+      operationId: create_role
+      summary: "Create role"
+      tags: [roles]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/authz/v1/roles:
+    get:
+      operationId: list_roles
+      summary: "List roles"
+      tags: [roles]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/authz/v1/roles/{id}:
+    get:
+      operationId: get_role
+      summary: "Get role"
+      tags: [roles]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/authz/v1/roles/{id}:
+    put:
+      operationId: update_role
+      summary: "Update role"
+      tags: [roles]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/authz/v1/roles/{id}/assignments:
+    post:
+      operationId: assign_role
+      summary: "Assign role"
+      tags: [roles]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/authz/v1/roles/{id}/assignments/{assignmentId}:
+    delete:
+      operationId: revoke_role
+      summary: "Revoke role"
+      tags: [roles]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/authz/v1/check:
+    get:
+      operationId: check_permission
+      summary: "Check permission"
+      tags: [check]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/authz/v1/policies:
+    post:
+      operationId: create_abac_policy
+      summary: "Create ABAC policy"
+      tags: [policies]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/authz/v1/policies:
+    get:
+      operationId: list_policies
+      summary: "List policies"
+      tags: [policies]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/authz/v1/delegations:
+    post:
+      operationId: create_delegation
+      summary: "Create delegation"
+      tags: [delegations]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearer: []

@@ -1,0 +1,60 @@
+openapi: 3.1.0
+info:
+  title: SD Delivery Service
+  version: 1.0.0
+  description: |
+    Outbound delivery planning and proof of delivery for the SD suite.
+
+    Full endpoint specification derived from domain-specs/sd_dlv-spec.md §6.
+  contact:
+    name: team-sd
+    email: sd-team@openleap.io
+  x-owner: team-sd
+  x-suite: sd
+  x-domain: dlv
+
+servers:
+  - url: http://localhost:8304
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+paths:
+  /api/sd/dlv/v1:
+    get:
+      summary: Service root / health
+      operationId: getServiceInfo
+      tags: [health]
+      responses:
+        '200':
+          description: Service info
+
+  /api/sd/dlv/v1/deliveries:
+    post:
+      summary: Create delivery from sales order
+      operationId: createDelivery
+      tags: [deliveries]
+      responses:
+        '201':
+          description: Delivery created
+
+  /api/sd/dlv/v1/proof-of-delivery:
+    post:
+      summary: Record proof of delivery
+      operationId: recordPod
+      tags: [pod]
+      responses:
+        '201':
+          description: POD recorded
+
+  # Full paths defined in domain-specs/sd_dlv-spec.md §6.
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

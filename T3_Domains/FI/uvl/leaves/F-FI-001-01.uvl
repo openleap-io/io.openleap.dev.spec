@@ -1,0 +1,16 @@
+namespace fi.gl.journal
+
+features
+    F_FI_001_01 { description "Journal Entry CRUD" }
+        mandatory
+            F_FI_001_01_CREATE { description "Create Journal Entry" }
+            F_FI_001_01_VIEW { description "View Journal Entry" }
+            F_FI_001_01_POST { description "Post Journal Entry" }
+        optional
+            F_FI_001_01_DRAFT { description "Save as Draft" }
+            F_FI_001_01_ATTACH { description "Attach Supporting Documents" }
+
+constraints
+    F_FI_001_01_POST => F_FI_001_01_CREATE
+    F_FI_001_01_DRAFT => F_FI_001_01_CREATE
+    F_FI_001_01_ATTACH => F_FI_001_01_VIEW

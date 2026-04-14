@@ -1,0 +1,19 @@
+// Composition UVL: F-CRM-008 — Calendar & Scheduling
+// Template: feature-composition.uvl v1.0.0
+// Generated: 2026-04-03
+
+namespace crm
+
+imports
+    crm.F_CRM_008_01
+    crm.F_CRM_008_02
+    crm.F_CRM_008_03
+    crm.F_CRM_008_04
+
+features
+    F_CRM_008
+        optional
+            F_CRM_008_01  // Calendar View
+            F_CRM_008_02  // Calendar Sync Settings
+            F_CRM_008_03  // Booking Link Manager
+            F_CRM_008_04  // Availability Configurator

@@ -1,0 +1,143 @@
+# Screen Contract (AUI) — F-SRV-002-02 Booking Lifecycle
+#
+# Companion of: F-SRV-002-02.md
+# Derived from: §2 journey, §3 fields, §4 edge cases
+
+featureId: F-SRV-002-02
+name: "Booking Lifecycle"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-appointment
+        description: "Load appointment detail (existing or from slot context)"
+
+      - task: view-details
+        description: "Display appointment fields, status, customer, resource"
+        operator: enabling
+        enabledBy: load-appointment
+
+      - task: view-history
+        description: "Display status history timeline"
+        operator: concurrent
+        # Concurrent with view-details — side panel or tab
+
+      - task: reserve
+        description: "Reserve the appointment (from PROPOSED)"
+        operator: enabling
+        enabledBy: view-details
+        # Visible only when status = PROPOSED
+
+      - task: confirm
+        description: "Confirm the reservation (from RESERVED)"
+        operator: enabling
+        enabledBy: reserve
+        # Visible only when status = RESERVED
+
+      - task: reschedule
+        description: "Navigate to Slot Discovery for new slot (from CONFIRMED)"
+        operator: optional
+        featureGate: "reschedule.allowAfterConfirm"
+        absentRule: panel-section-hidden
+
+      - task: cancel
+        description: "Cancel the appointment with optional reason"
+        operator: optional
+        # Available for non-terminal statuses
+
+zones:
+  - id: zone-header
+    name: "Status & Countdown"
+    type: fixed
+    priority: 1
+    dataBinding: "viewModel.appointment.status, viewModel.appointment.reservationExpiresAt"
+    fields:
+      - "statusBadge (display: current lifecycle state)"
+      - "countdownTimer (display: TTL remaining, gated by reservation.showCountdown, absent when not RESERVED)"
+
+  - id: zone-details
+    name: "Appointment Details"
+    type: fixed
+    priority: 2
+    dataBinding: "viewModel.appointment"
+    fields:
+      - "serviceOfferingName (display)"
+      - "customerName (display)"
+      - "customerContact (display: phone + email, gated by display.showCustomerContact)"
+      - "dateTime (display: start + end)"
+      - "resourceName (display)"
+      - "notes (textarea: optional, max 2000 chars)"
+
+  - id: zone-history
+    name: "Status History"
+    type: fixed
+    priority: 3
+    dataBinding: "viewModel.history[]"
+    fields:
+      - "historyEntry (display: timestamp, status, actor)"
+
+  - id: zone-extension
+    name: "Extension Area"
+    type: variable
+    priority: 4
+    extensionPoint: "ext.booking.customPanel"
+    absentRule: collapse-up
+
+  - id: zone-actions
+    name: "Actions"
+    type: fixed
+    priority: 99
+    fields:
+      - "reserve (action: reserve, visible when: PROPOSED, role: SRV_APT_EDITOR)"
+      - "confirm (action: confirm, visible when: RESERVED + not expired, role: SRV_APT_EDITOR)"
+      - "reschedule (action: navigate to F-SRV-002-01, visible when: CONFIRMED + reschedule.allowAfterConfirm, role: SRV_APT_EDITOR)"
+      - "cancel (action: cancel, visible when: non-terminal, role: SRV_APT_EDITOR)"
+      - "back (action: navigate back, always visible)"
+
+absentRules:
+  - zoneId: zone-extension
+    condition: "No extension point filled for ext.booking.customPanel"
+    rule: collapse-up
+    description: "Extension area hidden"
+
+businessRules:
+  - type: stateCondition
+    rule: "Reserve visible only when status = PROPOSED"
+
+  - type: stateCondition
+    rule: "Confirm visible only when status = RESERVED and TTL not expired"
+
+  - type: stateCondition
+    rule: "Reschedule visible only when status = CONFIRMED and reschedule.allowAfterConfirm = true"
+
+  - type: stateCondition
+    rule: "Cancel visible for all non-terminal statuses (PROPOSED, RESERVED, CONFIRMED)"
+
+  - type: roleGate
+    rule: "All mutation actions require SRV_APT_EDITOR; absent from DOM for SRV_APT_VIEWER"
+
+  - type: roleGate
+    rule: "Override cancellation policy requires SRV_APT_ADMIN"
+
+  - type: actionConsequence
+    action: "reserve"
+    consequence: "POST /api/srv/apt/v1/appointments → status = RESERVED"
+
+  - type: actionConsequence
+    action: "confirm"
+    consequence: "POST /api/srv/apt/v1/appointments/{id}/confirm → status = CONFIRMED, event: srv.apt.appointment.booked"
+
+  - type: actionConsequence
+    action: "reschedule"
+    consequence: "Navigate to F-SRV-002-01 with pre-filled offering and customer context"
+
+  - type: actionConsequence
+    action: "cancel"
+    consequence: "POST /api/srv/apt/v1/appointments/{id}/cancel → status = CANCELLED, event: srv.apt.appointment.cancelled"
+
+extensionZones:
+  - id: zone-extension
+    extensionPoint: "ext.booking.customPanel"
+    description: "Product-specific panels (e.g., insurance eligibility, entitlement balance)"
+    renderPosition: "after zone-history, before zone-actions"

@@ -1,0 +1,86 @@
+# Screen Contract (AUI) — F-OPS-003-01
+# Feature: Time Entry
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-OPS-003-01
+name: "Time Entry"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-entries
+        description: "Load existing time entries for selected week"
+      - task: add-entries
+        description: "User adds or edits time entries"
+        operator: enabling
+        enabledBy: load-entries
+      - task: submit-timesheet
+        description: "User submits all draft entries for approval"
+        operator: enabling
+        enabledBy: add-entries
+
+zones:
+  - id: zone-header
+    name: "Page Header"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Page title (display)"
+      - "Week selector (date range)"
+      - "Add Entry button"
+
+  - id: zone-core
+    name: "Time Entry Table"
+    type: fixed
+    priority: 2
+    dataBinding: "entries"
+    fields:
+      - "Date (display)"
+      - "Work Order / Project (display)"
+      - "Hours (display)"
+      - "Billable flag (display: checkbox)"
+      - "Status (display: DRAFT|SUBMITTED|APPROVED|REJECTED)"
+
+  - id: zone-summary
+    name: "Week Summary"
+    type: fixed
+    priority: 3
+    dataBinding: "_meta"
+    fields:
+      - "Total hours this week (display)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.timeEntryCustomFields"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Save Draft (action)"
+      - "Submit Week (action: primary)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-actions
+      action: "Submit Week"
+      requiresRole: "TECHNICIAN|CONSULTANT|FIELD_ENGINEER|OPERATIONS_MANAGER"
+  stateConditions:
+    - action: "Submit Week"
+      enabledWhen: "entries.anyDraft == true"
+  actionConsequences:
+    - action: "Submit Week"
+      onSuccess: "reload-entries + toast('ops.F-OPS-003-01.action.submit.success')"

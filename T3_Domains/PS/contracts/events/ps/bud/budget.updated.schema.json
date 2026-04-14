@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.openleap.io/ps/bud/budget.updated.schema.json",
+  "title": "ps.bud.budget.updated",
+  "description": "Budget plan modified",
+  "type": "object",
+  "required": [
+    "eventId",
+    "eventType",
+    "timestamp",
+    "tenantId",
+    "correlationId",
+    "producer",
+    "schemaVersion",
+    "payload"
+  ],
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique event identifier"
+    },
+    "eventType": {
+      "type": "string",
+      "const": "ps.bud.budget.updated",
+      "description": "Event routing key"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 event timestamp"
+    },
+    "tenantId": {
+      "type": "string",
+      "description": "Tenant identifier"
+    },
+    "correlationId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Correlation ID for tracing"
+    },
+    "causationId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "ID of the causing command/event"
+    },
+    "producer": {
+      "type": "string",
+      "const": "ps-bud-svc",
+      "description": "Producing service"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Schema version (semver)"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Event-specific payload for ps.bud.budget.updated",
+      "properties": {
+        "budgetId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Identifier of the affected budget"
+        }
+      },
+      "required": [
+        "budgetId"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

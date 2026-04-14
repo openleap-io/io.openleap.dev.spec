@@ -1,0 +1,86 @@
+# Screen Contract (AUI) — F-CO-004-01
+# Feature: Profitability Report Browser
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-CO-004-01
+name: "Profitability Report Browser"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-reports
+        description: "Load profitability reports for period and dimension"
+      - task: fill-filters
+        description: "User selects period and dimension"
+        operator: enabling
+        enabledBy: load-reports
+      - task: navigate-to-detail
+        description: "User selects segment for margin detail"
+        operator: enabling
+        enabledBy: fill-filters
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Back navigation (link)"
+      - "Page title (display)"
+
+  - id: zone-filters
+    name: "Filter Bar"
+    type: fixed
+    priority: 2
+    dataBinding: "filters"
+    fields:
+      - "Period selector (month/year)"
+      - "Dimension selector (select: COMPANY|DIVISION|CUSTOMER|PRODUCT)"
+
+  - id: zone-core
+    name: "Report List"
+    type: fixed
+    priority: 3
+    dataBinding: "content"
+    fields:
+      - "Segment ID (display)"
+      - "Revenue (display)"
+      - "COGS (display)"
+      - "Contribution Margin (display)"
+      - "Contribution Margin % (display)"
+      - "Preliminary badge (conditional display)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.reportActions"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Cancel (action)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-core
+      action: "Navigate"
+      requiresRole: "ANY_AUTHENTICATED"
+  stateConditions:
+    - action: "Navigate"
+      enabledWhen: "row.selected == true"
+  actionConsequences:
+    - action: "Navigate"
+      onSuccess: "navigate('F-CO-004-02', { segmentId: row.segmentId, period: filters.period })"

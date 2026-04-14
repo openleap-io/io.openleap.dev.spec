@@ -1,0 +1,13 @@
+namespace sd.dlv.proof-of-delivery
+
+features
+    F_SD_002_03 {
+        description "Proof of Delivery"
+        Boolean signature_required {
+            description "Requires a captured customer signature before a delivery can be confirmed as received"
+            default false
+        }
+    }
+
+constraints
+    F_SD_002_03 => F_SD_002_02

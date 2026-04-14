@@ -1,0 +1,96 @@
+# Screen Contract (AUI) — F-SD-003-02
+# Feature: Invoice Review
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-SD-003-02
+name: "Invoice Review"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-invoices
+        description: "Load invoice list from sd-bil-svc"
+      - task: browse-and-filter
+        description: "User filters invoices by status, run, customer"
+        operator: enabling
+        enabledBy: load-invoices
+      - task: review-and-act
+        description: "User approves or holds individual invoices"
+        operator: enabling
+        enabledBy: browse-and-filter
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Page title (display)"
+
+  - id: zone-filters
+    name: "Filter Bar"
+    type: fixed
+    priority: 2
+    dataBinding: "filters"
+    fields:
+      - "Status filter (select)"
+      - "Billing Run filter (select)"
+      - "Customer search (text input)"
+
+  - id: zone-core
+    name: "Invoice List"
+    type: fixed
+    priority: 3
+    dataBinding: "invoices"
+    fields:
+      - "Invoice Number (display)"
+      - "Customer (display)"
+      - "Status (display: badge)"
+      - "Amount (display)"
+      - "Approve (action per row — when GENERATED)"
+      - "Hold (action per row — when GENERATED)"
+      - "View (action per row)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.invoiceReviewActions"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Pagination"
+    type: fixed
+    priority: 99
+    dataBinding: "pagination"
+    fields:
+      - "Previous (action)"
+      - "Page indicator (display)"
+      - "Next (action)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-core
+      action: "Approve"
+      requiresRole: "FINANCE_MANAGER"
+    - zone: zone-core
+      action: "Hold"
+      requiresRole: "FINANCE_MANAGER"
+  stateConditions:
+    - action: "Approve"
+      enabledWhen: "invoice.status == 'GENERATED'"
+    - action: "Hold"
+      enabledWhen: "invoice.status == 'GENERATED'"
+  actionConsequences:
+    - action: "Approve"
+      onSuccess: "updateStatus('APPROVED') + toast('sd.F-SD-003-02.action.approve.success')"
+    - action: "Hold"
+      onSuccess: "updateStatus('HELD') + toast('sd.F-SD-003-02.action.hold.success')"

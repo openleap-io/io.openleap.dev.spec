@@ -1,0 +1,10 @@
+namespace pps.mes
+
+features
+    F_PPS_001_02 {
+        description "See feature-spec.md"
+    }
+
+        // Attributes
+        Boolean show_closed_orders { default false, bindingTime runtime }
+        Integer page_size { default 25, bindingTime runtime }

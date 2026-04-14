@@ -1,0 +1,99 @@
+# Screen Contract (AUI) — F-PPS-003-03
+# Feature: Physical Inventory
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-PPS-003-03
+name: "Physical Inventory"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-reference-data
+        description: "Load inventory documents and plant/location options"
+      - task: fill-form
+        description: "User creates document and enters count quantities"
+        operator: enabling
+        enabledBy: load-reference-data
+      - task: validate-and-submit
+        description: "Validate counts and post differences"
+        operator: enabling
+        enabledBy: fill-form
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Back navigation (link)"
+      - "Page title (display)"
+
+  - id: zone-filters
+    name: "Document Setup"
+    type: fixed
+    priority: 2
+    dataBinding: "documentConfig"
+    fields:
+      - "Plant (select)"
+      - "Storage Location (select)"
+
+  - id: zone-core
+    name: "Inventory Items"
+    type: fixed
+    priority: 3
+    dataBinding: "inventoryItems"
+    fields:
+      - "Material (display)"
+      - "Book Quantity (display)"
+      - "Count Quantity (number input)"
+      - "Difference (display, calculated)"
+      - "Unit (display)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.inventoryDocumentActions"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Cancel (action)"
+      - "Create Inventory Doc (action)"
+      - "Save Count (action)"
+      - "Post Differences (action: primary)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-actions
+      action: "Post Differences"
+      requiresRole: "WAREHOUSE_MANAGER"
+    - zone: zone-actions
+      action: "Create Inventory Doc"
+      requiresRole: "WAREHOUSE_MANAGER"
+  stateConditions:
+    - action: "Post Differences"
+      enabledWhen: "document.status == 'COUNT_ENTERED' AND document.hasDifferences == true AND document.recountRequired == false"
+    - action: "Save Count"
+      enabledWhen: "document.status == 'CREATED'"
+    - action: "Create Inventory Doc"
+      enabledWhen: "documentConfig.plant != null AND documentConfig.storageLocation != null"
+  actionConsequences:
+    - action: "Create Inventory Doc"
+      onSuccess: "loadDocument() + toast('pps.F-PPS-003-03.action.create.success')"
+    - action: "Save Count"
+      onSuccess: "calculateDifferences() + toast('pps.F-PPS-003-03.action.saveCount.success')"
+    - action: "Post Differences"
+      onSuccess: "navigate('history') + toast('pps.F-PPS-003-03.action.post.success')"

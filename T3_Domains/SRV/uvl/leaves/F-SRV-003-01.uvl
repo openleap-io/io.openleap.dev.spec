@@ -1,0 +1,7 @@
+namespace srv.F-SRV-003-01
+features
+    F-SRV-003-01
+        pagination.pageSize             Integer 25
+        pagination.pageSize.bindingTime String "deploy"
+constraints
+    // Intra-suite — all F-SRV-003 children are mandatory together

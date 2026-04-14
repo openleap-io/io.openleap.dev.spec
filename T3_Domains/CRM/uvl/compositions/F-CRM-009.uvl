@@ -1,0 +1,17 @@
+// Composition UVL: F-CRM-009 — Document Management
+// Template: feature-composition.uvl v1.0.0
+// Generated: 2026-04-03
+
+namespace crm
+
+imports
+    crm.F_CRM_009_01
+    crm.F_CRM_009_02
+    crm.F_CRM_009_03
+
+features
+    F_CRM_009
+        optional
+            F_CRM_009_01  // Document Library
+            F_CRM_009_02  // Document Upload & Attach
+            F_CRM_009_03  // Document Template Generator

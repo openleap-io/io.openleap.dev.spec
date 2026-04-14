@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sd.shp.shipment.dispatched",
+  "title": "sd.shp.shipment.dispatched",
+  "description": "Event published when a shipment is dispatched (goods issue posted) by sd-shp-svc",
+  "type": "object",
+  "required": ["eventId", "eventType", "timestamp", "tenantId", "correlationId", "producer", "schemaVersion", "payload"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "eventType": { "type": "string", "const": "sd.shp.shipment.dispatched" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "correlationId": { "type": "string", "format": "uuid" },
+    "causationId": { "type": "string", "format": "uuid" },
+    "producer": { "type": "string", "const": "sd-shp-svc" },
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "payload": {
+      "type": "object",
+      "required": ["shipmentId", "deliveryId", "customerId", "carrier", "dispatchedAt"],
+      "properties": {
+        "shipmentId": { "type": "string", "format": "uuid" },
+        "shipmentNumber": { "type": "string" },
+        "deliveryId": { "type": "string", "format": "uuid" },
+        "customerId": { "type": "string", "format": "uuid" },
+        "carrier": { "type": "string" },
+        "serviceLevel": { "type": "string", "enum": ["EXPRESS", "STANDARD", "ECONOMY"] },
+        "trackingNumber": { "type": "string" },
+        "dispatchedAt": { "type": "string", "format": "date-time" },
+        "estimatedDeliveryDate": { "type": "string", "format": "date" }
+      }
+    }
+  }
+}

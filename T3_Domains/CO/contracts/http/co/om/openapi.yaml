@@ -1,0 +1,45 @@
+openapi: 3.1.0
+info:
+  title: CO Overhead Management Service
+  version: 1.0.0
+  description: |
+    Overhead Management (OM) domain service for the Controlling suite.
+    Manages overhead keys, allocation cycles, and overhead distribution from cost centers to cost objects.
+
+    Full endpoint specification derived from domain-specs/co_om-spec.md §6.
+  contact:
+    name: team-co
+    email: co-team@openleap.io
+  x-owner: team-co
+  x-suite: co
+  x-domain: om
+
+servers:
+  - url: http://localhost:TBD
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+paths:
+  /api/co/om/v1:
+    get:
+      summary: Service root / health
+      operationId: getServiceInfo
+      tags: [health]
+      responses:
+        '200':
+          description: Service info
+
+  # Full paths defined in domain-specs/co_om-spec.md §6.
+  # This stub provides the OpenAPI metadata contract per blueprint §2.3.1.
+  # Implementation-complete OpenAPI MUST be generated from the domain spec.
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

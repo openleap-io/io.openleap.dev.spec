@@ -1,0 +1,10 @@
+namespace co
+
+features
+    F_CO_003_03 {
+        description "See feature-spec.md"
+    }
+
+        // Attributes
+        Boolean varianceCategoryBreakdown { default true, bindingTime deploy }
+        Boolean drillThroughToOPS { default false, bindingTime deploy }

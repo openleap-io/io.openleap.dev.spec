@@ -1,0 +1,12 @@
+namespace param.si
+
+features
+    F_PARAM_004 { description "Unit Management" }
+        mandatory
+            F_PARAM_004_01 { description "Browse Units & Prefixes" }
+        optional
+            F_PARAM_004_02 { description "Manage Custom Units" }
+            F_PARAM_004_03 { description "Unit Conversion Tool" }
+
+constraints
+    F_PARAM_004_02 => F_PARAM_004_01

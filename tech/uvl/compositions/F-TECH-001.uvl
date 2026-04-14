@@ -1,0 +1,10 @@
+namespace tech.dms
+features
+    F_TECH_001 { description "Document Management" }
+        mandatory
+            F_TECH_001_01 { description "Browse Documents" }
+            F_TECH_001_02 { description "Manage Retention Policies" }
+        optional
+            F_TECH_001_03 { description "Document Audit Trail" }
+constraints
+    F_TECH_001_03 => F_TECH_001_01

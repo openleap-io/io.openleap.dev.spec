@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/fi/slc/subledger.reconciled",
+  "title": "SubledgerReconciled",
+  "description": "Emitted when a subledger is reconciled against the general ledger.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "subledgerId"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "subledgerId": { "type": "string", "format": "uuid" }
+  }
+}

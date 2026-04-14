@@ -1,0 +1,89 @@
+# Screen Contract (AUI) — F-SD-003-03
+# Feature: Credit Note Management
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-SD-003-03
+name: "Credit Note Management"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-credit-notes
+        description: "Load credit note list from sd-bil-svc"
+      - task: create-or-review
+        description: "User creates a new credit note or reviews existing ones"
+        operator: enabling
+        enabledBy: load-credit-notes
+      - task: approve-and-post
+        description: "Finance manager approves and posts credit note"
+        operator: enabling
+        enabledBy: create-or-review
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Page title (display)"
+      - "New Credit Note (action)"
+
+  - id: zone-core
+    name: "Credit Note List"
+    type: fixed
+    priority: 3
+    dataBinding: "creditNotes"
+    fields:
+      - "Credit Note Number (display)"
+      - "Customer (display)"
+      - "Status (display: badge)"
+      - "Credit Amount (display — negative)"
+      - "Approve (action per row — when DRAFT)"
+      - "Post (action per row — when APPROVED)"
+      - "View (action per row)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.creditNoteFields"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Pagination"
+    type: fixed
+    priority: 99
+    dataBinding: "pagination"
+    fields:
+      - "Previous (action)"
+      - "Page indicator (display)"
+      - "Next (action)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-core
+      action: "Approve"
+      requiresRole: "FINANCE_MANAGER"
+    - zone: zone-core
+      action: "Post"
+      requiresRole: "FINANCE_MANAGER"
+  stateConditions:
+    - action: "Approve"
+      enabledWhen: "creditNote.status == 'DRAFT'"
+    - action: "Post"
+      enabledWhen: "creditNote.status == 'APPROVED'"
+  actionConsequences:
+    - action: "Approve"
+      onSuccess: "updateStatus('APPROVED') + toast('sd.F-SD-003-03.action.approve.success')"
+    - action: "Post"
+      onSuccess: "updateStatus('POSTED') + toast('sd.F-SD-003-03.action.post.success')"
+    - action: "New Credit Note"
+      onSuccess: "navigate('credit-note-form')"

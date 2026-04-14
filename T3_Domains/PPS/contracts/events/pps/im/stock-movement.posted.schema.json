@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pps.im.stock-movement.posted",
+  "title": "pps.im.stock-movement.posted",
+  "description": "Event published when a stock movement (GR, GI, or Transfer) has been posted",
+  "type": "object",
+  "required": ["eventId", "eventType", "timestamp", "tenantId", "correlationId", "producer", "schemaVersion", "payload"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "eventType": { "type": "string", "const": "pps.im.stock-movement.posted" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "correlationId": { "type": "string", "format": "uuid" },
+    "causationId": { "type": "string", "format": "uuid" },
+    "producer": { "type": "string", "const": "pps-im-svc" },
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "payload": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "movementId": { "type": "string" },
+        "movementType": { "type": "string", "enum": ["GR", "GI", "TRANSFER", "REVERSAL"] },
+        "material": { "type": "string" },
+        "plant": { "type": "string" },
+        "storageLocation": { "type": "string" },
+        "quantity": { "type": "number" },
+        "unit": { "type": "string" },
+        "postingDate": { "type": "string", "format": "date" },
+        "referenceDocument": { "type": "string" }
+      }
+    }
+  }
+}

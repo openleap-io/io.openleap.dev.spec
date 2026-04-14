@@ -1,0 +1,11 @@
+namespace srv.F-SRV-007
+features
+    F-SRV-007
+        mandatory
+            F-SRV-007-01   // Intent Derivation
+            F-SRV-007-02   // Correction & Reversal
+        optional
+            F-SRV-007-03   // Reconciliation View
+
+constraints
+    // Cross-node constraints — see F-SRV-007.md SS2.2

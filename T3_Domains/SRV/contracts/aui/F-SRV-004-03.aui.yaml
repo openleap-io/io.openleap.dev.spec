@@ -1,0 +1,78 @@
+# Screen Contract (AUI) — F-SRV-004-03 Proof-of-Service
+featureId: F-SRV-004-03
+name: "Proof-of-Service"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-proofs
+        description: "Fetch existing proof artifacts for session"
+      - task: view-proof-list
+        description: "View list of attached proofs"
+        operator: enabling
+        enabledBy: load-proofs
+      - task: attach-proof
+        description: "Select type, upload/capture file, save"
+        operator: optional
+        featureGate: "role == SRV_SES_EDITOR"
+        absentRule: collapse-up
+      - task: save-proof
+        description: "Upload to DMS and create proof reference on session"
+        operator: enabling
+        enabledBy: attach-proof
+
+zones:
+  - id: zone-proof-list
+    name: "Proof Artifact List"
+    type: fixed
+    priority: 1
+    dataBinding: "viewModel.proofs[]"
+    fields:
+      - "type (display: badge, values: SIGNATURE|DOCUMENT|PHOTO)"
+      - "description (display: text)"
+      - "capturedAt (display: datetime)"
+      - "viewAction (action: download-from-dms)"
+      - "deleteAction (action: delete-proof, roleGate: SRV_SES_EDITOR)"
+      - "attachAction (action: open-capture-form, roleGate: SRV_SES_EDITOR)"
+
+  - id: zone-capture
+    name: "Proof Capture Form (overlay)"
+    type: fixed
+    priority: 2
+    dataBinding: "viewModel.newProof"
+    fields:
+      - "proofType (select: filtered by proof.allowedTypes, required, label: srv.ses.proof.typeLabel)"
+      - "file (input: file-upload OR signature-pad, required, label: srv.ses.proof.fileLabel)"
+      - "description (input: text, maxLength: 500, label: srv.ses.proof.descriptionLabel)"
+      - "upload (action: upload-proof, roleGate: SRV_SES_EDITOR)"
+      - "cancel (action: dismiss-form)"
+
+  - id: zone-extension
+    name: "Extension Area"
+    type: variable
+    priority: 3
+    extensionPoint: "ext.proof.customCapture"
+    absentRule: collapse-up
+
+absentRules:
+  - zoneId: zone-extension
+    condition: "No custom capture extension"
+    rule: collapse-up
+
+businessRules:
+  - type: stateCondition
+    rule: "proofType dropdown filtered by proof.allowedTypes attribute"
+  - type: stateCondition
+    rule: "If proof.requireAtLeastOne == true AND proofCount == 0, completion (F-SRV-004-01) blocked"
+  - type: roleGate
+    rule: "attachAction/deleteAction require SRV_SES_EDITOR"
+  - type: actionConsequence
+    action: upload-proof
+    consequence: "Upload file to DMS → POST /sessions/{id}/proofs {type, externalRefId} → list refresh"
+
+extensionZones:
+  - id: zone-extension
+    extensionPoint: "ext.proof.customCapture"
+    description: "Custom capture UI (e.g., biometric signature pad, specialized photo capture)"
+    renderPosition: "after zone-capture"

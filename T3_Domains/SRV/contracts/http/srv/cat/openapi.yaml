@@ -1,0 +1,8 @@
+openapi: "3.0.3"
+info:
+  title: "SRV Catalog API"
+  description: "OpenAPI contract for srv.cat service"
+  version: "1.0.0"
+paths: {}
+components:
+  schemas: {}

@@ -1,0 +1,21 @@
+// Composition UVL: F-CRM-017 — Configure-Price-Quote
+// Template: feature-composition.uvl v1.0.0
+// Generated: 2026-04-03
+
+namespace crm
+
+imports
+    crm.F_CRM_017_01
+    crm.F_CRM_017_02
+    crm.F_CRM_017_03
+    crm.F_CRM_017_04
+    crm.F_CRM_017_05
+
+features
+    F_CRM_017
+        optional
+            F_CRM_017_01  // Quote List
+            F_CRM_017_02  // Quote Builder
+            F_CRM_017_03  // Quote Approval Workflow
+            F_CRM_017_04  // Quote PDF Generation
+            F_CRM_017_05  // Quote Acceptance Portal

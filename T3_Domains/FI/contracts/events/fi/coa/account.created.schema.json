@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/fi/coa/account.created",
+  "title": "AccountCreated",
+  "description": "Emitted when a new GL account is created in the chart of accounts.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "accountId"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "accountId": { "type": "string", "format": "uuid" }
+  }
+}

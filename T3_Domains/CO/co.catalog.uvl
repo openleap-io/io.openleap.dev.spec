@@ -1,0 +1,43 @@
+// co.catalog.uvl — Catalog Root
+// Suite: co (Controlling)
+// Generated: 2026-04-04
+// Template: suite-catalog.uvl v1.0.0
+
+namespace co
+
+features
+    CO_UI {
+        description "Controlling administrative and analytical features"
+    }
+
+        mandatory
+            F_CO_001 {
+                description "Cost Center Management"
+                uvl "uvl/compositions/F-CO-001.uvl"
+            }
+            F_CO_002 {
+                description "Overhead & Allocation Management"
+                uvl "uvl/compositions/F-CO-002.uvl"
+            }
+            F_CO_003 {
+                description "Product Costing"
+                uvl "uvl/compositions/F-CO-003.uvl"
+            }
+
+        optional
+            F_CO_004 {
+                description "Profitability Analysis"
+                uvl "uvl/compositions/F-CO-004.uvl"
+            }
+
+constraints
+    // All CO features require IAM authentication
+    F_CO_001 => IAM_UI
+    F_CO_002 => IAM_UI
+    F_CO_003 => IAM_UI
+    F_CO_004 => IAM_UI
+
+    // Cross-composition dependencies
+    F_CO_002 => F_CO_001
+    F_CO_003 => F_CO_001
+    F_CO_004 => F_CO_003

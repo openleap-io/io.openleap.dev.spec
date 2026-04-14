@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/fi/ar/invoice.created",
+  "title": "InvoiceCreated",
+  "description": "Emitted when a new AR customer invoice is created.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "invoiceId"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "invoiceId": { "type": "string", "format": "uuid" }
+  }
+}

@@ -1,0 +1,70 @@
+# Screen Contract (AUI) — F-SRV-004-02 Outcome Recording
+featureId: F-SRV-004-02
+name: "Outcome Recording"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: open-completion-dialog
+        description: "Completion dialog triggered from F-SRV-004-01 'Complete' action"
+      - task: fill-outcome
+        description: "Select outcome code, enter notes, verify duration"
+        operator: enabling
+        enabledBy: open-completion-dialog
+      - task: confirm-completion
+        description: "Submit outcome and complete session"
+        operator: enabling
+        enabledBy: fill-outcome
+
+zones:
+  - id: zone-outcome-form
+    name: "Outcome Form (modal dialog)"
+    type: fixed
+    priority: 1
+    dataBinding: "viewModel.outcomeForm"
+    fields:
+      - "dialogTitle (display: text, label: srv.ses.outcome.title)"
+      - "outcomeCode (select: viewModel.outcomeCodes, required when: outcome.requireCode == true, label: srv.ses.outcome.codeLabel)"
+      - "outcomeNotes (input: textarea, maxLength: 2000, required when: outcome.requireNotes == true, label: srv.ses.outcome.notesLabel)"
+      - "deliveredDuration (input: number, min: 1, featureGate: outcome.showDuration == true, prefilled: viewModel.suggestedDuration, label: srv.ses.outcome.durationLabel)"
+      - "billableFlag (input: checkbox, default: true, label: srv.ses.outcome.billableLabel)"
+
+  - id: zone-outcome-extension
+    name: "Outcome Extension"
+    type: variable
+    priority: 2
+    extensionPoint: "ext.outcome.customFields"
+    absentRule: collapse-up
+
+  - id: zone-outcome-actions
+    name: "Dialog Actions"
+    type: fixed
+    priority: 99
+    fields:
+      - "confirmCompletion (action: confirm-completion, enabled when: requiredFieldsValid, label: srv.ses.outcome.confirmAction)"
+      - "cancel (action: dismiss-dialog)"
+
+absentRules:
+  - zoneId: zone-outcome-extension
+    condition: "No extension point filled for ext.outcome.customFields"
+    rule: collapse-up
+
+businessRules:
+  - type: stateCondition
+    rule: "outcomeCode required when outcome.requireCode == true"
+  - type: stateCondition
+    rule: "outcomeNotes required when outcome.requireNotes == true"
+  - type: stateCondition
+    rule: "deliveredDuration hidden when outcome.showDuration == false"
+  - type: stateCondition
+    rule: "confirmCompletion disabled until all required fields valid"
+  - type: actionConsequence
+    action: confirm-completion
+    consequence: "POST /sessions/{id}/complete {outcomeCode, outcomeNotes, deliveredDuration, billableFlag} → close dialog → session COMPLETED"
+
+extensionZones:
+  - id: zone-outcome-extension
+    extensionPoint: "ext.outcome.customFields"
+    description: "Industry-specific outcome fields (e.g., clinical scores, test results)"
+    renderPosition: "after zone-outcome-form, before zone-outcome-actions"

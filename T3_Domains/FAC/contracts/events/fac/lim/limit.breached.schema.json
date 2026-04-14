@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/fac/lim/limit.breached",
+  "title": "LimitBreached",
+  "description": "Emitted when a credit limit is breached during assignment eligibility check.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "policyId", "breachType", "scopeRef", "overageAmount"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "policyId": { "type": "string", "format": "uuid" },
+    "breachType": { "type": "string", "enum": ["HARD_DEBTOR", "SOFT_DEBTOR", "HARD_CLIENT", "SOFT_CLIENT", "CONCENTRATION", "PORTFOLIO"] },
+    "scopeRef": { "type": "string", "format": "uuid" },
+    "overageAmount": { "type": "number" },
+    "utilizationPct": { "type": "number", "minimum": 0, "maximum": 100 },
+    "receivableId": { "type": "string", "format": "uuid" }
+  }
+}

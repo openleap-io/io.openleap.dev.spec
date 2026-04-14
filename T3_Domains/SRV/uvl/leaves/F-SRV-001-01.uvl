@@ -1,0 +1,11 @@
+namespace srv.F-SRV-001-01
+
+features
+    F-SRV-001-01
+        pagination.pageSize             Integer 25
+        pagination.pageSize.bindingTime String "deploy"
+        display.showPricingHints             Boolean false
+        display.showPricingHints.bindingTime String "deploy"
+
+constraints
+    // No cross-suite requires — catalog is upstream

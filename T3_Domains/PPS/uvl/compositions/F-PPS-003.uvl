@@ -1,0 +1,12 @@
+namespace pps.im
+
+features
+    F_PPS_003 { description "Inventory & Warehouse" }
+        mandatory
+            F_PPS_003_01 { description "Stock Overview" }
+            F_PPS_003_02 { description "Goods Movement" }
+        optional
+            F_PPS_003_03 { description "Physical Inventory" }
+
+constraints
+    F_PPS_003_03 => F_PPS_003_01

@@ -1,0 +1,8 @@
+openapi: "3.0.3"
+info:
+  title: "COM CHK API"
+  description: "OpenAPI contract for com.chk service"
+  version: "1.0.0"
+paths: {}
+components:
+  schemas: {}

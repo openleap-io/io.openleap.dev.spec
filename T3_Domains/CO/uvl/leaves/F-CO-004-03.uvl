@@ -1,0 +1,10 @@
+namespace co
+
+features
+    F_CO_004_03 {
+        description "See feature-spec.md"
+    }
+
+        // Attributes
+        Boolean allowMultiplePCs { default false, bindingTime deploy }
+        Boolean requirePCForAll { default false, bindingTime deploy }

@@ -1,0 +1,71 @@
+# Screen Contract (AUI) — F-OPS-003-02
+# Feature: Project Status Board
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-OPS-003-02
+name: "Project Status Board"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-board
+        description: "Load project milestones, tasks, and logged hours"
+      - task: interact
+        description: "PM views and updates milestone statuses"
+        operator: enabling
+        enabledBy: load-board
+
+zones:
+  - id: zone-header
+    name: "Project Header"
+    type: fixed
+    priority: 1
+    dataBinding: "project"
+    fields:
+      - "Project name (display)"
+      - "Budget hours (display)"
+      - "Logged hours (display)"
+      - "Status Report button"
+      - "View toggle (KANBAN|GANTT)"
+
+  - id: zone-filters
+    name: "Filter Bar"
+    type: fixed
+    priority: 2
+    dataBinding: "filters"
+    fields:
+      - "Milestone filter (select)"
+
+  - id: zone-core
+    name: "Kanban Board"
+    type: fixed
+    priority: 3
+    dataBinding: "milestones"
+    fields:
+      - "Milestone column header with status badge"
+      - "Task cards (title, assignee, due date, logged hours)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.projectBoardWidgets"
+    absentRule: panel-section-hidden
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-core
+      action: "Update Milestone Status"
+      requiresRole: "PROJECT_MANAGER|OPERATIONS_MANAGER"
+  actionConsequences:
+    - action: "Update Milestone Status"
+      onSuccess: "reload-board + toast('ops.F-OPS-003-02.action.update.success')"
+    - action: "Status Report"
+      onSuccess: "open-pdf('project-status-report')"

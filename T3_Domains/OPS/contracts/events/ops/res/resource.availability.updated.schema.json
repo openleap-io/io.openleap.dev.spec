@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ops.res.resource.availability.updated",
+  "title": "ops.res.resource.availability.updated",
+  "description": "Event published when a resource availability block is created or removed",
+  "type": "object",
+  "required": ["eventId", "eventType", "timestamp", "tenantId", "correlationId", "producer", "schemaVersion", "payload"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "eventType": { "type": "string", "const": "ops.res.resource.availability.updated" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "correlationId": { "type": "string", "format": "uuid" },
+    "causationId": { "type": "string", "format": "uuid" },
+    "producer": { "type": "string", "const": "ops-res-svc" },
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "payload": {
+      "type": "object",
+      "required": ["resourceId", "changeType", "affectedFrom", "affectedTo"],
+      "properties": {
+        "resourceId": { "type": "string", "format": "uuid" },
+        "changeType": { "type": "string", "enum": ["BLOCKED", "UNBLOCKED"] },
+        "blockReason": { "type": "string", "enum": ["LEAVE", "TRAINING", "SICK", "OTHER"] },
+        "affectedFrom": { "type": "string", "format": "date" },
+        "affectedTo": { "type": "string", "format": "date" }
+      }
+    }
+  }
+}

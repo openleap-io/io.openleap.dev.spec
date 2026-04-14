@@ -1,0 +1,90 @@
+openapi: 3.1.0
+info:
+  title: SD Order Service
+  version: 1.0.0
+  description: |
+    Sales order creation, tracking, and amendment for the SD suite.
+
+    Full endpoint specification derived from domain-specs/sd_ord-spec.md §6.
+  contact:
+    name: team-sd
+    email: sd-team@openleap.io
+  x-owner: team-sd
+  x-suite: sd
+  x-domain: ord
+
+servers:
+  - url: http://localhost:8305
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+paths:
+  /api/sd/ord/v1:
+    get:
+      summary: Service root / health
+      operationId: getServiceInfo
+      tags: [health]
+      responses:
+        '200':
+          description: Service info
+
+  /api/sd/ord/v1/orders:
+    get:
+      summary: List sales orders
+      operationId: listOrders
+      tags: [orders]
+      responses:
+        '200':
+          description: Order list
+    post:
+      summary: Create sales order
+      operationId: createOrder
+      tags: [orders]
+      responses:
+        '201':
+          description: Order created
+
+  /api/sd/ord/v1/orders/{id}/confirm:
+    post:
+      summary: Confirm sales order
+      operationId: confirmOrder
+      tags: [orders]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Order confirmed
+
+  /api/sd/ord/v1/orders/{id}/timeline:
+    get:
+      summary: Get order fulfillment timeline
+      operationId: getOrderTimeline
+      tags: [orders]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Order timeline
+
+  # Full paths defined in domain-specs/sd_ord-spec.md §6.
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

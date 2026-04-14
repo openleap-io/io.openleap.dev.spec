@@ -1,0 +1,10 @@
+namespace co
+
+features
+    F_CO_003_02 {
+        description "See feature-spec.md"
+    }
+
+        // Attributes
+        Boolean requireApproval { default false, bindingTime deploy }
+        Boolean allowReleaseWithoutMark { default false, bindingTime deploy }

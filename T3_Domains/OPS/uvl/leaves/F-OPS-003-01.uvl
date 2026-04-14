@@ -1,0 +1,25 @@
+namespace ops.tim
+
+features
+    F_OPS_003_01 {
+        description "Time Entry"
+        optional
+            billableFlagVisibility {
+                description "Whether the billable checkbox is visible to users"
+                type String
+                values ["visible", "hidden"]
+                default "visible"
+            }
+            minimumEntryDuration {
+                description "Minimum time entry duration in hours"
+                type Real
+                values [0.25, 0.5, 1.0]
+                default 0.25
+            }
+            timesheetPeriod {
+                description "Period covered by a single timesheet submission"
+                type String
+                values ["DAILY", "WEEKLY"]
+                default "WEEKLY"
+            }
+    }

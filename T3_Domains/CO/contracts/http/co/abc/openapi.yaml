@@ -1,0 +1,45 @@
+openapi: 3.1.0
+info:
+  title: CO Activity-Based Costing Service
+  version: 1.0.0
+  description: |
+    Activity-Based Costing (ABC) domain service for the Controlling suite.
+    Calculates process costs by activity driver and distributes them to cost objects.
+
+    Full endpoint specification derived from domain-specs/co_abc-spec.md §6.
+  contact:
+    name: team-co
+    email: co-team@openleap.io
+  x-owner: team-co
+  x-suite: co
+  x-domain: abc
+
+servers:
+  - url: http://localhost:TBD
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+paths:
+  /api/co/abc/v1:
+    get:
+      summary: Service root / health
+      operationId: getServiceInfo
+      tags: [health]
+      responses:
+        '200':
+          description: Service info
+
+  # Full paths defined in domain-specs/co_abc-spec.md §6.
+  # This stub provides the OpenAPI metadata contract per blueprint §2.3.1.
+  # Implementation-complete OpenAPI MUST be generated from the domain spec.
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

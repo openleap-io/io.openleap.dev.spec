@@ -1,0 +1,11 @@
+// F-COM-003.uvl — Checkout & Promotions (Composition)
+namespace com.F_COM_003
+features
+    F_COM_003 { description "Checkout & Promotions" }
+        mandatory
+            F_COM_003_01 { description "Cart & Checkout"; domain "com.chk" }
+        optional
+            F_COM_003_02 { description "Promotions & Coupons"; domain "com.promo" }
+constraints
+    F_COM_003_01 => F_COM_001_01
+    F_COM_003_02 => F_COM_003_01

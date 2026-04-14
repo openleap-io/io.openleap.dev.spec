@@ -1,0 +1,21 @@
+    namespace F-T2-003
+
+    imports
+        F-T2-003-01
+F-T2-003-02
+
+    features
+
+        F-T2-003 "Booking Management"
+
+            mandatory
+        F-T2-003-01
+
+    optional
+        F-T2-003-02
+
+
+    constraints
+
+F-T2-003 => F-T2-002
+

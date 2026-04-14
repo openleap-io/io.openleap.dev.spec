@@ -1,0 +1,13 @@
+namespace sd.shp
+
+features
+    F_SD_002 { description "Shipping & Delivery" }
+        mandatory
+            F_SD_002_01 { description "Delivery Planning" }
+            F_SD_002_02 { description "Shipment Execution" }
+        optional
+            F_SD_002_03 { description "Proof of Delivery" }
+
+constraints
+    F_SD_002_02 => F_SD_002_01
+    F_SD_002_03 => F_SD_002_02

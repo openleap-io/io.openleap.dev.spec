@@ -1,0 +1,14 @@
+// F-IAM-004 — Security Audit
+// Generated: 2026-04-03
+
+namespace F_IAM_004
+
+features
+    F_IAM_004 {
+        mandatory
+            F_IAM_004_01
+            F_IAM_004_02
+        optional
+            F_IAM_004_03
+            F_IAM_004_04
+    }

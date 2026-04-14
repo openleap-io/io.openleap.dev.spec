@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.openleap.io/ps/prj/workpackage.completed.schema.json",
+  "title": "ps.prj.workpackage.completed",
+  "description": "WP marked 100% complete (status=DONE)",
+  "type": "object",
+  "required": [
+    "eventId",
+    "eventType",
+    "timestamp",
+    "tenantId",
+    "correlationId",
+    "producer",
+    "schemaVersion",
+    "payload"
+  ],
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique event identifier"
+    },
+    "eventType": {
+      "type": "string",
+      "const": "ps.prj.workpackage.completed",
+      "description": "Event routing key"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 event timestamp"
+    },
+    "tenantId": {
+      "type": "string",
+      "description": "Tenant identifier"
+    },
+    "correlationId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Correlation ID for tracing"
+    },
+    "causationId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "ID of the causing command/event"
+    },
+    "producer": {
+      "type": "string",
+      "const": "ps-prj-svc",
+      "description": "Producing service"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Schema version (semver)"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Event-specific payload for ps.prj.workpackage.completed",
+      "properties": {
+        "workpackageId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Identifier of the affected workpackage"
+        }
+      },
+      "required": [
+        "workpackageId"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

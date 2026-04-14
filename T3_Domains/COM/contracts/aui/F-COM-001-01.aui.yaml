@@ -1,0 +1,54 @@
+apiVersion: aui/v1
+kind: ScreenContract
+metadata:
+  featureId: F-COM-001-01
+  screenId: SCR-COM-001-01-A
+  name: Channel Catalog Worklist
+  suite: com
+  domain: cat
+  version: 1.0.0
+
+spec:
+  layout: list
+  title: Channel Catalog
+  description: Manage channel-specific product view content
+
+  dataSource:
+    service: com-cat-svc
+    endpoint: GET /api/com/cat/v1/productviews
+    pagination: true
+
+  filters:
+    - field: channelId
+      type: select
+      label: Channel
+    - field: locale
+      type: select
+      label: Locale
+    - field: status
+      type: enum
+      options: [DRAFT, READY, PUBLISHED, ARCHIVED]
+
+  columns:
+    - field: title
+      label: Product Title
+      sortable: true
+    - field: channelId
+      label: Channel
+    - field: locale
+      label: Locale
+    - field: status
+      label: Status
+      type: badge
+    - field: completenessScore
+      label: Completeness
+      type: progress
+
+  actions:
+    row:
+      - id: edit
+        label: Edit Content
+        permission: COM_CAT_EDITOR
+      - id: archive
+        label: Archive
+        permission: COM_CAT_ADMIN

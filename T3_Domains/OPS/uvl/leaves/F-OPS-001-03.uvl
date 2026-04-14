@@ -1,0 +1,23 @@
+namespace ops.ord
+
+features
+    F_OPS_001_03 {
+        description "Work Order Close & Report"
+        optional
+            customerSignature {
+                description "Customer signature capture on close"
+                type String
+                values ["required", "optional", "disabled"]
+                default "optional"
+            }
+            pdfEmailOnClose {
+                description "Automatic PDF email on work order close"
+                type String
+                values ["auto", "manual", "disabled"]
+                default "manual"
+            }
+            materialsReconciliation {
+                description "Capture and reconcile materials used at close"
+                default true
+            }
+    }

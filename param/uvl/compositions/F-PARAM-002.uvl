@@ -1,0 +1,13 @@
+namespace param.i18n
+
+features
+    F_PARAM_002 { description "Translation Management" }
+        mandatory
+            F_PARAM_002_01 { description "Browse Translations" }
+            F_PARAM_002_02 { description "Edit Translations" }
+        optional
+            F_PARAM_002_03 { description "Seed Translation Bundles" }
+
+constraints
+    F_PARAM_002_03 => F_PARAM_002_01
+    F_PARAM_002 => F_PARAM_001_01

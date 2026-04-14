@@ -1,0 +1,16 @@
+// Leaf UVL: F-CRM-014-04 — Predictive Scoring Setup
+// Template: feature-leaf.uvl v1.0.0
+// Generated: 2026-04-03
+
+namespace crm
+
+features
+    F_CRM_014_04
+        Boolean enabled  // deploy-time: feature toggle
+            {default true}
+        Boolean readOnly  // runtime: read-only mode
+            {default false}
+
+constraints
+    // Parent composition must be selected
+    F_CRM_014_04 => F_CRM_014

@@ -1,0 +1,74 @@
+openapi: 3.1.0
+info:
+  title: SD Shipment Service
+  version: 1.0.0
+  description: |
+    Shipment execution, carrier assignment, and goods issue for the SD suite.
+
+    Full endpoint specification derived from domain-specs/sd_shp-spec.md §6.
+  contact:
+    name: team-sd
+    email: sd-team@openleap.io
+  x-owner: team-sd
+  x-suite: sd
+  x-domain: shp
+
+servers:
+  - url: http://localhost:8307
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+paths:
+  /api/sd/shp/v1:
+    get:
+      summary: Service root / health
+      operationId: getServiceInfo
+      tags: [health]
+      responses:
+        '200':
+          description: Service info
+
+  /api/sd/shp/v1/shipments:
+    get:
+      summary: List shipments
+      operationId: listShipments
+      tags: [shipments]
+      responses:
+        '200':
+          description: Shipment list
+    post:
+      summary: Create shipment from delivery
+      operationId: createShipment
+      tags: [shipments]
+      responses:
+        '201':
+          description: Shipment created
+
+  /api/sd/shp/v1/shipments/{id}/post-goods-issue:
+    post:
+      summary: Post goods issue for shipment
+      operationId: postGoodsIssue
+      tags: [shipments]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '202':
+          description: Goods issue accepted for async processing
+
+  # Full paths defined in domain-specs/sd_shp-spec.md §6.
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

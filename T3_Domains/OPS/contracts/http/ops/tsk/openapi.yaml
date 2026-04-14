@@ -1,0 +1,76 @@
+openapi: 3.1.0
+info:
+  title: OPS Task Management Service
+  version: 1.0.0
+  description: |
+    Task management — create, assign, and track individual tasks within projects.
+
+    Full endpoint specification derived from domain-specs/ops_tsk-spec.md §6.
+  contact:
+    name: team-ops
+    email: ops-engineering@openleap.io
+  x-owner: team-ops
+  x-suite: ops
+  x-domain: tsk
+
+servers:
+  - url: http://localhost:8216
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+paths:
+  /api/ops/tsk/v1:
+    get:
+      summary: Service root / health
+      operationId: getServiceInfo
+      tags: [health]
+      responses:
+        '200':
+          description: Service info
+
+  /api/ops/tsk/v1/tasks:
+    get:
+      summary: List tasks
+      operationId: listTasks
+      tags: [tasks]
+      parameters:
+        - name: projectId
+          in: query
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Task list
+    post:
+      summary: Create task
+      operationId: createTask
+      tags: [tasks]
+      responses:
+        '201':
+          description: Task created
+
+  /api/ops/tsk/v1/tasks/{id}:
+    patch:
+      summary: Update task
+      operationId: updateTask
+      tags: [tasks]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Task updated
+
+  # Full paths defined in domain-specs/ops_tsk-spec.md §6.
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

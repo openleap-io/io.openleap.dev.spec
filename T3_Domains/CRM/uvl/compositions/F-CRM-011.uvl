@@ -1,0 +1,19 @@
+// Composition UVL: F-CRM-011 — Workflow Automation
+// Template: feature-composition.uvl v1.0.0
+// Generated: 2026-04-03
+
+namespace crm
+
+imports
+    crm.F_CRM_011_01
+    crm.F_CRM_011_02
+    crm.F_CRM_011_03
+    crm.F_CRM_011_04
+
+features
+    F_CRM_011
+        optional
+            F_CRM_011_01  // Workflow Builder
+            F_CRM_011_02  // Workflow Template Library
+            F_CRM_011_03  // Workflow Monitor & Logs
+            F_CRM_011_04  // Assignment & Escalation Rules

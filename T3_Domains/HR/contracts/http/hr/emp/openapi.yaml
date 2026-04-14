@@ -1,0 +1,8 @@
+openapi: "3.0.3"
+info:
+  title: "HR EMP API"
+  description: "OpenAPI contract for hr.emp service"
+  version: "1.0.0"
+paths: {}
+components:
+  schemas: {}

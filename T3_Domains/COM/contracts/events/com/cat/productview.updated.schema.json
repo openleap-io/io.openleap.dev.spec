@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/com/cat/productview.updated",
+  "title": "ProductViewUpdated",
+  "description": "Emitted when a channel product view is created or updated.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "productViewId", "channelId", "locale"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "productViewId": { "type": "string", "format": "uuid" },
+    "productRef": { "type": "string" },
+    "channelId": { "type": "string" },
+    "locale": { "type": "string" },
+    "status": { "type": "string", "enum": ["DRAFT", "READY", "PUBLISHED", "ARCHIVED"] }
+  }
+}

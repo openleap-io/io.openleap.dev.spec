@@ -1,0 +1,84 @@
+# Screen Contract (AUI) — F-PARAM-002-03
+# Feature: Seed Translation Bundles
+# Generated: 2026-04-03
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-PARAM-002-03
+name: "Seed Translation Bundles"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-reference-data
+        description: "Load reference catalogs and form defaults"
+      - task: fill-form
+        description: "User interacts with primary content"
+        operator: enabling
+        enabledBy: load-reference-data
+      - task: validate-and-submit
+        description: "Validate and execute primary action"
+        operator: enabling
+        enabledBy: fill-form
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Back navigation (link)"
+      - "Page title (display)"
+
+  - id: zone-filters
+    name: "Filter Bar"
+    type: fixed
+    priority: 2
+    dataBinding: "filters"
+    fields:
+      - "Search (text input)"
+      - "Filter controls (selects)"
+
+  - id: zone-core
+    name: "Core Content"
+    type: fixed
+    priority: 3
+    dataBinding: "content"
+    fields:
+      - "Namespace (text input)"
+      - "Payload (JSON editor)"
+      - "Overwrite (checkbox)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.customFields"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Cancel (action)"
+      - "Submit (action: primary)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-actions
+      action: "Submit"
+      requiresRole: "SUITE_ADMIN"
+  stateConditions:
+    - action: "Submit"
+      enabledWhen: "form.isValid == true"
+  actionConsequences:
+    - action: "Submit"
+      onSuccess: "navigate('list') + toast('param.F-PARAM-002-03.action.submit.success')"

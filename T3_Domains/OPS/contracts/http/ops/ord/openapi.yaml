@@ -1,0 +1,80 @@
+openapi: 3.1.0
+info:
+  title: OPS Order Management Service
+  version: 1.0.0
+  description: |
+    Work order management — create, assign, execute, and close operational work orders.
+
+    Full endpoint specification derived from domain-specs/ops_ord-spec.md §6.
+  contact:
+    name: team-ops
+    email: ops-engineering@openleap.io
+  x-owner: team-ops
+  x-suite: ops
+  x-domain: ord
+
+servers:
+  - url: http://localhost:8210
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+paths:
+  /api/ops/ord/v1:
+    get:
+      summary: Service root / health
+      operationId: getServiceInfo
+      tags: [health]
+      responses:
+        '200':
+          description: Service info
+
+  /api/ops/ord/v1/work-orders:
+    get:
+      summary: List work orders
+      operationId: listWorkOrders
+      tags: [work-orders]
+      parameters:
+        - name: assignee
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: Paginated list of work orders
+    post:
+      summary: Create work order
+      operationId: createWorkOrder
+      tags: [work-orders]
+      responses:
+        '201':
+          description: Work order created
+
+  /api/ops/ord/v1/work-orders/{id}/close:
+    post:
+      summary: Close work order
+      operationId: closeWorkOrder
+      tags: [work-orders]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Work order closed
+
+  # Full paths defined in domain-specs/ops_ord-spec.md §6.
+  # This stub provides the OpenAPI metadata contract per blueprint §2.3.1.
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,13 @@
+namespace co.pc
+
+features
+    F_CO_003 { description "Product Costing" }
+        mandatory
+            F_CO_003_01 { description "Maintain Cost Estimates" }
+            F_CO_003_02 { description "Mark & Release Cost Estimates" }
+        optional
+            F_CO_003_03 { description "Variance Analysis" }
+
+constraints
+    F_CO_003_02 => F_CO_003_01
+    F_CO_003_03 => F_CO_003_02

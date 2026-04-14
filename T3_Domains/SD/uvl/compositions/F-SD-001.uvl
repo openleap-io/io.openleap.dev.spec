@@ -1,0 +1,12 @@
+namespace sd.ord
+
+features
+    F_SD_001 { description "Order Management" }
+        mandatory
+            F_SD_001_01 { description "Create Sales Order" }
+            F_SD_001_02 { description "Order Status Tracking" }
+        optional
+            F_SD_001_03 { description "Order Amendment" }
+
+constraints
+    F_SD_001_03 => F_SD_001_02

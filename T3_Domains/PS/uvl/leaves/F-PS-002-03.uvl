@@ -1,0 +1,24 @@
+// ============================================================
+// F-PS-002-03 — Kanban Board (Leaf Feature)
+// File: F-PS-002-03.uvl
+//
+// Companion document: features/leaves/F-PS-002-03/feature-spec.md
+//
+// Generated: 2026-04-03
+// Template: TPL-UVL-LEAF v1.0.0
+// ============================================================
+
+namespace F_PS_002_03
+
+features
+
+    F-PS-002-03
+        // Attributes (binding times)
+        // Attributes will be detailed in the feature spec §9
+        // and added here as the spec matures.
+
+
+constraints
+
+    // Cross-suite requires (from feature spec §9):
+    // (To be populated as feature specs mature)

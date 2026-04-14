@@ -1,0 +1,13 @@
+namespace sd.bil.credit-note-management
+
+features
+    F_SD_003_03 {
+        description "Credit Note Management"
+        Boolean auto_credit_on_return {
+            description "Automatically creates a credit note draft when a return is approved in sd.ret"
+            default false
+        }
+    }
+
+constraints
+    F_SD_003_03 => F_SD_003_02

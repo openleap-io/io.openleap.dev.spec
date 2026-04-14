@@ -1,0 +1,88 @@
+# Screen Contract (AUI) — F-CO-004-02
+# Feature: Contribution Margin Analysis
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-CO-004-02
+name: "Contribution Margin Analysis"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-margins
+        description: "Load contribution margin data"
+      - task: fill-filters
+        description: "User applies period, product, customer filters"
+        operator: enabling
+        enabledBy: load-margins
+      - task: view-waterfall
+        description: "User drills into CM waterfall for a segment"
+        operator: enabling
+        enabledBy: fill-filters
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Back navigation (link)"
+      - "Page title (display)"
+
+  - id: zone-filters
+    name: "Filter Bar"
+    type: fixed
+    priority: 2
+    dataBinding: "filters"
+    fields:
+      - "Period selector (month/year)"
+      - "Product filter (reference select)"
+      - "Customer filter (reference select)"
+      - "Prior period toggle (switch)"
+
+  - id: zone-core
+    name: "Margin List"
+    type: fixed
+    priority: 3
+    dataBinding: "content"
+    fields:
+      - "Product ID (display)"
+      - "Customer ID (display)"
+      - "CM I (display)"
+      - "CM II (display)"
+      - "CM III (display)"
+      - "Currency (display)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.marginActions"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Cancel (action)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-core
+      action: "Navigate"
+      requiresRole: "ANY_AUTHENTICATED"
+  stateConditions:
+    - action: "Navigate"
+      enabledWhen: "row.selected == true"
+  actionConsequences:
+    - action: "Navigate"
+      onSuccess: "navigate('margin-waterfall', { productId: row.productId, customerId: row.customerId, period: filters.period })"

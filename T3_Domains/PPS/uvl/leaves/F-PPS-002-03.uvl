@@ -1,0 +1,10 @@
+namespace pps.qm
+
+features
+    F_PPS_002_03 {
+        description "See feature-spec.md"
+    }
+
+        // Attributes
+        Boolean allow_partial_usage_decision { default false, bindingTime deploy }
+        Boolean require_defect_code_on_rejection { default true, bindingTime deploy }

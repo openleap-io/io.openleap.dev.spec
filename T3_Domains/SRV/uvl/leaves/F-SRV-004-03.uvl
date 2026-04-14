@@ -1,0 +1,9 @@
+namespace srv.F-SRV-004-03
+features
+    F-SRV-004-03
+        proof.allowedTypes             String "SIGNATURE,DOCUMENT,PHOTO"
+        proof.allowedTypes.bindingTime String "deploy"
+        proof.requireAtLeastOne             Boolean false
+        proof.requireAtLeastOne.bindingTime String "deploy"
+constraints
+    // See parent composition for structural constraints

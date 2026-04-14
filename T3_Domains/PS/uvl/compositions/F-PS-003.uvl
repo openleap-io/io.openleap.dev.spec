@@ -1,0 +1,36 @@
+// ============================================================
+// F-PS-003 — Budget & Cost Control (Composition Node)
+// File: F-PS-003.uvl
+//
+// Companion document: features/compositions/F-PS-003.md
+//
+// Generated: 2026-04-03
+// Template: TPL-UVL-COMP v1.0.0
+// ============================================================
+
+namespace F_PS_003
+
+imports
+    F-PS-003-01 as Budget_Planning
+    F-PS-003-02 as Cost_Type_Management
+    F-PS-003-03 as Budget_vs._Actuals_Dashboard
+    F-PS-003-04 as Earned_Value_Management
+    F-PS-003-05 as Cost_Forecasting_EAC_ETC
+
+features
+
+    F-PS-003
+
+        mandatory
+            F-PS-003-01
+            F-PS-003-02
+            F-PS-003-03
+
+        optional
+            F-PS-003-04
+            F-PS-003-05
+
+
+constraints
+
+    // Intra-composition constraints (if any)

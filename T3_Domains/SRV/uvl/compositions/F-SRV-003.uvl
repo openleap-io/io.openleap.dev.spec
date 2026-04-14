@@ -1,0 +1,10 @@
+namespace srv.F-SRV-003
+features
+    F-SRV-003
+        mandatory
+            F-SRV-003-01   // Resource Management
+            F-SRV-003-02   // Availability Management
+            F-SRV-003-03   // Conflict Detection
+constraints
+    // All mandatory — no intra-node constraints needed
+    // Cross-suite: OPEN QUESTION — HR and CAL feature IDs TBD

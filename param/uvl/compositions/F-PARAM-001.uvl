@@ -1,0 +1,12 @@
+namespace param.ref
+
+features
+    F_PARAM_001 { description "Reference Data Management" }
+        mandatory
+            F_PARAM_001_01 { description "Browse Catalogs" }
+            F_PARAM_001_02 { description "Manage Catalog Codes" }
+        optional
+            F_PARAM_001_03 { description "Bulk Import/Export" }
+
+constraints
+    F_PARAM_001_03 => F_PARAM_001_01

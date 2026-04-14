@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "co.pca.profit-center-assignment.changed",
+  "title": "co.pca.profit-center-assignment.changed",
+  "description": "Event published when a profit center assignment for a cost object is created, updated, or removed",
+  "type": "object",
+  "required": ["eventId", "eventType", "timestamp", "tenantId", "correlationId", "producer", "schemaVersion", "payload"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "eventType": { "type": "string", "const": "co.pca.profit-center-assignment.changed" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "correlationId": { "type": "string", "format": "uuid" },
+    "causationId": { "type": "string", "format": "uuid" },
+    "producer": { "type": "string", "const": "co-pca-svc" },
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "payload": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "assignmentId": { "type": "string" },
+        "changeType": { "type": "string", "enum": ["CREATED", "UPDATED", "DELETED"] },
+        "costObjectId": { "type": "string" },
+        "costObjectType": { "type": "string", "enum": ["COST_CENTER", "INT_ORDER", "WBS"] },
+        "previousProfitCenter": { "type": "string" },
+        "newProfitCenter": { "type": "string" },
+        "validFrom": { "type": "string", "format": "date" },
+        "changedBy": { "type": "string" }
+      }
+    }
+  }
+}

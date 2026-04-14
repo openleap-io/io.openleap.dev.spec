@@ -1,0 +1,12 @@
+namespace co.cca
+
+features
+    F_CO_001 { description "Cost Center Management" }
+        mandatory
+            F_CO_001_01 { description "Browse Cost Centers" }
+            F_CO_001_02 { description "Manage Cost Center Groups" }
+        optional
+            F_CO_001_03 { description "Cost Element Catalog" }
+
+constraints
+    F_CO_001_03 => F_CO_001_01

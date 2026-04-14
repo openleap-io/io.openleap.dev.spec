@@ -1,0 +1,131 @@
+# Screen Contract (AUI) — F-SRV-005-01 Case Lifecycle
+featureId: F-SRV-005-01
+name: "Case Lifecycle"
+
+taskModel:
+  root:
+    operator: alternative
+    children:
+      - task: list-path
+        operator: sequential
+        children:
+          - task: load-cases
+            description: "Fetch cases with filters"
+          - task: view-list
+            description: "Browse case list"
+            operator: enabling
+            enabledBy: load-cases
+          - task: create-case
+            operator: optional
+            featureGate: "role == SRV_CAS_EDITOR"
+            absentRule: collapse-up
+      - task: detail-path
+        operator: sequential
+        children:
+          - task: load-case
+            description: "Fetch case by ID"
+          - task: view-detail
+            operator: enabling
+            enabledBy: load-case
+          - task: edit-case
+            operator: optional
+            featureGate: "role == SRV_CAS_EDITOR AND status != CLOSED"
+          - task: lifecycle-action
+            description: "Pause/Resume/Close"
+            operator: optional
+            featureGate: "role == SRV_CAS_EDITOR"
+
+zones:
+  - id: zone-list-header
+    name: "Search & Filter"
+    type: fixed
+    priority: 1
+    fields:
+      - "searchText (input: text)"
+      - "customerFilter (input: lookup)"
+      - "statusFilter (select: OPEN|ACTIVE|PAUSED|CLOSED)"
+      - "searchAction (action: search)"
+      - "createAction (action: navigate-to-create, roleGate: SRV_CAS_EDITOR)"
+
+  - id: zone-list
+    name: "Case Table"
+    type: fixed
+    priority: 2
+    dataBinding: "viewModel.cases[]"
+    fields:
+      - "title (display: text, sortable)"
+      - "customerName (display: text)"
+      - "status (display: badge)"
+      - "sessionCount (display: text, template: '{completed}/{total}', featureGate: display.showSessionCount)"
+      - "detailAction (action: navigate-to-detail)"
+
+  - id: zone-case-header
+    name: "Case Header"
+    type: fixed
+    priority: 1
+    dataBinding: "viewModel.case"
+    fields:
+      - "title (display: text, prominent)"
+      - "status (display: badge)"
+      - "customerName (display: text)"
+      - "offeringName (display: text)"
+
+  - id: zone-case-details
+    name: "Case Details"
+    type: fixed
+    priority: 2
+    dataBinding: "viewModel.case"
+    fields:
+      - "description (input: textarea, editable when: role == SRV_CAS_EDITOR)"
+      - "sessionProgress (display: progress-bar, featureGate: display.showSessionCount)"
+
+  - id: zone-sessions-tab
+    name: "Sessions Tab (→ F-SRV-005-02)"
+    type: fixed
+    priority: 3
+    dataBinding: "F-SRV-005-02 provides"
+
+  - id: zone-extension
+    name: "Extension Area"
+    type: variable
+    priority: 4
+    extensionPoint: "ext.case.customPanel"
+    absentRule: collapse-up
+
+  - id: zone-actions
+    name: "Actions"
+    type: fixed
+    priority: 99
+    fields:
+      - "edit (action: edit-case, visible when: status != CLOSED, roleGate: SRV_CAS_EDITOR)"
+      - "pause (action: pause-case, visible when: status IN [OPEN, ACTIVE], roleGate: SRV_CAS_EDITOR)"
+      - "resume (action: resume-case, visible when: status == PAUSED, roleGate: SRV_CAS_EDITOR)"
+      - "close (action: close-case, visible when: status != CLOSED, roleGate: SRV_CAS_EDITOR)"
+      - "back (action: navigate-back)"
+
+absentRules:
+  - zoneId: zone-extension
+    condition: "No extension point filled"
+    rule: collapse-up
+
+businessRules:
+  - type: stateCondition
+    rule: "pause visible when status IN [OPEN, ACTIVE]"
+  - type: stateCondition
+    rule: "resume visible when status == PAUSED"
+  - type: stateCondition
+    rule: "close requires reason when case.requireCloseReason == true"
+  - type: roleGate
+    rule: "all mutations require SRV_CAS_EDITOR"
+  - type: actionConsequence
+    action: close-case
+    consequence: "POST /cases/{id}/close → event srv.cas.case.closed → status badge update"
+  - type: actionConsequence
+    action: pause-case
+    consequence: "POST /cases/{id}/pause → event srv.cas.case.paused"
+
+extensionZones:
+  - id: zone-extension
+    extensionPoint: "ext.case.customPanel"
+    description: "Industry-specific panels (e.g., treatment plan, training curriculum)"
+    renderPosition: "after zone-sessions-tab, before zone-actions"

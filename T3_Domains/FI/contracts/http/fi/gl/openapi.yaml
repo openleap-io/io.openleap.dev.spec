@@ -1,0 +1,8 @@
+openapi: "3.0.3"
+info:
+  title: "FI GL API"
+  description: "OpenAPI contract for fi.gl service"
+  version: "1.0.0"
+paths: {}
+components:
+  schemas: {}

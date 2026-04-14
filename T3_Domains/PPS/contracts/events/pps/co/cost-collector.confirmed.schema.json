@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pps.co.cost-collector.confirmed",
+  "title": "pps.co.cost-collector.confirmed",
+  "description": "Event published when a production cost collector has been confirmed",
+  "type": "object",
+  "required": ["eventId", "eventType", "timestamp", "tenantId", "correlationId", "producer", "schemaVersion", "payload"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "eventType": { "type": "string", "const": "pps.co.cost-collector.confirmed" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "correlationId": { "type": "string", "format": "uuid" },
+    "causationId": { "type": "string", "format": "uuid" },
+    "producer": { "type": "string", "const": "pps-co-svc" },
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "payload": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "costCollectorId": { "type": "string" },
+        "productionOrderId": { "type": "string" },
+        "plant": { "type": "string" },
+        "costCenter": { "type": "string" },
+        "totalActualCost": { "type": "number" },
+        "currency": { "type": "string" },
+        "confirmedAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}

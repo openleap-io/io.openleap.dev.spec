@@ -1,0 +1,88 @@
+# Screen Contract (AUI) — F-CO-003-01
+# Feature: Maintain Cost Estimates
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-CO-003-01
+name: "Maintain Cost Estimates"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-estimates
+        description: "Load cost estimate list"
+      - task: fill-form
+        description: "User creates or edits a cost estimate"
+        operator: enabling
+        enabledBy: load-estimates
+      - task: validate-and-submit
+        description: "Validate and save cost estimate"
+        operator: enabling
+        enabledBy: fill-form
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Back navigation (link)"
+      - "Page title (display)"
+      - "New Estimate (action: primary)"
+
+  - id: zone-filters
+    name: "Filter Bar"
+    type: fixed
+    priority: 2
+    dataBinding: "filters"
+    fields:
+      - "Search Material (text input)"
+      - "Status filter (select)"
+      - "Year filter (select)"
+
+  - id: zone-core
+    name: "Estimate List"
+    type: fixed
+    priority: 3
+    dataBinding: "content"
+    fields:
+      - "Material ID (display)"
+      - "Costing Variant (display)"
+      - "Valid From (display)"
+      - "Standard Cost (display)"
+      - "Status (display: PRELIMINARY|MARKED|RELEASED)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.costEstimateActions"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Cancel (action)"
+      - "Save (action: primary)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-actions
+      action: "Save"
+      requiresRole: "CO_CONTROLLER"
+  stateConditions:
+    - action: "Save"
+      enabledWhen: "form.isValid == true && estimate.status == 'PRELIMINARY'"
+  actionConsequences:
+    - action: "Save"
+      onSuccess: "navigate('estimate-detail') + toast('co.F-CO-003-01.action.save.success')"

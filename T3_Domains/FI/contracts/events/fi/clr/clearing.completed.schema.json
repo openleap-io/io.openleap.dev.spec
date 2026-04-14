@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/fi/clr/clearing.completed",
+  "title": "ClearingCompleted",
+  "description": "Emitted when a clearing run completes and open items are matched.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "clearingId"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "clearingId": { "type": "string", "format": "uuid" }
+  }
+}

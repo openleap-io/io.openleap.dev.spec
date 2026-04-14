@@ -1,0 +1,9 @@
+namespace srv.F-SRV-007-02
+features
+    F-SRV-007-02
+        correction.requireReason             Boolean true
+        correction.requireReason.bindingTime String "deploy"
+        correction.requireApproval             Boolean false
+        correction.requireApproval.bindingTime String "deploy"
+constraints
+    // See parent composition for structural constraints

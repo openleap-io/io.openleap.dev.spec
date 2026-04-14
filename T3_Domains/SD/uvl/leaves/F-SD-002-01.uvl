@@ -1,0 +1,14 @@
+namespace sd.dlv.delivery-planning
+
+features
+    F_SD_002_01 {
+        description "Delivery Planning"
+        Boolean auto_create_delivery {
+            description "Automatically creates a delivery document when a sales order is confirmed"
+            default false
+        }
+        Integer max_delivery_lines {
+            description "Maximum number of line items allowed per delivery before a split is required"
+            default 100
+        }
+    }

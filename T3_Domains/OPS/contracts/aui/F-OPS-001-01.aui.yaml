@@ -1,0 +1,100 @@
+# Screen Contract (AUI) — F-OPS-001-01
+# Feature: Create Work Order
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-OPS-001-01
+name: "Create Work Order"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-form-config
+        description: "Load SLA options, skill catalog, and form defaults"
+      - task: fill-form
+        description: "User fills work order fields"
+        operator: enabling
+        enabledBy: load-form-config
+      - task: validate-and-submit
+        description: "Validate and create work order"
+        operator: enabling
+        enabledBy: fill-form
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Back navigation (link)"
+      - "Page title (display)"
+
+  - id: zone-core
+    name: "Work Order Fields"
+    type: fixed
+    priority: 2
+    dataBinding: "workOrder"
+    fields:
+      - "Title (text input, required)"
+      - "Customer (typeahead, required)"
+      - "Location (address, required)"
+      - "Priority (radio: NORMAL|HIGH|CRITICAL, required)"
+      - "Requested From (date picker, required)"
+      - "Requested To (date picker, required)"
+      - "SLA Tier (select, optional)"
+
+  - id: zone-skills
+    name: "Required Skills"
+    type: fixed
+    priority: 3
+    dataBinding: "workOrder.requiredSkills"
+    fields:
+      - "Skills (multi-checkbox, catalog-driven)"
+
+  - id: zone-extras
+    name: "Additional Details"
+    type: fixed
+    priority: 4
+    dataBinding: "workOrder"
+    fields:
+      - "Description (textarea, optional)"
+      - "Attachments (file upload, optional)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.workOrderFormFields"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Cancel (action)"
+      - "Create Work Order (action: primary)"
+
+absentRules:
+  - zone: zone-skills
+    condition: "skillsSelection == disabled"
+    rule: panel-section-hidden
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-actions
+      action: "Create Work Order"
+      requiresRole: "DISPATCHER|OPERATIONS_MANAGER|OPS_ADMIN"
+  stateConditions:
+    - action: "Create Work Order"
+      enabledWhen: "form.isValid == true"
+  actionConsequences:
+    - action: "Create Work Order"
+      onSuccess: "navigate('work-order-detail', workOrderId) + toast('ops.F-OPS-001-01.action.create.success')"
+      onError: "toast.error('ops.F-OPS-001-01.action.create.error')"

@@ -1,0 +1,12 @@
+namespace ops.ord
+
+features
+    F_OPS_001 { description "Work Order Management" }
+        mandatory
+            F_OPS_001_01 { description "Create Work Order" }
+            F_OPS_001_02 { description "Work Order Execution" }
+        optional
+            F_OPS_001_03 { description "Work Order Close & Report" }
+
+constraints
+    F_OPS_001_03 => F_OPS_001_02

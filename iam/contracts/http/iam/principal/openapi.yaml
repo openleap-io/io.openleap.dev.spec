@@ -1,0 +1,301 @@
+# OpenAPI Contract — iam-principal-svc
+# Generated: 2026-04-03
+# Convention: contracts/http/iam/principal/openapi.yaml
+#
+# Machine-readable companion to domain-specs/iam_principal-spec.md §6.
+
+openapi: 3.1.0
+
+info:
+  title: "IAM Principal Management API"
+  version: "1.0.0"
+  description: |
+    REST API for the Principal Management domain within the IAM suite.
+    Manages identity and authentication lifecycle for all principals (humans, services, systems, devices). Owns Keycloak synchronization, credential management, and tenant membership.
+  contact:
+    name: IAM Team
+    email: iam-team@openleap.io
+  license:
+    name: Proprietary
+
+servers:
+  - url: http://localhost:8080
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+x-owner: team-iam
+x-suite: iam
+x-domain: principal
+
+tags:
+  - name: devices
+  - name: humans
+  - name: principals
+  - name: services
+  - name: systems
+
+paths:
+
+  /api/iam/principal/v1/humans:
+    post:
+      operationId: create_human_principal
+      summary: "Create human principal"
+      tags: [humans]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/principal/v1/services:
+    post:
+      operationId: create_service_principal
+      summary: "Create service principal"
+      tags: [services]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/principal/v1/systems:
+    post:
+      operationId: create_system_principal
+      summary: "Create system principal"
+      tags: [systems]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/principal/v1/devices:
+    post:
+      operationId: create_device_principal
+      summary: "Create device principal"
+      tags: [devices]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/principal/v1/principals/{id}:
+    get:
+      operationId: get_principal_by_id
+      summary: "Get principal by ID"
+      tags: [principals]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/principal/v1/principals:
+    get:
+      operationId: search_principals
+      summary: "Search principals"
+      tags: [principals]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/principal/v1/humans/{id}/profile:
+    put:
+      operationId: update_profile
+      summary: "Update profile"
+      tags: [humans]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/principal/v1/principals/{id}/status:
+    patch:
+      operationId: change_status
+      summary: "Change status"
+      tags: [principals]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/principal/v1/principals/{id}/credentials/rotate:
+    post:
+      operationId: rotate_credentials
+      summary: "Rotate credentials"
+      tags: [principals]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/principal/v1/principals/{id}/gdpr/export:
+    post:
+      operationId: gdpr_data_export
+      summary: "GDPR data export"
+      tags: [principals]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/principal/v1/principals/{id}/gdpr/erase:
+    post:
+      operationId: gdpr_data_erasure
+      summary: "GDPR data erasure"
+      tags: [principals]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+  /api/iam/principal/v1/principals/{id}:
+    delete:
+      operationId: delete_principal
+      summary: "Delete principal"
+      tags: [principals]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+        '422':
+          description: Business rule violation
+
+
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearer: []

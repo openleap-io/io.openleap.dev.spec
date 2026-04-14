@@ -1,0 +1,32 @@
+// ============================================================
+// Leaf Feature UVL — F-SRV-002-04
+// Name: No-Show Handling
+// Suite: srv
+// Parent: F-SRV-002
+//
+// Companion document: F-SRV-002-04.md
+// ============================================================
+
+namespace srv.F-SRV-002-04
+
+features
+
+    F-SRV-002-04
+
+        noShow.requireReason             Boolean false  // deploy — require reason text
+        noShow.requireReason.bindingTime String "deploy"
+
+        noShow.graceMinutes              Integer 15     // deploy — minutes after scheduled time
+        noShow.graceMinutes.bindingTime  String "deploy"
+
+        noShow.showFeePreview             Boolean false  // deploy — show fee preview in dialog
+        noShow.showFeePreview.bindingTime String "deploy"
+
+
+constraints
+
+    // No-show is an action within booking detail
+    F-SRV-002-04 => srv.F-SRV-002-02
+
+    // No-show triggers billing intent derivation
+    F-SRV-002-04 => srv.F-SRV-007

@@ -1,0 +1,19 @@
+namespace ops.res
+
+features
+    F_OPS_002_01 {
+        description "Resource Availability"
+        optional
+            defaultViewPeriod {
+                description "Default calendar period on page open"
+                type String
+                values ["DAY", "WEEK", "MONTH"]
+                default "WEEK"
+            }
+            resourceTypeFilter {
+                description "Resource types visible in calendar"
+                type String
+                values ["EMPLOYEE", "VEHICLE", "MACHINE", "ALL"]
+                default "ALL"
+            }
+    }

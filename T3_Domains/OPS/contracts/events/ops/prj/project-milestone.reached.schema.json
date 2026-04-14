@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ops.prj.project-milestone.reached",
+  "title": "ops.prj.project-milestone.reached",
+  "description": "Event published when a project milestone status changes to COMPLETED",
+  "type": "object",
+  "required": ["eventId", "eventType", "timestamp", "tenantId", "correlationId", "producer", "schemaVersion", "payload"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "eventType": { "type": "string", "const": "ops.prj.project-milestone.reached" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "correlationId": { "type": "string", "format": "uuid" },
+    "causationId": { "type": "string", "format": "uuid" },
+    "producer": { "type": "string", "const": "ops-prj-svc" },
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "payload": {
+      "type": "object",
+      "required": ["projectId", "milestoneId", "milestoneName", "reachedAt"],
+      "properties": {
+        "projectId": { "type": "string", "format": "uuid" },
+        "milestoneId": { "type": "string", "format": "uuid" },
+        "milestoneName": { "type": "string" },
+        "previousStatus": { "type": "string", "enum": ["NOT_STARTED", "ON_TRACK", "AT_RISK", "DELAYED"] },
+        "newStatus": { "type": "string", "enum": ["ON_TRACK", "AT_RISK", "DELAYED", "COMPLETED"] },
+        "reachedAt": { "type": "string", "format": "date-time" },
+        "loggedHours": { "type": "number" }
+      }
+    }
+  }
+}

@@ -1,0 +1,64 @@
+// ============================================================
+// PS Suite — UI Feature Catalog (UVL Root)
+// File: ps.catalog.uvl
+//
+// Machine-readable root of the PS suite's UI feature tree.
+// Imported by catalog.uvl (the platform root).
+//
+// Companion document: _ps_suite.md (SS6 Feature Catalog)
+//
+// Generated: 2026-04-03
+// Template: TPL-UVL-CAT v1.0.0
+// ============================================================
+
+namespace ps
+
+imports
+    F-PS-001 as Project_Management
+    F-PS-002 as Agile_Boards
+    F-PS-003 as Budget_Cost_Control
+    F-PS-004 as Project_Time_Costs
+    F-PS-005 as Project_Staffing
+    F-PS-006 as Portfolio_Program
+
+features
+
+    PS_UI
+
+        mandatory
+            F-PS-001
+            F-PS-003
+            F-PS-004
+
+        optional
+            F-PS-002
+            F-PS-005
+            F-PS-006
+
+
+constraints
+
+    // Suite-level cross-tree constraints:
+    // Budget & Cost Control requires Project Management (cannot track costs without projects)
+    F-PS-003 => F-PS-001
+
+    // Project Time & Costs requires Project Management and Budget & Cost Control
+    F-PS-004 => F-PS-001
+    F-PS-004 => F-PS-003
+
+    // Agile & Boards requires Project Management (operates on work packages from prj)
+    F-PS-002 => F-PS-001
+
+    // Project Staffing requires Project Management (staffing demands are per project)
+    F-PS-005 => F-PS-001
+
+    // Portfolio & Program requires Project Management (portfolios contain projects)
+    F-PS-006 => F-PS-001
+
+    // Cross-suite dependencies (surfaced from leaf UVLs for visibility):
+    // F-PS-001 requires bp.F-BP-xxx (Business Partner lookup for customer/sponsor)
+    // F-PS-001 requires cal.F-CAL-xxx (Working calendar for scheduling)
+    // F-PS-001 requires ref.F-REF-xxx (Reference data for codes/currencies)
+    // F-PS-004 requires iam (IAM user context for time bookings)
+    // F-PS-005 requires ops.res (Resource master data for slot filling)
+    // F-PS-003 requires ref.F-REF-xxx (Currency & UoM for budget amounts)

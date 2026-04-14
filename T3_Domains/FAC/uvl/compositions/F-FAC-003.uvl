@@ -1,0 +1,29 @@
+// F-FAC-003.uvl — Collections & Risk (Composition)
+// Suite: fac | Composition: F-FAC-003
+
+namespace fac.F_FAC_003
+
+features
+    F_FAC_003 {
+        description "Collections & Risk — dunning, cash application, disputes, credit limits, risk scoring"
+    }
+        mandatory
+            F_FAC_003_01 {
+                description "Dunning & Collection Cases"
+                domain "fac.col"
+            }
+        optional
+            F_FAC_003_02 {
+                description "Credit Limit Management"
+                domain "fac.lim"
+            }
+            F_FAC_003_03 {
+                description "Risk Scoring & Coverage"
+                domain "fac.rsk"
+            }
+
+constraints
+    F_FAC_003_01 => IAM_UI
+    F_FAC_003_01 => F_FAC_002_01
+    F_FAC_003_02 => IAM_UI
+    F_FAC_003_03 => IAM_UI

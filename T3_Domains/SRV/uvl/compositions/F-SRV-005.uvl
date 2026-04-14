@@ -1,0 +1,9 @@
+namespace srv.F-SRV-005
+features
+    F-SRV-005
+        mandatory
+            F-SRV-005-01   // Case Lifecycle
+            F-SRV-005-02   // Session Linking
+
+constraints
+    // Cross-node constraints — see F-SRV-005.md SS2.2

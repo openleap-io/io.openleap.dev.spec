@@ -1,0 +1,70 @@
+# Screen Contract (AUI) — F-SRV-003-03 Conflict Detection
+featureId: F-SRV-003-03
+name: "Conflict Detection"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: detect-conflict
+        description: "System checks resource availability during booking attempt"
+      - task: display-conflict
+        description: "Show conflict dialog with details and options"
+        operator: enabling
+        enabledBy: detect-conflict
+      - task: resolve-conflict
+        description: "User chooses: override (if admin), choose different slot, or cancel"
+        operator: alternative
+        children:
+          - task: override
+            description: "Admin overrides conflict with reason"
+            featureGate: "conflict.allowOverride == true AND role == SRV_APT_ADMIN"
+          - task: choose-different
+            description: "Navigate back to slot discovery"
+          - task: cancel-booking
+            description: "Abandon booking attempt"
+
+zones:
+  - id: zone-conflict-dialog
+    name: "Conflict Dialog (modal)"
+    type: fixed
+    priority: 1
+    dataBinding: "viewModel.conflicts[]"
+    fields:
+      - "conflictIcon (display: icon-warning)"
+      - "conflictTitle (display: text, label: srv.res.conflict.title)"
+      - "resourceName (display: text)"
+      - "conflictDetails (display: text, featureGate: conflict.showDetails == true, template: srv.res.conflict.details)"
+      - "conflictGeneric (display: text, featureGate: conflict.showDetails == false, template: srv.res.conflict.noDetails)"
+      - "overrideAction (action: override-and-book, featureGate: conflict.allowOverride AND role == SRV_APT_ADMIN)"
+      - "chooseDifferent (action: navigate-to-slot-discovery)"
+      - "cancelAction (action: dismiss-dialog)"
+
+  - id: zone-extension
+    name: "Extension Area"
+    type: variable
+    priority: 2
+    extensionPoint: "ext.conflict.customValidation"
+    absentRule: collapse-up
+
+absentRules:
+  - zoneId: zone-extension
+    condition: "No custom conflict validation rules"
+    rule: collapse-up
+
+businessRules:
+  - type: stateCondition
+    rule: "conflict dialog shown only when API returns 409 Conflict"
+  - type: stateCondition
+    rule: "overrideAction visible only when conflict.allowOverride == true"
+  - type: roleGate
+    rule: "overrideAction requires SRV_APT_ADMIN"
+  - type: actionConsequence
+    action: override-and-book
+    consequence: "POST /appointments (override=true) → booking with override badge → audit log entry"
+
+extensionZones:
+  - id: zone-extension
+    extensionPoint: "ext.conflict.customValidation"
+    description: "Custom conflict rules (e.g., mandatory break-time between sessions)"
+    renderPosition: "within zone-conflict-dialog, before action buttons"

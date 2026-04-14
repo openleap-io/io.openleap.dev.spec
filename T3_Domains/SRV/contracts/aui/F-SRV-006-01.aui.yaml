@@ -1,0 +1,128 @@
+# Screen Contract (AUI) — F-SRV-006-01 Entitlement Management
+featureId: F-SRV-006-01
+name: "Entitlement Management"
+
+taskModel:
+  root:
+    operator: alternative
+    children:
+      - task: list-path
+        operator: sequential
+        children:
+          - task: load-entitlements
+            description: "Fetch entitlements with filters"
+          - task: view-list
+            operator: enabling
+            enabledBy: load-entitlements
+          - task: create-entitlement
+            operator: optional
+            featureGate: "entitlement.allowManualCreate == true AND role == SRV_ENT_EDITOR"
+            absentRule: collapse-up
+      - task: detail-path
+        operator: sequential
+        children:
+          - task: load-entitlement
+            description: "Fetch entitlement by ID"
+          - task: view-detail
+            operator: enabling
+            enabledBy: load-entitlement
+          - task: edit-or-cancel
+            operator: optional
+            featureGate: "status IN [ACTIVE, PENDING] AND role == SRV_ENT_EDITOR"
+
+zones:
+  - id: zone-list-header
+    name: "Search & Filter"
+    type: fixed
+    priority: 1
+    fields:
+      - "customerFilter (input: lookup)"
+      - "statusFilter (select: ACTIVE|PENDING|EXHAUSTED|EXPIRED|CANCELLED)"
+      - "searchAction (action: search)"
+      - "createAction (action: navigate-to-create, featureGate: entitlement.allowManualCreate, roleGate: SRV_ENT_EDITOR)"
+
+  - id: zone-list
+    name: "Entitlement Table"
+    type: fixed
+    priority: 2
+    dataBinding: "viewModel.entitlements[]"
+    fields:
+      - "customerName (display: text)"
+      - "offeringName (display: text)"
+      - "status (display: badge)"
+      - "balance (display: text, template: '{remaining}/{total}', featureGate: entitlement.showBalance)"
+      - "expiresAt (display: date)"
+      - "detailAction (action: navigate-to-detail)"
+
+  - id: zone-detail
+    name: "Entitlement Detail"
+    type: fixed
+    priority: 1
+    dataBinding: "viewModel.entitlement"
+    fields:
+      - "customerName (display: text)"
+      - "offeringName (display: text)"
+      - "status (display: badge)"
+      - "totalQuota (display: number)"
+      - "consumed (display: number, featureGate: entitlement.showBalance)"
+      - "remaining (display: number, featureGate: entitlement.showBalance)"
+      - "progressBar (display: progress-bar, featureGate: entitlement.showBalance)"
+      - "validFrom (display: date)"
+      - "validTo (display: date)"
+
+  - id: zone-form
+    name: "Create/Edit Form"
+    type: fixed
+    priority: 2
+    fields:
+      - "customer (input: lookup, required)"
+      - "serviceOffering (input: lookup, required, filter: status == ACTIVE)"
+      - "totalQuota (input: number, required, min: 1)"
+      - "validFrom (input: date, required)"
+      - "validTo (input: date, required)"
+
+  - id: zone-transactions-tab
+    name: "Transactions Tab (→ F-SRV-006-03)"
+    type: fixed
+    priority: 3
+
+  - id: zone-extension
+    name: "Extension Area"
+    type: variable
+    priority: 4
+    extensionPoint: "ext.entitlement.customPanel"
+    absentRule: collapse-up
+
+  - id: zone-actions
+    name: "Actions"
+    type: fixed
+    priority: 99
+    fields:
+      - "save (action: save-entitlement, roleGate: SRV_ENT_EDITOR)"
+      - "cancel-entitlement (action: cancel-entitlement, visible when: status IN [ACTIVE, PENDING], roleGate: SRV_ENT_EDITOR)"
+      - "back (action: navigate-back)"
+
+absentRules:
+  - zoneId: zone-extension
+    condition: "No extension point filled"
+    rule: collapse-up
+
+businessRules:
+  - type: stateCondition
+    rule: "createAction hidden when entitlement.allowManualCreate == false"
+  - type: stateCondition
+    rule: "cancel-entitlement shows warning about forfeited quota"
+  - type: roleGate
+    rule: "save/cancel-entitlement require SRV_ENT_EDITOR"
+  - type: actionConsequence
+    action: save
+    consequence: "POST /entitlements → event srv.ent.entitlement.created"
+  - type: actionConsequence
+    action: cancel-entitlement
+    consequence: "POST /entitlements/{id}/cancel → event srv.ent.entitlement.cancelled → warning dialog"
+
+extensionZones:
+  - id: zone-extension
+    extensionPoint: "ext.entitlement.customPanel"
+    description: "Custom panels (e.g., renewal options, insurance linkage)"
+    renderPosition: "after zone-transactions-tab, before zone-actions"

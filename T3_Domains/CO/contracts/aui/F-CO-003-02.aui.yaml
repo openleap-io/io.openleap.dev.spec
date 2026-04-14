@@ -1,0 +1,92 @@
+# Screen Contract (AUI) — F-CO-003-02
+# Feature: Mark & Release Cost Estimates
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-CO-003-02
+name: "Mark & Release Cost Estimates"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-estimate-detail
+        description: "Load cost estimate detail and cost components"
+      - task: review-estimate
+        description: "User reviews cost components"
+        operator: enabling
+        enabledBy: load-estimate-detail
+      - task: mark-or-release
+        description: "User marks or releases the estimate"
+        operator: enabling
+        enabledBy: review-estimate
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Back navigation (link)"
+      - "Page title (display)"
+      - "Status badge (display)"
+
+  - id: zone-core
+    name: "Estimate Detail"
+    type: fixed
+    priority: 2
+    dataBinding: "content"
+    fields:
+      - "Material ID (display)"
+      - "Costing Variant (display)"
+      - "Valid From (display)"
+      - "Lot Size (display)"
+      - "Standard Cost (display)"
+      - "Material Cost Component (display)"
+      - "Labor Cost Component (display)"
+      - "Overhead Cost Component (display)"
+      - "Mark Date (display)"
+      - "Marked By (display)"
+      - "Release Date (display)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.releaseActions"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Cancel (action)"
+      - "Mark (action: secondary)"
+      - "Release (action: primary)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-actions
+      action: "Mark"
+      requiresRole: "CO_CONTROLLER"
+    - zone: zone-actions
+      action: "Release"
+      requiresRole: "CO_ADMIN"
+  stateConditions:
+    - action: "Mark"
+      enabledWhen: "estimate.status == 'PRELIMINARY'"
+    - action: "Release"
+      enabledWhen: "estimate.status == 'MARKED'"
+  actionConsequences:
+    - action: "Mark"
+      onSuccess: "refreshDetail() + toast('co.F-CO-003-02.action.mark.success')"
+    - action: "Release"
+      onSuccess: "refreshDetail() + toast('co.F-CO-003-02.action.release.success')"

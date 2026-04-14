@@ -1,0 +1,29 @@
+// F-FAC-002.uvl — Funding & Settlement (Composition)
+// Suite: fac | Composition: F-FAC-002
+
+namespace fac.F_FAC_002
+
+features
+    F_FAC_002 {
+        description "Funding & Settlement — advance calculation, disbursement, interest accrual, settlement"
+    }
+        mandatory
+            F_FAC_002_01 {
+                description "Funding Creation & Advance Calculation"
+                domain "fac.fnd"
+            }
+        optional
+            F_FAC_002_02 {
+                description "Disbursement Tracking"
+                domain "fac.fnd"
+            }
+            F_FAC_002_03 {
+                description "Settlement & Reserve Release"
+                domain "fac.fnd"
+            }
+
+constraints
+    F_FAC_002_01 => IAM_UI
+    F_FAC_002_01 => F_FAC_001_01
+    F_FAC_002_02 => F_FAC_002_01
+    F_FAC_002_03 => F_FAC_002_01

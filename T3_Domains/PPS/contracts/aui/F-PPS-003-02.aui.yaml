@@ -1,0 +1,100 @@
+# Screen Contract (AUI) — F-PPS-003-02
+# Feature: Goods Movement
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-PPS-003-02
+name: "Goods Movement"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-reference-data
+        description: "Load movement history and plant/location options"
+      - task: fill-form
+        description: "User enters movement type, material, and quantity"
+        operator: enabling
+        enabledBy: load-reference-data
+      - task: validate-and-submit
+        description: "Validate and post goods movement"
+        operator: enabling
+        enabledBy: fill-form
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Back navigation (link)"
+      - "Page title (display)"
+
+  - id: zone-core
+    name: "Movement Form"
+    type: fixed
+    priority: 2
+    dataBinding: "movement"
+    fields:
+      - "Movement Type (select: GR|GI|TRANSFER)"
+      - "Posting Date (date input)"
+      - "Material (text/search input)"
+      - "Quantity (number input)"
+      - "Unit (select)"
+      - "Plant (select)"
+      - "Storage Location (select)"
+      - "Reference Document (text input, conditional)"
+
+  - id: zone-filters
+    name: "Recent Movements"
+    type: fixed
+    priority: 3
+    dataBinding: "movements"
+    fields:
+      - "Document No. (display)"
+      - "Type (display)"
+      - "Material (display)"
+      - "Quantity (display)"
+      - "Date (display)"
+      - "Reverse action (button)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.goodsMovementFields"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Cancel (action)"
+      - "Post Movement (action: primary)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-actions
+      action: "Post Movement"
+      requiresRole: "WAREHOUSE_OPERATOR"
+    - zone: zone-filters
+      action: "Reverse"
+      requiresRole: "WAREHOUSE_MANAGER"
+  stateConditions:
+    - action: "Post Movement"
+      enabledWhen: "form.isValid == true"
+    - action: "Reverse"
+      enabledWhen: "movement.reversed == false"
+  actionConsequences:
+    - action: "Post Movement"
+      onSuccess: "refreshHistory() + resetForm() + toast('pps.F-PPS-003-02.action.post.success')"
+    - action: "Reverse"
+      onSuccess: "refreshHistory() + toast('pps.F-PPS-003-02.action.reverse.success')"

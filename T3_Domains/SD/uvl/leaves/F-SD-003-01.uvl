@@ -1,0 +1,14 @@
+namespace sd.bil.billing-run
+
+features
+    F_SD_003_01 {
+        description "Billing Run"
+        Boolean scheduled_billing_enabled {
+            description "Enables automatic scheduled billing run execution via job scheduler"
+            default false
+        }
+        String billing_run_scope {
+            description "Default scope of documents included in a billing run"
+            default "DELIVERED_ONLY"
+        }
+    }

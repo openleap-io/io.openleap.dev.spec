@@ -1,0 +1,96 @@
+# Screen Contract (AUI) — F-OPS-001-03
+# Feature: Work Order Close & Report
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-OPS-001-03
+name: "Work Order Close & Report"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: fill-close-form
+        description: "Technician fills completion code, materials, notes"
+      - task: capture-signature
+        description: "Customer signs on screen"
+        operator: enabling
+        enabledBy: fill-close-form
+      - task: generate-and-submit
+        description: "Generate PDF and close work order"
+        operator: enabling
+        enabledBy: fill-close-form
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Back navigation (link)"
+      - "Page title (display)"
+
+  - id: zone-core
+    name: "Closure Fields"
+    type: fixed
+    priority: 2
+    dataBinding: "close"
+    fields:
+      - "Completion Code (select: RESOLVED|CANCELLED|DEFERRED|ESCALATED, required)"
+      - "Notes (textarea, optional)"
+
+  - id: zone-materials
+    name: "Materials Used"
+    type: fixed
+    priority: 3
+    dataBinding: "close.materials"
+    fields:
+      - "Material items (repeating: item + qty + unit)"
+
+  - id: zone-signature
+    name: "Customer Signature"
+    type: variable
+    priority: 4
+    dataBinding: "close.signatureData"
+    extensionPoint: "ext.closeFormChecklist"
+    absentRule: panel-section-hidden
+    fields:
+      - "Signature pad (canvas)"
+      - "Clear button"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.closeFormChecklist"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Cancel (action)"
+      - "Generate Report & Close (action: primary)"
+
+absentRules:
+  - zone: zone-signature
+    condition: "customerSignature == disabled"
+    rule: panel-section-hidden
+  - zone: zone-extension
+    condition: "No extension point filled"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-actions
+      action: "Generate Report & Close"
+      requiresRole: "TECHNICIAN|FIELD_ENGINEER|OPERATIONS_MANAGER"
+  stateConditions:
+    - action: "Generate Report & Close"
+      enabledWhen: "form.completionCode != null AND (customerSignature != required OR form.signatureData != null)"
+  actionConsequences:
+    - action: "Generate Report & Close"
+      onSuccess: "navigate('work-order-summary', workOrderId) + toast('ops.F-OPS-001-03.action.generate.success')"

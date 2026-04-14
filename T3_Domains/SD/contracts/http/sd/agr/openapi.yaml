@@ -1,0 +1,43 @@
+openapi: 3.1.0
+info:
+  title: SD Agreements Service
+  version: 1.0.0
+  description: |
+    Pricing agreements and customer-specific pricing conditions for the SD suite.
+
+    Full endpoint specification derived from domain-specs/sd_agr-spec.md §6.
+  contact:
+    name: team-sd
+    email: sd-team@openleap.io
+  x-owner: team-sd
+  x-suite: sd
+  x-domain: agr
+
+servers:
+  - url: http://localhost:8300
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+paths:
+  /api/sd/agr/v1:
+    get:
+      summary: Service root / health
+      operationId: getServiceInfo
+      tags: [health]
+      responses:
+        '200':
+          description: Service info
+
+  # Full paths defined in domain-specs/sd_agr-spec.md §6.
+  # This stub provides the OpenAPI metadata contract per blueprint §2.3.1.
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

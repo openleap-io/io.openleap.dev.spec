@@ -1,0 +1,85 @@
+# Screen Contract (AUI) — F-SRV-005-02 Session Linking
+featureId: F-SRV-005-02
+name: "Session Linking"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-linked-sessions
+        description: "Fetch sessions linked to this case"
+      - task: view-session-table
+        description: "View session table with outcomes and progress"
+        operator: enabling
+        enabledBy: load-linked-sessions
+      - task: link-session
+        description: "Open session search dialog and link an unlinked session"
+        operator: optional
+        featureGate: "role == SRV_CAS_EDITOR"
+        absentRule: collapse-up
+      - task: unlink-session
+        description: "Remove session link from case"
+        operator: optional
+        featureGate: "role == SRV_CAS_EDITOR"
+
+zones:
+  - id: zone-session-table
+    name: "Linked Sessions Table"
+    type: fixed
+    priority: 1
+    dataBinding: "viewModel.linkedSessions[]"
+    fields:
+      - "sequenceNumber (display: number)"
+      - "date (display: date, sortable)"
+      - "offeringName (display: text)"
+      - "status (display: badge)"
+      - "outcomeCode (display: badge, featureGate: linking.showOutcome)"
+      - "deliveredDuration (display: number, suffix: min, featureGate: linking.showOutcome)"
+
+  - id: zone-progress
+    name: "Progress Bar"
+    type: fixed
+    priority: 2
+    dataBinding: "viewModel.progress"
+    fields:
+      - "progressBar (display: progress-bar, template: '{completed}/{total} ({percentage}%)')"
+
+  - id: zone-link-actions
+    name: "Link Actions"
+    type: fixed
+    priority: 3
+    fields:
+      - "linkSession (action: open-session-search, roleGate: SRV_CAS_EDITOR)"
+      - "unlinkSelected (action: unlink-session, roleGate: SRV_CAS_EDITOR, enabled when: sessionSelected)"
+
+  - id: zone-extension
+    name: "Extension Area"
+    type: variable
+    priority: 4
+    extensionPoint: "ext.sessionLink.customView"
+    absentRule: collapse-up
+
+absentRules:
+  - zoneId: zone-extension
+    condition: "No extension point filled"
+    rule: collapse-up
+
+businessRules:
+  - type: stateCondition
+    rule: "unlinkSelected enabled only when a session row is selected"
+  - type: stateCondition
+    rule: "link blocked if session already linked to another case (409)"
+  - type: roleGate
+    rule: "linkSession/unlinkSelected require SRV_CAS_EDITOR"
+  - type: actionConsequence
+    action: linkSession
+    consequence: "POST /cases/{id}/sessions {sessionId} → table refresh"
+  - type: actionConsequence
+    action: unlinkSelected
+    consequence: "DELETE /cases/{id}/sessions/{sid} → table refresh"
+
+extensionZones:
+  - id: zone-extension
+    extensionPoint: "ext.sessionLink.customView"
+    description: "Custom session summary view"
+    renderPosition: "after zone-link-actions"

@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.openleap.io/ps/prj/project.created.schema.json",
+  "title": "ps.prj.project.created",
+  "description": "New project created in DRAFT status",
+  "type": "object",
+  "required": [
+    "eventId",
+    "eventType",
+    "timestamp",
+    "tenantId",
+    "correlationId",
+    "producer",
+    "schemaVersion",
+    "payload"
+  ],
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique event identifier"
+    },
+    "eventType": {
+      "type": "string",
+      "const": "ps.prj.project.created",
+      "description": "Event routing key"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 event timestamp"
+    },
+    "tenantId": {
+      "type": "string",
+      "description": "Tenant identifier"
+    },
+    "correlationId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Correlation ID for tracing"
+    },
+    "causationId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "ID of the causing command/event"
+    },
+    "producer": {
+      "type": "string",
+      "const": "ps-prj-svc",
+      "description": "Producing service"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Schema version (semver)"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Event-specific payload for ps.prj.project.created",
+      "properties": {
+        "projectId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Identifier of the affected project"
+        }
+      },
+      "required": [
+        "projectId"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

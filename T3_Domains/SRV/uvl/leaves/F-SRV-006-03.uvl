@@ -1,0 +1,9 @@
+namespace srv.F-SRV-006-03
+features
+    F-SRV-006-03
+        consumption.showTransactionLog             Boolean true
+        consumption.showTransactionLog.bindingTime String "deploy"
+        consumption.allowManualAdjust             Boolean false
+        consumption.allowManualAdjust.bindingTime String "deploy"
+constraints
+    // See parent composition for structural constraints

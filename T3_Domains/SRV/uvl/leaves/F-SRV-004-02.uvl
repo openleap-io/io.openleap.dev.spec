@@ -1,0 +1,11 @@
+namespace srv.F-SRV-004-02
+features
+    F-SRV-004-02
+        outcome.requireCode             Boolean false
+        outcome.requireCode.bindingTime String "deploy"
+        outcome.codeList             String "COMPLETED_NORMAL"
+        outcome.codeList.bindingTime String "deploy"
+        outcome.requireNotes             Boolean false
+        outcome.requireNotes.bindingTime String "deploy"
+constraints
+    // See parent composition for structural constraints

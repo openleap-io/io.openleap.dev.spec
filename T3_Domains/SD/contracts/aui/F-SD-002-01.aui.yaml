@@ -1,0 +1,91 @@
+# Screen Contract (AUI) — F-SD-002-01
+# Feature: Delivery Planning
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-SD-002-01
+name: "Delivery Planning"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-pending-orders
+        description: "Load confirmed orders awaiting delivery and planned deliveries"
+      - task: plan-deliveries
+        description: "User creates or manages delivery documents"
+        operator: enabling
+        enabledBy: load-pending-orders
+      - task: assign-and-schedule
+        description: "User assigns warehouse and pick date"
+        operator: enabling
+        enabledBy: plan-deliveries
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Page title (display)"
+      - "Create Delivery (action: primary)"
+
+  - id: zone-pending
+    name: "Orders Awaiting Delivery"
+    type: fixed
+    priority: 2
+    dataBinding: "pendingOrders"
+    fields:
+      - "Order Number (display)"
+      - "Customer (display)"
+      - "Line Count (display)"
+      - "Delivery Date (display)"
+      - "Create Delivery (action per row)"
+
+  - id: zone-core
+    name: "Planned Deliveries"
+    type: fixed
+    priority: 3
+    dataBinding: "plannedDeliveries"
+    fields:
+      - "Delivery Number (display)"
+      - "Customer (display)"
+      - "Status (display: badge)"
+      - "Warehouse (select — editable)"
+      - "Pick Date (date picker)"
+      - "Split (action per row)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.deliveryPlanningActions"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Pagination"
+    type: fixed
+    priority: 99
+    dataBinding: "pagination"
+    fields:
+      - "Previous (action)"
+      - "Page indicator (display)"
+      - "Next (action)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-pending
+      action: "Create Delivery"
+      requiresRole: "LOGISTICS_COORDINATOR"
+  stateConditions:
+    - action: "Split"
+      enabledWhen: "delivery.lineCount > 1"
+  actionConsequences:
+    - action: "Create Delivery"
+      onSuccess: "navigate('delivery-detail', deliveryId) + toast('sd.F-SD-002-01.action.create.success')"

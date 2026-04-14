@@ -1,0 +1,13 @@
+namespace co.om
+
+features
+    F_CO_002 { description "Overhead & Allocation Management" }
+        mandatory
+            F_CO_002_01 { description "Define Overhead Keys" }
+            F_CO_002_02 { description "Run Allocation Cycle" }
+        optional
+            F_CO_002_03 { description "Allocation Simulation" }
+
+constraints
+    F_CO_002_03 => F_CO_002_02
+    F_CO_002_02 => F_CO_002_01

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pps.eam.maintenance-order.completed",
+  "title": "pps.eam.maintenance-order.completed",
+  "description": "Event published when an EAM maintenance order has been completed",
+  "type": "object",
+  "required": ["eventId", "eventType", "timestamp", "tenantId", "correlationId", "producer", "schemaVersion", "payload"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "eventType": { "type": "string", "const": "pps.eam.maintenance-order.completed" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "correlationId": { "type": "string", "format": "uuid" },
+    "causationId": { "type": "string", "format": "uuid" },
+    "producer": { "type": "string", "const": "pps-eam-svc" },
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "payload": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "maintenanceOrderId": { "type": "string" },
+        "equipmentId": { "type": "string" },
+        "plant": { "type": "string" },
+        "maintenanceType": { "type": "string", "enum": ["PREVENTIVE", "CORRECTIVE", "INSPECTION"] },
+        "completedAt": { "type": "string", "format": "date-time" },
+        "technician": { "type": "string" }
+      }
+    }
+  }
+}

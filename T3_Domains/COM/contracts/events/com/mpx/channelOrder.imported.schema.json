@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/com/mpx/channelOrder.imported",
+  "title": "ChannelOrderImported",
+  "description": "Emitted when an inbound marketplace order is captured by com.mpx.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "channelOrderId", "externalOrderId", "channelId"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "channelOrderId": { "type": "string", "format": "uuid" },
+    "externalOrderId": { "type": "string" },
+    "channelId": { "type": "string" },
+    "marketplace": { "type": "string" },
+    "itemCount": { "type": "integer", "minimum": 1 }
+  }
+}

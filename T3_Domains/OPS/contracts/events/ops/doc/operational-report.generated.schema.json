@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ops.doc.operational-report.generated",
+  "title": "ops.doc.operational-report.generated",
+  "description": "Event published when an operational report document is generated for a work order",
+  "type": "object",
+  "required": ["eventId", "eventType", "timestamp", "tenantId", "correlationId", "producer", "schemaVersion", "payload"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "eventType": { "type": "string", "const": "ops.doc.operational-report.generated" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "correlationId": { "type": "string", "format": "uuid" },
+    "causationId": { "type": "string", "format": "uuid" },
+    "producer": { "type": "string", "const": "ops-doc-svc" },
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "payload": {
+      "type": "object",
+      "required": ["documentId", "workOrderId", "reportType"],
+      "properties": {
+        "documentId": { "type": "string", "format": "uuid" },
+        "workOrderId": { "type": "string", "format": "uuid" },
+        "reportType": { "type": "string", "enum": ["SERVICE_REPORT", "COMPLETION_CERTIFICATE", "INSPECTION_REPORT"] },
+        "pdfUrl": { "type": "string", "format": "uri" },
+        "generatedAt": { "type": "string", "format": "date-time" },
+        "customerSignatureCaptured": { "type": "boolean" }
+      }
+    }
+  }
+}

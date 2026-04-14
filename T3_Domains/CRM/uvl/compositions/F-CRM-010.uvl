@@ -1,0 +1,19 @@
+// Composition UVL: F-CRM-010 — Dashboards & Reporting
+// Template: feature-composition.uvl v1.0.0
+// Generated: 2026-04-03
+
+namespace crm
+
+imports
+    crm.F_CRM_010_01
+    crm.F_CRM_010_02
+    crm.F_CRM_010_03
+    crm.F_CRM_010_04
+
+features
+    F_CRM_010
+        optional
+            F_CRM_010_01  // Dashboard Builder
+            F_CRM_010_02  // Standard Report Library
+            F_CRM_010_03  // Custom Report Builder
+            F_CRM_010_04  // Report Scheduling & Export

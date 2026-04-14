@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/srv/ses/session.completed",
+  "title": "SessionCompleted",
+  "description": "Raised when a service session has been completed.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "sessionId"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "sessionId": { "type": "string", "format": "uuid" }
+  }
+}

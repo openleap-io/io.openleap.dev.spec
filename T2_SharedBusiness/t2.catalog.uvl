@@ -1,0 +1,83 @@
+// Template Meta
+// Template-ID:   TPL-UVL-CAT
+// Version:       1.0.0
+// Last Updated:  2026-04-03
+// Changelog:
+//   1.0.0 (2026-04-03) — Initial versioned baseline.
+
+// ============================================================
+// T2 Suite — UI Feature Catalog (UVL Root)
+// File: t2.catalog.uvl
+//
+// This is the machine-readable root of the T2 suite's
+// UI feature tree. It imports all composition node UVL
+// files in this suite and assembles them under a single
+// suite root feature.
+//
+// This file is imported by catalog.uvl (the platform root).
+//
+// Companion document: _t2_suite.md (SS6 Feature Catalog)
+//
+// Authoring rules:
+//   - Add an import line for every composition .uvl file in this suite.
+//   - Add the corresponding feature reference under the
+//     suite root's group.
+//   - The group type at the suite root is `optional` —
+//     ProductConfigs select which composition nodes to include.
+//   - Mandatory suite-level cross-tree constraints go in
+//     the constraints block here.
+//   - Feature-level constraints stay in individual .uvl files.
+// ============================================================
+
+namespace t2
+
+imports
+    // Import every composition node in this suite.
+    // One import per composition node defined in SS6.1 of _t2_suite.md.
+    F-T2-001 as PartyManagement
+    F-T2-002 as CalendarManagement
+    F-T2-003 as BookingManagement
+    F-T2-004 as PeriodManagement
+
+features
+
+    // Suite root — the top-level feature representing T2's
+    // entire UI capability.
+    // This is the node that the platform catalog.uvl references.
+    T2_UI
+
+        optional
+            // List every top-level composition node.
+            // Products select which capability areas they need.
+            F-T2-001    // Party Management        [mandatory in most configs]
+            F-T2-002    // Calendar Management      [mandatory in most configs]
+            F-T2-003    // Booking Management       [optional]
+            F-T2-004    // Period Management         [optional]
+
+
+constraints
+
+    // --------------------------------------------------------
+    // Suite-level cross-tree constraints.
+    //
+    // Place here only constraints that span multiple
+    // composition nodes within this suite, or that represent
+    // suite-level requirements on other suites.
+    //
+    // Feature-level cross-suite requires (e.g., F-T2-001-03
+    // requires ref.F-T1-xxx) belong in the leaf .uvl file,
+    // NOT here.
+    // --------------------------------------------------------
+
+    // Booking Management requires Calendar Management:
+    // Bookings reserve slots which are derived from calendars.
+    F-T2-003 => F-T2-002
+
+    // Period Management requires Calendar Management:
+    // Periods are owned by calendars.
+    F-T2-004 => F-T2-002
+
+    // Cross-suite: all T2 features require T1 reference data.
+    // (Surfaced here for visibility; enforced in leaf .uvl files.)
+    // F-T2-001 => ref.F-T1-REF-001
+    // F-T2-002 => ref.F-T1-REF-001

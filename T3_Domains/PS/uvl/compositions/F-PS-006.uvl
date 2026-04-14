@@ -1,0 +1,38 @@
+// ============================================================
+// F-PS-006 — Portfolio & Program (Composition Node)
+// File: F-PS-006.uvl
+//
+// Companion document: features/compositions/F-PS-006.md
+//
+// Generated: 2026-04-03
+// Template: TPL-UVL-COMP v1.0.0
+// ============================================================
+
+namespace F_PS_006
+
+imports
+    F-PS-006-01 as Portfolio_Dashboard
+    F-PS-006-02 as Program_Management
+    F-PS-006-03 as Lifecycle_Gate_Management
+    F-PS-006-04 as Gate_Review_Workflow
+    F-PS-006-05 as Project_Scoring_Prioritization
+    F-PS-006-06 as Multi-Project_Roadmap
+
+features
+
+    F-PS-006
+
+        mandatory
+            F-PS-006-01
+            F-PS-006-02
+            F-PS-006-03
+            F-PS-006-04
+
+        optional
+            F-PS-006-05
+            F-PS-006-06
+
+
+constraints
+
+    // Intra-composition constraints (if any)

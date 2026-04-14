@@ -1,0 +1,86 @@
+# Screen Contract (AUI) — F-SD-003-01
+# Feature: Billing Run
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-SD-003-01
+name: "Billing Run"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-runs
+        description: "Load billing runs list from sd-bil-svc"
+      - task: schedule-or-execute
+        description: "User schedules or executes a billing run"
+        operator: enabling
+        enabledBy: load-runs
+      - task: review-results
+        description: "User reviews run results and posts invoices"
+        operator: enabling
+        enabledBy: schedule-or-execute
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Page title (display)"
+      - "New Run (action)"
+
+  - id: zone-core
+    name: "Billing Runs List"
+    type: fixed
+    priority: 3
+    dataBinding: "runs"
+    fields:
+      - "Run ID (display)"
+      - "Run Date (display)"
+      - "Status (display: badge)"
+      - "Invoice Count (display)"
+      - "Execute Now (action per row — when SCHEDULED)"
+      - "View Results (action per row — when COMPLETED)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.billingRunFilters"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Pagination"
+    type: fixed
+    priority: 99
+    dataBinding: "pagination"
+    fields:
+      - "Previous (action)"
+      - "Page indicator (display)"
+      - "Next (action)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-core
+      action: "Execute Now"
+      requiresRole: "BILLING_CLERK"
+    - zone: zone-core
+      action: "Post All Invoices"
+      requiresRole: "FINANCE_MANAGER"
+  stateConditions:
+    - action: "Execute Now"
+      enabledWhen: "run.status == 'SCHEDULED'"
+    - action: "Post All Invoices"
+      enabledWhen: "run.status == 'COMPLETED'"
+  actionConsequences:
+    - action: "Execute Now"
+      onSuccess: "updateStatus('RUNNING') + toast('sd.F-SD-003-01.action.execute.success')"
+    - action: "View Results"
+      onSuccess: "navigate('billing-run-detail', runId)"

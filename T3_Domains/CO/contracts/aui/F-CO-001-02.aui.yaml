@@ -1,0 +1,85 @@
+# Screen Contract (AUI) — F-CO-001-02
+# Feature: Manage Cost Center Groups
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-CO-001-02
+name: "Manage Cost Center Groups"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-group-tree
+        description: "Load cost center group hierarchy"
+      - task: fill-form
+        description: "User creates or edits a group"
+        operator: enabling
+        enabledBy: load-group-tree
+      - task: validate-and-submit
+        description: "Validate and save group"
+        operator: enabling
+        enabledBy: fill-form
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Back navigation (link)"
+      - "Page title (display)"
+      - "Add Group (action: primary)"
+
+  - id: zone-core
+    name: "Group Hierarchy Tree"
+    type: fixed
+    priority: 2
+    dataBinding: "content"
+    fields:
+      - "Group ID (display)"
+      - "Group Name (display)"
+      - "Member Count (display)"
+      - "Edit (action)"
+      - "Delete (action)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.groupTreeActions"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Cancel (action)"
+      - "Save (action: primary)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-actions
+      action: "Save"
+      requiresRole: "CO_ADMIN"
+    - zone: zone-core
+      action: "Delete"
+      requiresRole: "CO_ADMIN"
+  stateConditions:
+    - action: "Save"
+      enabledWhen: "form.isValid == true"
+    - action: "Delete"
+      enabledWhen: "group.memberCount == 0"
+  actionConsequences:
+    - action: "Save"
+      onSuccess: "refreshTree() + toast('co.F-CO-001-02.action.save.success')"
+    - action: "Delete"
+      onSuccess: "refreshTree() + toast('co.F-CO-001-02.action.delete.success')"

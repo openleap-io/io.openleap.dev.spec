@@ -1,0 +1,10 @@
+namespace co
+
+features
+    F_CO_004_02 {
+        description "See feature-spec.md"
+    }
+
+        // Attributes
+        Integer cmLevels { default 3, bindingTime deploy }
+        Boolean showAllocatedOverhead { default true, bindingTime deploy }

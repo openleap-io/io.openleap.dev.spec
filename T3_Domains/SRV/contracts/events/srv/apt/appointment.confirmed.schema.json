@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/srv/apt/appointment.confirmed",
+  "title": "AppointmentConfirmed",
+  "description": "Raised when an appointment has been confirmed.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "appointmentId"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "appointmentId": { "type": "string", "format": "uuid" }
+  }
+}

@@ -1,0 +1,24 @@
+namespace ops.ord
+
+features
+    F_OPS_001_02 {
+        description "Work Order Execution"
+        mandatory
+            offlineMode {
+                description "Cache work orders locally for offline use"
+                default true
+            }
+        optional
+            gpsCheckIn {
+                description "Require GPS location fix before starting work"
+                type String
+                values ["required", "optional", "disabled"]
+                default "optional"
+            }
+            photoEvidence {
+                description "Allow or require photo capture during execution"
+                type String
+                values ["required", "optional", "disabled"]
+                default "optional"
+            }
+    }

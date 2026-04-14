@@ -1,0 +1,14 @@
+// F-IAM-002 — Authorization
+// Generated: 2026-04-03
+
+namespace F_IAM_002
+
+features
+    F_IAM_002 {
+        mandatory
+            F_IAM_002_01
+            F_IAM_002_02
+        optional
+            F_IAM_002_03
+            F_IAM_002_04
+    }

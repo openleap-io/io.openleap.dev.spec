@@ -1,0 +1,10 @@
+namespace co
+
+features
+    F_CO_001_02 {
+        description "See feature-spec.md"
+    }
+
+        // Attributes
+        Integer maxHierarchyDepth { default 5, bindingTime deploy }
+        Boolean allowDeleteWithChildren { default false, bindingTime deploy }

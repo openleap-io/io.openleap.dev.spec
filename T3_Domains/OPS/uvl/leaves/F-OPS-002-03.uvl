@@ -1,0 +1,19 @@
+namespace ops.res
+
+features
+    F_OPS_002_03 {
+        description "Utilization Report"
+        optional
+            defaultPeriod {
+                description "Default report period on page open"
+                type String
+                values ["WEEK", "MONTH", "QUARTER"]
+                default "MONTH"
+            }
+            targetUtilizationPct {
+                description "Target utilization percentage for over/under indicators"
+                type Integer
+                values [0, 100]
+                default 80
+            }
+    }

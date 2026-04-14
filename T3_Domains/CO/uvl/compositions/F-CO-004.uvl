@@ -1,0 +1,12 @@
+namespace co.pa
+
+features
+    F_CO_004 { description "Profitability Analysis" }
+        mandatory
+            F_CO_004_01 { description "Profitability Report Browser" }
+            F_CO_004_02 { description "Contribution Margin Analysis" }
+        optional
+            F_CO_004_03 { description "Profit Center Assignment" }
+
+constraints
+    F_CO_004_03 => F_CO_004_01

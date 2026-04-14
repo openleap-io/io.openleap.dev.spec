@@ -1,0 +1,10 @@
+namespace pps.mes
+
+features
+    F_PPS_002_02 {
+        description "See feature-spec.md"
+    }
+
+        // Attributes
+        Boolean require_downtime_reason { default false, bindingTime deploy }
+        Boolean allow_split_recording { default false, bindingTime deploy }

@@ -1,0 +1,87 @@
+# Screen Contract (AUI) — F-PPS-001-03
+# Feature: Capacity Planning
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-PPS-001-03
+name: "Capacity Planning"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-reference-data
+        description: "Load capacity profiles and work center list"
+      - task: fill-form
+        description: "User filters by work center and period"
+        operator: enabling
+        enabledBy: load-reference-data
+      - task: validate-and-submit
+        description: "Level load or drill into overloaded period"
+        operator: enabling
+        enabledBy: fill-form
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Back navigation (link)"
+      - "Page title (display)"
+
+  - id: zone-filters
+    name: "Filter Bar"
+    type: fixed
+    priority: 2
+    dataBinding: "filters"
+    fields:
+      - "Work Center filter (select)"
+      - "Period filter (select: 1–52 weeks)"
+
+  - id: zone-core
+    name: "Capacity Chart"
+    type: fixed
+    priority: 3
+    dataBinding: "capacityProfiles"
+    fields:
+      - "Work Center ID (display)"
+      - "Period (display: week number)"
+      - "Load % (bar chart cell)"
+      - "Overloaded indicator (display)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.capacityChartOverlay"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Export (action)"
+      - "Level Load (action: primary)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-actions
+      action: "Level Load"
+      requiresRole: "PLANNER"
+  stateConditions:
+    - action: "Level Load"
+      enabledWhen: "capacityProfiles.hasOverloads == true"
+  actionConsequences:
+    - action: "Level Load"
+      onSuccess: "refreshChart() + toast('pps.F-PPS-001-03.action.levelLoad.success')"
+    - action: "Drill Overload"
+      onSuccess: "navigate('orderListForPeriod')"

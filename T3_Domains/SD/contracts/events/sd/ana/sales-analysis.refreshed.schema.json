@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sd.ana.sales-analysis.refreshed",
+  "title": "sd.ana.sales-analysis.refreshed",
+  "description": "Event published when a sales analysis snapshot is refreshed",
+  "type": "object",
+  "required": ["eventId", "eventType", "timestamp", "tenantId", "correlationId", "producer", "schemaVersion", "payload"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "eventType": { "type": "string", "const": "sd.ana.sales-analysis.refreshed" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "correlationId": { "type": "string", "format": "uuid" },
+    "causationId": { "type": "string", "format": "uuid" },
+    "producer": { "type": "string", "const": "sd-ana-svc" },
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "payload": {
+      "type": "object",
+      "required": ["snapshotId", "period", "refreshedAt"],
+      "properties": {
+        "snapshotId": { "type": "string", "format": "uuid" },
+        "period": { "type": "string", "description": "Period covered by this snapshot, e.g. 2026-Q1" },
+        "refreshedAt": { "type": "string", "format": "date-time" },
+        "totalRevenue": { "type": "number" },
+        "currency": { "type": "string" },
+        "orderCount": { "type": "integer" }
+      }
+    }
+  }
+}

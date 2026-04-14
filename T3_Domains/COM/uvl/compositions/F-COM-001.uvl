@@ -1,0 +1,13 @@
+// F-COM-001.uvl — Channel Catalog Management (Composition)
+namespace com.F_COM_001
+features
+    F_COM_001 { description "Channel Catalog Management — catalog content and listings" }
+        mandatory
+            F_COM_001_01 { description "Channel Catalog Worklist"; domain "com.cat" }
+        optional
+            F_COM_001_02 { description "Listing Management"; domain "com.lst" }
+            F_COM_001_03 { description "Content Editing"; domain "com.cat" }
+constraints
+    F_COM_001_01 => IAM_UI
+    F_COM_001_02 => F_COM_001_01
+    F_COM_001_03 => F_COM_001_01

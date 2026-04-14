@@ -1,0 +1,9 @@
+namespace srv.F-SRV-006-02
+features
+    F-SRV-006-02
+        eligibility.blockOnIneligible             Boolean false
+        eligibility.blockOnIneligible.bindingTime String "deploy"
+        eligibility.showRemainingQuota             Boolean true
+        eligibility.showRemainingQuota.bindingTime String "deploy"
+constraints
+    // See parent composition for structural constraints

@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/com/chk/checkoutSession.submitted",
+  "title": "CheckoutSessionSubmitted",
+  "description": "Emitted when a checkout intent is submitted to SD.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "sessionId", "channelId", "sdOrderId"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "sessionId": { "type": "string", "format": "uuid" },
+    "channelId": { "type": "string" },
+    "customerId": { "type": "string", "format": "uuid" },
+    "sdOrderId": { "type": "string" },
+    "sdStatus": { "type": "string" }
+  }
+}

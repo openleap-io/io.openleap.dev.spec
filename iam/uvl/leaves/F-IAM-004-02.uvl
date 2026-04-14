@@ -1,0 +1,11 @@
+// F-IAM-004-02 — Audit Query & Reporting
+// Generated: 2026-04-03
+// Template: TPL-UVL-LEAF v1.0.0
+
+namespace F_IAM_004_02
+
+features
+    F_IAM_004_02
+        pagination {
+            Integer pageSize default 25
+        }

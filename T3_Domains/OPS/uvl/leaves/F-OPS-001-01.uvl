@@ -1,0 +1,22 @@
+namespace ops.ord
+
+features
+    F_OPS_001_01 {
+        description "Create Work Order"
+        mandatory
+            slaEnforcement {
+                description "Enforce SLA tier selection and deadline computation"
+                default true
+            }
+            skillsSelection {
+                description "Allow selection of required skills on work order"
+                default true
+            }
+        optional
+            customerSignatureAtCreation {
+                description "Capture customer signature at work order creation"
+                type String
+                values ["required", "optional", "hidden"]
+                default "optional"
+            }
+    }

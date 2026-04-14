@@ -1,0 +1,90 @@
+# Screen Contract (AUI) — F-SRV-002-03 Waitlist Management
+#
+# Companion of: F-SRV-002-03.md
+
+featureId: F-SRV-002-03
+name: "Waitlist Management"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-waitlist
+        description: "Load waitlist entries with filters"
+
+      - task: view-list
+        description: "Display waitlist entries in table"
+        operator: enabling
+        enabledBy: load-waitlist
+
+      - task: add-entry
+        description: "Open add-to-waitlist dialog"
+        operator: optional
+
+      - task: remove-entry
+        description: "Remove a waitlist entry"
+        operator: optional
+
+zones:
+  - id: zone-header
+    name: "Filters & Actions"
+    type: fixed
+    priority: 1
+    fields:
+      - "offeringFilter (lookup: optional, source: srv-cat-svc)"
+      - "statusFilter (select: PENDING | NOTIFIED | EXPIRED)"
+      - "searchAction (action: search)"
+      - "addAction (action: open add dialog, role: SRV_APT_EDITOR)"
+
+  - id: zone-list
+    name: "Waitlist Entries"
+    type: fixed
+    priority: 2
+    dataBinding: "viewModel.entries[]"
+    fields:
+      - "position (display: integer, gated by waitlist.showPosition)"
+      - "customerName (display)"
+      - "offeringName (display)"
+      - "createdAt (display: date)"
+      - "expiresAt (display: date, computed from waitlist.autoExpireDays)"
+      - "removeAction (action: delete, per-row, role: SRV_APT_EDITOR)"
+
+  - id: zone-extension
+    name: "Extension Area"
+    type: variable
+    priority: 3
+    extensionPoint: "ext.waitlist.customPanel"
+    absentRule: collapse-up
+
+  - id: zone-actions
+    name: "Actions"
+    type: fixed
+    priority: 99
+    fields:
+      - "addToWaitlist (action: open dialog, role: SRV_APT_EDITOR)"
+
+absentRules:
+  - zoneId: zone-extension
+    condition: "No extension point filled"
+    rule: collapse-up
+
+businessRules:
+  - type: roleGate
+    rule: "addAction and removeAction require SRV_APT_EDITOR"
+
+  - type: stateCondition
+    rule: "addAction disabled if customer already has maxPerCustomer entries for selected offering"
+
+  - type: actionConsequence
+    action: "addToWaitlist"
+    consequence: "POST /api/srv/apt/v1/waitlist → WaitlistEntry created"
+
+  - type: actionConsequence
+    action: "removeAction"
+    consequence: "DELETE /api/srv/apt/v1/waitlist/{id} → entry removed"
+
+extensionZones:
+  - id: zone-extension
+    extensionPoint: "ext.waitlist.customPanel"
+    description: "Product-specific panel (e.g., priority tier display)"
+    renderPosition: "after zone-list, before zone-actions"

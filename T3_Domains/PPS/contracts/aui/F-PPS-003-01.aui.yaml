@@ -1,0 +1,88 @@
+# Screen Contract (AUI) — F-PPS-003-01
+# Feature: Stock Overview
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-PPS-003-01
+name: "Stock Overview"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-reference-data
+        description: "Load stock data and filter options"
+      - task: fill-form
+        description: "User interacts with filters and search"
+        operator: enabling
+        enabledBy: load-reference-data
+      - task: validate-and-submit
+        description: "Navigate to movement history or export"
+        operator: enabling
+        enabledBy: fill-form
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Back navigation (link)"
+      - "Page title (display)"
+
+  - id: zone-filters
+    name: "Filter Bar"
+    type: fixed
+    priority: 2
+    dataBinding: "filters"
+    fields:
+      - "Search (text input)"
+      - "Plant filter (select)"
+      - "Storage Location filter (select)"
+
+  - id: zone-core
+    name: "Stock List"
+    type: fixed
+    priority: 3
+    dataBinding: "stocks"
+    fields:
+      - "Material (display)"
+      - "Plant (display)"
+      - "Storage Location (display)"
+      - "Unrestricted Qty (display)"
+      - "Unit (display)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.stockOverviewColumns"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Export (action)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-actions
+      action: "Export"
+      requiresRole: "WAREHOUSE_MANAGER"
+  stateConditions:
+    - action: "Export"
+      enabledWhen: "stocks.length > 0"
+  actionConsequences:
+    - action: "Export"
+      onSuccess: "download('stock-overview.csv')"
+    - action: "Select Row"
+      onSuccess: "navigate('movementHistory')"

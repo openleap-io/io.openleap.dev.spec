@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sd.bil.invoice.posted",
+  "title": "sd.bil.invoice.posted",
+  "description": "Event published when an invoice is posted to the FI suite",
+  "type": "object",
+  "required": ["eventId", "eventType", "timestamp", "tenantId", "correlationId", "producer", "schemaVersion", "payload"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "eventType": { "type": "string", "const": "sd.bil.invoice.posted" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "correlationId": { "type": "string", "format": "uuid" },
+    "causationId": { "type": "string", "format": "uuid" },
+    "producer": { "type": "string", "const": "sd-bil-svc" },
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "payload": {
+      "type": "object",
+      "required": ["invoiceId", "invoiceNumber", "customerId", "totalAmount", "currency", "postedAt"],
+      "properties": {
+        "invoiceId": { "type": "string", "format": "uuid" },
+        "invoiceNumber": { "type": "string" },
+        "customerId": { "type": "string", "format": "uuid" },
+        "salesOrderId": { "type": "string", "format": "uuid" },
+        "billingRunId": { "type": "string", "format": "uuid" },
+        "totalAmount": { "type": "number" },
+        "currency": { "type": "string" },
+        "dueDate": { "type": "string", "format": "date" },
+        "postedAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}

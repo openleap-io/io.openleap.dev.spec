@@ -1,0 +1,102 @@
+// fi.catalog.uvl — Catalog Root
+// Suite: fi (Finance)
+// Generated: 2026-04-04
+// Template: suite-catalog.uvl v1.0.0
+
+namespace fi
+
+features
+    FI_UI {
+        description "Finance suite administrative and transactional features"
+    }
+
+        mandatory
+            F_FI_001 {
+                description "GL Journal Entry Management"
+                uvl "uvl/compositions/F-FI-001.uvl"
+            }
+            F_FI_002 {
+                description "Receivables Management"
+                uvl "uvl/compositions/F-FI-002.uvl"
+            }
+            F_FI_003 {
+                description "Payables Management"
+                uvl "uvl/compositions/F-FI-003.uvl"
+            }
+
+        optional
+            // Core domains — optional compositions (placeholder; full authoring pending)
+            F_FI_BNK {
+                description "Banking & Bank Statement Import"
+                domain "fi.bnk"
+            }
+            F_FI_CLR {
+                description "Clearing Management"
+                domain "fi.clr"
+            }
+            F_FI_CLS {
+                description "Period Closing"
+                domain "fi.cls"
+            }
+            F_FI_COA {
+                description "Chart of Accounts"
+                domain "fi.coa"
+            }
+            F_FI_FA {
+                description "Fixed Assets"
+                domain "fi.fa"
+            }
+            F_FI_SLC {
+                description "Subledger Closing & Reconciliation"
+                domain "fi.slc"
+            }
+
+            // Extension domains
+            F_FI_CNSL {
+                description "Consolidation"
+                domain "fi.cnsl"
+            }
+            F_FI_IC {
+                description "Intercompany Accounting"
+                domain "fi.ic"
+            }
+            F_FI_INV {
+                description "Inventory Valuation (FI view)"
+                domain "fi.inv"
+            }
+            F_FI_PRJ {
+                description "Project Accounting"
+                domain "fi.prj"
+            }
+            F_FI_RVRC {
+                description "Revenue Recognition"
+                domain "fi.rvrc"
+            }
+            F_FI_TAX {
+                description "Tax Management"
+                domain "fi.tax"
+            }
+
+constraints
+    // All FI features require IAM authentication
+    F_FI_001 => IAM_UI
+    F_FI_002 => IAM_UI
+    F_FI_003 => IAM_UI
+    F_FI_BNK => IAM_UI
+    F_FI_CLR => IAM_UI
+    F_FI_CLS => IAM_UI
+    F_FI_COA => IAM_UI
+    F_FI_FA => IAM_UI
+    F_FI_SLC => IAM_UI
+    F_FI_CNSL => IAM_UI
+    F_FI_IC => IAM_UI
+    F_FI_INV => IAM_UI
+    F_FI_PRJ => IAM_UI
+    F_FI_RVRC => IAM_UI
+    F_FI_TAX => IAM_UI
+    // Extension domain dependencies
+    F_FI_CNSL => F_FI_001
+    F_FI_IC => F_FI_001
+    F_FI_RVRC => F_FI_002
+    F_FI_INV => F_FI_001
+    F_FI_PRJ => F_FI_001

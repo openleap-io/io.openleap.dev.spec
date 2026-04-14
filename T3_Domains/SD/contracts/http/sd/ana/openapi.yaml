@@ -1,0 +1,42 @@
+openapi: 3.1.0
+info:
+  title: SD Sales Analytics Service
+  version: 1.0.0
+  description: |
+    Sales analytics and reporting for the SD suite.
+
+    Full endpoint specification derived from domain-specs/sd_ana-spec.md §6.
+  contact:
+    name: team-sd
+    email: sd-team@openleap.io
+  x-owner: team-sd
+  x-suite: sd
+  x-domain: ana
+
+servers:
+  - url: http://localhost:8301
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+paths:
+  /api/sd/ana/v1:
+    get:
+      summary: Service root / health
+      operationId: getServiceInfo
+      tags: [health]
+      responses:
+        '200':
+          description: Service info
+
+  # Full paths defined in domain-specs/sd_ana-spec.md §6.
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

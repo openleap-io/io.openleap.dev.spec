@@ -1,0 +1,82 @@
+# Screen Contract (AUI) — F-OPS-002-02
+# Feature: Schedule Assignment
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-OPS-002-02
+name: "Schedule Assignment"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-board
+        description: "Load unassigned work orders and resource schedule grid"
+      - task: assign
+        description: "Dispatcher assigns WOs to resource slots"
+        operator: enabling
+        enabledBy: load-board
+      - task: dispatch
+        description: "Dispatcher sends notification to technician"
+        operator: enabling
+        enabledBy: assign
+
+zones:
+  - id: zone-header
+    name: "Page Header"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Page title (display)"
+      - "Week selector (date picker)"
+
+  - id: zone-sidebar
+    name: "Unassigned Work Orders"
+    type: fixed
+    priority: 2
+    dataBinding: "unassigned"
+    fields:
+      - "WO title (display)"
+      - "Priority badge (display)"
+      - "SLA countdown (display)"
+
+  - id: zone-core
+    name: "Schedule Grid"
+    type: fixed
+    priority: 3
+    dataBinding: "assignments"
+    fields:
+      - "Resource rows (display)"
+      - "Day columns (Mon–Fri)"
+      - "Assignment cards (draggable)"
+      - "Dispatch button (per assignment card)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.boardSidebar"
+    absentRule: panel-section-hidden
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-core
+      action: "Assign"
+      requiresRole: "DISPATCHER|OPERATIONS_MANAGER|RESOURCE_PLANNER"
+    - zone: zone-core
+      action: "Dispatch"
+      requiresRole: "DISPATCHER|OPERATIONS_MANAGER"
+  stateConditions:
+    - action: "Dispatch"
+      enabledWhen: "assignment.dispatched == false"
+  actionConsequences:
+    - action: "Assign"
+      onConflict: "show-conflict-dialog"
+    - action: "Dispatch"
+      onSuccess: "toast('ops.F-OPS-002-02.action.dispatch.success')"

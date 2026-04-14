@@ -1,0 +1,71 @@
+// ============================================================
+// Composition Node UVL — F-SRV-002
+// Name: Appointment & Booking
+// Suite: srv
+// Parent: SRV_UI (suite root)
+//
+// Companion document: F-SRV-002.md
+//
+// This file defines the variability structure over the children
+// of the Appointment & Booking composition node.
+// ============================================================
+
+namespace srv.F-SRV-002
+
+imports
+    // No child composition nodes to import — all children are leaves.
+    // Leaf UVL files are referenced for attribute aggregation but
+    // not structurally imported into the composition.
+
+features
+
+    F-SRV-002
+
+        // --------------------------------------------------------
+        // Group structure: mixed (mandatory core + optional add-ons)
+        //
+        // Business rationale: see F-SRV-002.md §1.1
+        //   - Core Booking (01, 02): inseparable minimum viable booking
+        //   - Operational Add-ons (03, 04): deployment-dependent
+        // --------------------------------------------------------
+
+        mandatory
+            // Core Booking — always required when F-SRV-002 is selected.
+            // Slot Discovery and Booking Lifecycle are inseparable.
+            F-SRV-002-01   // Slot Discovery
+            F-SRV-002-02   // Booking Lifecycle
+
+        optional
+            // Operational add-ons — deployment-dependent.
+            F-SRV-002-03   // Waitlist Management
+            F-SRV-002-04   // No-Show Handling
+
+
+constraints
+
+    // --------------------------------------------------------
+    // Intra-node cross-tree constraints.
+    //
+    // Both are already implied by the mandatory group on 01/02,
+    // but stated explicitly for documentation and validation.
+    // --------------------------------------------------------
+
+    // Waitlist requires slot discovery (entry point for waitlist creation).
+    F-SRV-002-03 => F-SRV-002-01
+
+    // No-show requires booking lifecycle (no-show is a booking terminal state).
+    F-SRV-002-04 => F-SRV-002-02
+
+    // --------------------------------------------------------
+    // Cross-node constraints (from F-SRV-002.md §2.2).
+    // These reference features outside this composition node.
+    // --------------------------------------------------------
+
+    // Slot discovery needs resource availability queries.
+    F-SRV-002-01 => srv.F-SRV-003
+
+    // Booking lifecycle needs active service offerings.
+    F-SRV-002-02 => srv.F-SRV-001
+
+    // No-show triggers billing intent derivation.
+    F-SRV-002-04 => srv.F-SRV-007

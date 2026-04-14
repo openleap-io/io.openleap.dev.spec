@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/fac/rsk/score.updated",
+  "title": "ScoreUpdated",
+  "description": "Emitted when a debtor's risk score is updated.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "debtorPartyId", "newScore", "newRating"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "debtorPartyId": { "type": "string", "format": "uuid" },
+    "previousScore": { "type": "integer", "minimum": 0, "maximum": 1000 },
+    "newScore": { "type": "integer", "minimum": 0, "maximum": 1000 },
+    "previousRating": { "type": "string" },
+    "newRating": { "type": "string" },
+    "scoreDelta": { "type": "integer" },
+    "alertTriggered": { "type": "boolean" }
+  }
+}

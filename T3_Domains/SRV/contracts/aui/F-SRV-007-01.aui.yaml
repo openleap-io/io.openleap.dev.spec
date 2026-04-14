@@ -1,0 +1,118 @@
+# Screen Contract (AUI) — F-SRV-007-01 Intent Derivation
+featureId: F-SRV-007-01
+name: "Intent Derivation"
+
+taskModel:
+  root:
+    operator: alternative
+    children:
+      - task: list-path
+        operator: sequential
+        children:
+          - task: load-intents
+            description: "Fetch billing intents with filters"
+          - task: view-list
+            operator: enabling
+            enabledBy: load-intents
+      - task: detail-path
+        operator: sequential
+        children:
+          - task: load-intent
+            description: "Fetch intent by ID"
+          - task: view-detail
+            operator: enabling
+            enabledBy: load-intent
+          - task: confirm-intent
+            operator: optional
+            featureGate: "status == DRAFT AND role == SRV_BIL_EDITOR"
+          - task: mark-ready
+            operator: optional
+            featureGate: "status == CONFIRMED AND role == SRV_BIL_EDITOR"
+
+zones:
+  - id: zone-list-header
+    name: "Search & Filter"
+    type: fixed
+    priority: 1
+    fields:
+      - "customerFilter (input: lookup)"
+      - "statusFilter (select: DRAFT|CONFIRMED|READY_FOR_INVOICING|REVERSED|CANCELLED)"
+      - "typeFilter (select: SERVICE_DELIVERY|NO_SHOW_FEE|CANCELLATION_FEE)"
+      - "dateFrom (input: date)"
+      - "dateTo (input: date)"
+      - "searchAction (action: search)"
+
+  - id: zone-list
+    name: "Intent Table"
+    type: fixed
+    priority: 2
+    dataBinding: "viewModel.intents[]"
+    fields:
+      - "intentId (display: text)"
+      - "customerName (display: text)"
+      - "intentType (display: badge)"
+      - "status (display: badge)"
+      - "lineItemSummary (display: text)"
+      - "confirmAction (action: confirm, visible when: status == DRAFT, roleGate: SRV_BIL_EDITOR)"
+      - "markReadyAction (action: mark-ready, visible when: status == CONFIRMED, roleGate: SRV_BIL_EDITOR)"
+      - "detailAction (action: navigate-to-detail)"
+
+  - id: zone-intent-detail
+    name: "Intent Detail"
+    type: fixed
+    priority: 1
+    dataBinding: "viewModel.intent"
+    fields:
+      - "intentId (display: text)"
+      - "intentType (display: badge)"
+      - "status (display: badge)"
+      - "customerName (display: text)"
+      - "sessionRef (display: link)"
+      - "offeringName (display: text)"
+      - "lineItems (display: table, columns: description|quantity|billingUnit)"
+
+  - id: zone-extension
+    name: "Extension Area"
+    type: variable
+    priority: 3
+    extensionPoint: "ext.derivation.customFeePolicy"
+    absentRule: collapse-up
+
+  - id: zone-actions
+    name: "Actions"
+    type: fixed
+    priority: 99
+    fields:
+      - "confirm (action: confirm-intent, visible when: DRAFT, roleGate: SRV_BIL_EDITOR)"
+      - "markReady (action: mark-ready, visible when: CONFIRMED, roleGate: SRV_BIL_EDITOR)"
+      - "reverse (action: navigate-to-F-SRV-007-02, visible when: CONFIRMED|READY)"
+      - "back (action: navigate-back)"
+
+absentRules:
+  - zoneId: zone-extension
+    condition: "No custom fee policy extension"
+    rule: collapse-up
+
+businessRules:
+  - type: stateCondition
+    rule: "confirm visible only when status == DRAFT"
+  - type: stateCondition
+    rule: "markReady visible only when status == CONFIRMED"
+  - type: stateCondition
+    rule: "If derivation.autoConfirm == true, intents skip DRAFT"
+  - type: stateCondition
+    rule: "If derivation.autoMarkReady == true, intents auto-transition to READY_FOR_INVOICING"
+  - type: roleGate
+    rule: "confirm/markReady require SRV_BIL_EDITOR"
+  - type: actionConsequence
+    action: confirm-intent
+    consequence: "POST /billing-intents/{id}/confirm → CONFIRMED"
+  - type: actionConsequence
+    action: mark-ready
+    consequence: "POST /billing-intents/{id}/mark-ready → READY_FOR_INVOICING → event billingintent.ready_for_invoicing"
+
+extensionZones:
+  - id: zone-extension
+    extensionPoint: "ext.derivation.customFeePolicy"
+    description: "Custom fee policy evaluation"
+    renderPosition: "after zone-intent-detail, before zone-actions"

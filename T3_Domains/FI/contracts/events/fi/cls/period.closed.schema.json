@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/fi/cls/period.closed",
+  "title": "PeriodClosed",
+  "description": "Emitted when an accounting period is successfully closed.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "periodId", "fiscalYear"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "periodId": { "type": "string", "format": "uuid" },
+    "fiscalYear": { "type": "integer", "description": "The fiscal year of the closed period" }
+  }
+}

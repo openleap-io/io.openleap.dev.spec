@@ -1,0 +1,12 @@
+// F-COM-004.uvl — Marketplace & Compliance (Composition)
+namespace com.F_COM_004
+features
+    F_COM_004 { description "Marketplace & Compliance" }
+        optional
+            F_COM_004_01 { description "Marketplace Publication"; domain "com.mpx" }
+            F_COM_004_02 { description "Compliance Validation"; domain "com.cmp" }
+            F_COM_004_03 { description "Inbound Channel Orders"; domain "com.mpx" }
+constraints
+    F_COM_004_01 => F_COM_001_02
+    F_COM_004_02 => F_COM_001_02
+    F_COM_004_03 => F_COM_004_01

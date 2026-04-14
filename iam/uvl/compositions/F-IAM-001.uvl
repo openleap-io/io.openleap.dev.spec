@@ -1,0 +1,17 @@
+// F-IAM-001 — Principal Management
+// Generated: 2026-04-03
+
+namespace F_IAM_001
+
+features
+    F_IAM_001 {
+        mandatory
+            F_IAM_001_01
+            F_IAM_001_02
+            F_IAM_001_03
+            F_IAM_001_05
+            F_IAM_001_06
+            F_IAM_001_07
+        optional
+            F_IAM_001_04
+    }

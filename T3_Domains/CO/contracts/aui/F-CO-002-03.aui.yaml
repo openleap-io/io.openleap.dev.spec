@@ -1,0 +1,92 @@
+# Screen Contract (AUI) — F-CO-002-03
+# Feature: Allocation Simulation
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-CO-002-03
+name: "Allocation Simulation"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: configure-simulation
+        description: "User selects period for simulation"
+      - task: run-simulation
+        description: "Execute simulation"
+        operator: enabling
+        enabledBy: configure-simulation
+      - task: review-results
+        description: "User reviews simulated postings"
+        operator: enabling
+        enabledBy: run-simulation
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Back navigation (link)"
+      - "Page title (display)"
+
+  - id: zone-filters
+    name: "Simulation Controls"
+    type: fixed
+    priority: 2
+    dataBinding: "filters"
+    fields:
+      - "Period selector (month/year)"
+      - "Simulate (action: primary)"
+      - "Export CSV (action)"
+
+  - id: zone-core
+    name: "Simulation Results"
+    type: fixed
+    priority: 3
+    dataBinding: "content"
+    fields:
+      - "Overhead Key (display)"
+      - "Sender Cost Center (display)"
+      - "Receiver (display)"
+      - "Receiver Type (display)"
+      - "Debit Amount (display)"
+      - "Credit Amount (display)"
+      - "Currency (display)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.simulationActions"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Run Actual Cycle (action: secondary)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-filters
+      action: "Simulate"
+      requiresRole: "CO_CONTROLLER"
+  stateConditions:
+    - action: "Simulate"
+      enabledWhen: "form.period != null"
+    - action: "Export CSV"
+      enabledWhen: "simulation.hasResults == true && feature.simulationExport == true"
+  actionConsequences:
+    - action: "Simulate"
+      onSuccess: "renderResults(simulation.rows)"
+    - action: "Run Actual Cycle"
+      onSuccess: "navigate('F-CO-002-02', { period: form.period })"

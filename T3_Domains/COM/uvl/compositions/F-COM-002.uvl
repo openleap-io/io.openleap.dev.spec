@@ -1,0 +1,11 @@
+// F-COM-002.uvl — Commerce Search & Discovery (Composition)
+namespace com.F_COM_002
+features
+    F_COM_002 { description "Commerce Search & Discovery" }
+        mandatory
+            F_COM_002_01 { description "Product Search"; domain "com.srch" }
+        optional
+            F_COM_002_02 { description "Faceted Navigation"; domain "com.srch" }
+            F_COM_002_03 { description "Recommendations"; domain "com.srch" }
+constraints
+    F_COM_002_01 => F_COM_001_01

@@ -1,0 +1,105 @@
+# Screen Contract (AUI) — F-SRV-001-03 Variant & Requirement Management
+featureId: F-SRV-001-03
+name: "Variant & Requirement Management"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-variants
+        description: "Fetch variants for the current offering"
+      - task: view-variant-list
+        description: "Browse existing variants with requirements"
+        operator: enabling
+        enabledBy: load-variants
+      - task: add-variant
+        description: "Open inline form to create a new variant"
+        operator: optional
+        featureGate: "role == SRV_CAT_EDITOR AND variantCount < variant.maxPerOffering"
+        absentRule: collapse-up
+      - task: fill-variant-form
+        description: "Enter variant name, duration, requirements"
+        operator: enabling
+        enabledBy: add-variant
+      - task: save-variant
+        description: "Persist variant"
+        operator: enabling
+        enabledBy: fill-variant-form
+
+zones:
+  - id: zone-variant-list
+    name: "Variant Table"
+    type: fixed
+    priority: 1
+    dataBinding: "viewModel.variants[]"
+    fields:
+      - "name (display: text)"
+      - "durationMinutes (display: number, suffix: min)"
+      - "requirements (display: tag-list)"
+      - "editAction (action: open-edit-form, roleGate: SRV_CAT_EDITOR)"
+      - "deleteAction (action: delete-variant, roleGate: SRV_CAT_EDITOR)"
+      - "addVariant (action: open-add-form, enabled when: canAddMore, roleGate: SRV_CAT_EDITOR)"
+
+  - id: zone-variant-form
+    name: "Variant Form (inline expand)"
+    type: fixed
+    priority: 2
+    dataBinding: "viewModel.currentVariant"
+    fields:
+      - "name (input: text, required, maxLength: 255, label: srv.cat.variant.nameLabel)"
+      - "durationMinutes (input: number, min: 1, label: srv.cat.variant.durationLabel)"
+      - "priceHintOverride (input: number, featureGate: display.showPricingHints == true)"
+
+  - id: zone-requirements
+    name: "Resource Requirements"
+    type: feature-gated
+    featureGate: "variant.showRequirements == true"
+    priority: 3
+    absentRule: panel-section-hidden
+    dataBinding: "viewModel.currentVariant.requirements"
+    fields:
+      - "resourceType (select: PERSON|ROOM|ASSET, label: srv.cat.variant.resourceTypeLabel)"
+      - "skillTags (input: tag, label: srv.cat.variant.skillTagsLabel)"
+      - "minCapacity (input: number, min: 1)"
+
+  - id: zone-extension
+    name: "Extension Area"
+    type: variable
+    priority: 4
+    extensionPoint: "ext.variant.customFields"
+    absentRule: collapse-up
+
+  - id: zone-actions
+    name: "Actions"
+    type: fixed
+    priority: 99
+    fields:
+      - "saveVariant (action: save-variant, enabled when: nameValid, roleGate: SRV_CAT_EDITOR)"
+      - "cancel (action: collapse-form, always enabled)"
+
+absentRules:
+  - zoneId: zone-requirements
+    condition: "variant.showRequirements == false"
+    rule: panel-section-hidden
+    description: "Requirements section hidden; variant form ends after duration/price"
+  - zoneId: zone-extension
+    condition: "No extension point filled for ext.variant.customFields"
+    rule: collapse-up
+
+businessRules:
+  - type: stateCondition
+    rule: "addVariant disabled when variantCount >= variant.maxPerOffering"
+  - type: roleGate
+    rule: "addVariant/saveVariant/deleteVariant require SRV_CAT_EDITOR"
+  - type: actionConsequence
+    action: saveVariant
+    consequence: "POST/PATCH /offerings/{id}/variants → event srv.cat.variant.created/updated → list refresh + toast"
+  - type: actionConsequence
+    action: deleteVariant
+    consequence: "DELETE /offerings/{id}/variants/{vid} → event srv.cat.variant.deleted → list refresh"
+
+extensionZones:
+  - id: zone-extension
+    extensionPoint: "ext.variant.customFields"
+    description: "Custom variant metadata (industry-specific)"
+    renderPosition: "after zone-requirements, before zone-actions"

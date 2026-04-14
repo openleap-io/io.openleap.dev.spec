@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/srv/res/resource.availability.updated",
+  "title": "ResourceAvailabilityUpdated",
+  "description": "Raised when a resource's availability schedule has been updated.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "resourceId"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "resourceId": { "type": "string", "format": "uuid" }
+  }
+}

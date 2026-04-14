@@ -1,0 +1,29 @@
+// F-FAC-001-01.uvl — Receivable Intake & Worklist (Leaf)
+// Suite: fac | Composition: F-FAC-001 | Leaf: 01
+// Template: feature-leaf.uvl v1.0.0
+
+namespace fac.F_FAC_001_01
+
+features
+    F_FAC_001_01 {
+        description "Receivable Intake & Worklist — view and manage incoming receivables from fi.ar"
+    }
+        mandatory
+            receivable_list {
+                description "Paginated receivable worklist with status/date/debtor filters"
+            }
+            receivable_detail {
+                description "Full receivable detail view with eligibility check results and audit trail"
+            }
+        optional
+            receivable_assign {
+                description "Manual assignment trigger with eligibility review"
+            }
+            receivable_reject {
+                description "Manual rejection with reason selection"
+            }
+
+constraints
+    F_FAC_001_01 => IAM_UI
+    receivable_assign => receivable_list
+    receivable_reject => receivable_list

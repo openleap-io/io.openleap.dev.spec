@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "co.abc.process-cost.calculated",
+  "title": "co.abc.process-cost.calculated",
+  "description": "Event published when an ABC process cost has been calculated",
+  "type": "object",
+  "required": ["eventId", "eventType", "timestamp", "tenantId", "correlationId", "producer", "schemaVersion", "payload"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "eventType": { "type": "string", "const": "co.abc.process-cost.calculated" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "correlationId": { "type": "string", "format": "uuid" },
+    "causationId": { "type": "string", "format": "uuid" },
+    "producer": { "type": "string", "const": "co-abc-svc" },
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "payload": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "processId": { "type": "string" },
+        "costObjectId": { "type": "string" },
+        "costObjectType": { "type": "string", "enum": ["COST_CENTER", "INTERNAL_ORDER", "WBS"] },
+        "period": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}$" },
+        "calculatedCost": { "type": "number" },
+        "currency": { "type": "string", "maxLength": 3 },
+        "activityType": { "type": "string" }
+      }
+    }
+  }
+}

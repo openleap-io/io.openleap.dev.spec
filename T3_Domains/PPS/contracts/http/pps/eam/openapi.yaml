@@ -1,0 +1,44 @@
+openapi: 3.1.0
+info:
+  title: PPS EAM Service
+  version: 1.0.0
+  description: |
+    Enterprise Asset Management service for maintenance order management.
+
+    Full endpoint specification derived from domain-specs/pps_eam-spec.md §6.
+  contact:
+    name: team-pps
+    email: pps-team@openleap.io
+  x-owner: team-pps
+  x-suite: pps
+  x-domain: eam
+
+servers:
+  - url: http://localhost:TBD
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+paths:
+  /api/pps/eam/v1:
+    get:
+      summary: Service root / health
+      operationId: getServiceInfo
+      tags: [health]
+      responses:
+        '200':
+          description: Service info
+
+  # Full paths defined in domain-specs/pps_eam-spec.md §6.
+  # This stub provides the OpenAPI metadata contract per blueprint §2.3.1.
+  # Implementation-complete OpenAPI MUST be generated from the domain spec.
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

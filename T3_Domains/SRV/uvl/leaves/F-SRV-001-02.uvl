@@ -1,0 +1,9 @@
+namespace srv.F-SRV-001-02
+features
+    F-SRV-001-02
+        lifecycle.requireApproval             Boolean false
+        lifecycle.requireApproval.bindingTime String "deploy"
+        lifecycle.archiveAfterDays             Integer 365
+        lifecycle.archiveAfterDays.bindingTime String "deploy"
+constraints
+    // No cross-suite requires

@@ -1,0 +1,14 @@
+namespace sd.ord.order-tracking
+
+features
+    F_SD_001_02 {
+        description "Order Status Tracking"
+        String default_status_filter {
+            description "Default status filter applied when opening order list"
+            default "ALL"
+        }
+        String export_format {
+            description "Format for order list export download"
+            default "CSV"
+        }
+    }

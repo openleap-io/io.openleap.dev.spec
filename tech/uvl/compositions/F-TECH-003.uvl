@@ -1,0 +1,8 @@
+namespace tech.jc
+features
+    F_TECH_003 { description "Job Control" }
+        mandatory
+            F_TECH_003_01 { description "Browse Jobs & Runners" }
+            F_TECH_003_02 { description "Manage Job Types" }
+        optional
+            F_TECH_003_03 { description "Job Execution History" }

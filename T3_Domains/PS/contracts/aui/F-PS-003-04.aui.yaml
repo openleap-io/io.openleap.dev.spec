@@ -1,0 +1,171 @@
+# Screen Contract (AUI) — F-PS-003-04
+# Feature: Earned Value Management
+# Generated: 2026-04-03
+# Template: screen-contract-aui.yaml v1.0.0
+#
+# Derived from F-PS-003-04 feature-spec.md:
+#   §2 User Journey → Task Model
+#   §3 Interaction Requirements → Zones
+#   §4 Edge Cases → Absent Rules
+#
+# Task pattern: form
+
+featureId: F-PS-003-04
+name: "Earned Value Management"
+
+# ──────────────────────────────────────────────
+# Task Model (from §2 User Journey)
+# ──────────────────────────────────────────────
+taskModel:
+  root:
+    operator: sequential
+    children:
+
+      - task: "load-form"
+        description: "System loads form with reference data and defaults"
+        operator: sequential
+
+      - task: "fill-form"
+        description: "User fills in form fields"
+        operator: enabling
+        enabledBy: "load-form"
+
+      - task: "validate"
+        description: "System validates input against business rules"
+        operator: enabling
+        enabledBy: "fill-form"
+
+      - task: "submit"
+        description: "User submits the form"
+        operator: enabling
+        enabledBy: "validate"
+
+      - task: "confirm"
+        description: "System confirms successful save"
+        operator: enabling
+        enabledBy: "submit"
+
+
+# ──────────────────────────────────────────────
+# Zones (from §3 Interaction Requirements)
+# ──────────────────────────────────────────────
+zones:
+  - id: zone-header
+    name: "Page Header"
+    type: fixed
+    priority: 1
+    dataBinding: "viewModel.title"
+    fields:
+      - "title (display)"
+      - "breadcrumbs (display)"
+      - "primaryAction (button)"
+
+  - id: zone-toolbar
+    name: "Toolbar / Filter Bar"
+    type: fixed
+    priority: 2
+    dataBinding: "viewModel.filters"
+    fields:
+      - "search (input)"
+      - "statusFilter (select)"
+      - "dateRangeFilter (date-range)"
+
+  - id: zone-main
+    name: "Main Content Area"
+    type: fixed
+    priority: 3
+    dataBinding: "viewModel.data"
+    fields:
+      - "primaryContent (display: table | tree | chart | form)"
+      # Detailed fields derived from domain model
+      # See feature-spec.md §3 for complete field list
+
+  - id: zone-detail
+    name: "Detail / Side Panel"
+    type: fixed
+    priority: 4
+    dataBinding: "viewModel.selectedItem"
+    fields:
+      - "itemDetail (display)"
+      - "actions (button-group)"
+
+  - id: zone-extension
+    name: "Product Extension Area"
+    type: variable
+    priority: 5
+    extensionPoint: "ext.f_ps_003_04.custom_section"
+    description: "Extension zone for product-specific fields and actions"
+
+# ──────────────────────────────────────────────
+# Absent Rules (from §4 Edge Cases)
+# ──────────────────────────────────────────────
+absentRules:
+  - zoneId: zone-detail
+    rule: collapse-up
+    condition: "No item selected"
+
+  - zoneId: zone-extension
+    rule: panel-section-hidden
+    condition: "No product extensions configured"
+
+  - zoneId: zone-toolbar
+    rule: collapse-up
+    condition: "Feature attribute 'showFilters' is false"
+
+# ──────────────────────────────────────────────
+# Screen States (from §4 Edge Cases)
+# ──────────────────────────────────────────────
+screenStates:
+  loading:
+    description: "Data being fetched from backend"
+    display: "Skeleton loader in zone-main"
+
+  empty:
+    description: "No data matches current filters or no data exists"
+    display: "Empty state illustration with guidance text in zone-main"
+
+  populated:
+    description: "Data available"
+    display: "Normal content rendering in all zones"
+
+  error:
+    description: "Backend API call failed"
+    display: "Error message with retry button in zone-main"
+
+  partial:
+    description: "Primary data loaded but secondary data failed"
+    display: "Primary content shown; failed sections show inline error"
+
+# ──────────────────────────────────────────────
+# Business Rules (UI-level)
+# ──────────────────────────────────────────────
+businessRules:
+  - id: "rule-f_ps_003_04-readonly"
+    type: roleGate
+    description: "Users with PS_READER role see read-only view"
+    affectedZones: ["zone-main", "zone-detail"]
+    condition: "user.role == PS_READER"
+    effect: "disable all mutation actions"
+
+  - id: "rule-f_ps_003_04-project-scope"
+    type: stateCondition
+    description: "Content scoped to user's accessible projects"
+    affectedZones: ["zone-main"]
+    condition: "user.role != PS_ADMIN"
+    effect: "filter data to user's project assignments"
+
+# ──────────────────────────────────────────────
+# Extension Zones (for product customization)
+# ──────────────────────────────────────────────
+extensionZones:
+  - id: "ext-f_ps_003_04-custom-fields"
+    name: "Custom Fields Section"
+    insertionPoint: "after zone-main"
+    maxFields: 10
+    allowedFieldTypes: ["input", "select", "display", "date", "number"]
+
+  - id: "ext-f_ps_003_04-custom-actions"
+    name: "Custom Actions"
+    insertionPoint: "after zone-toolbar"
+    maxFields: 5
+    allowedFieldTypes: ["button", "dropdown-action"]

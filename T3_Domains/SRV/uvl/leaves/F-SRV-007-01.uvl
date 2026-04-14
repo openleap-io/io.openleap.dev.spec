@@ -1,0 +1,9 @@
+namespace srv.F-SRV-007-01
+features
+    F-SRV-007-01
+        pagination.pageSize             Integer 20
+        pagination.pageSize.bindingTime String "deploy"
+        derivation.autoConfirm             Boolean false
+        derivation.autoConfirm.bindingTime String "deploy"
+constraints
+    // See parent composition for structural constraints

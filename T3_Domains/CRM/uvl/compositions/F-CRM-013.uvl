@@ -1,0 +1,19 @@
+// Composition UVL: F-CRM-013 — Integrations & Connectors
+// Template: feature-composition.uvl v1.0.0
+// Generated: 2026-04-03
+
+namespace crm
+
+imports
+    crm.F_CRM_013_01
+    crm.F_CRM_013_02
+    crm.F_CRM_013_03
+    crm.F_CRM_013_04
+
+features
+    F_CRM_013
+        optional
+            F_CRM_013_01  // Integration Hub
+            F_CRM_013_02  // Webhook Configuration
+            F_CRM_013_03  // Connector Marketplace
+            F_CRM_013_04  // Integration Logs & Monitor

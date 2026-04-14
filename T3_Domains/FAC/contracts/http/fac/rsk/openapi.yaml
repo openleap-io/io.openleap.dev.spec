@@ -1,0 +1,8 @@
+openapi: "3.0.3"
+info:
+  title: "FAC RSK API"
+  description: "OpenAPI contract for fac.rsk service"
+  version: "1.0.0"
+paths: {}
+components:
+  schemas: {}

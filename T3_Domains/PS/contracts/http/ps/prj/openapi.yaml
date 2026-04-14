@@ -1,0 +1,839 @@
+# OpenAPI Contract — ps-prj-svc
+# Generated: 2026-04-03
+# Convention: contracts/http/ps/prj/openapi.yaml
+#
+# This is the API contract for Project Core (ps-prj-svc).
+# It is the machine-readable companion to ps_prj-spec.md §6.
+
+openapi: 3.1.0
+
+info:
+  title: "PS Project Core API"
+  version: "1.0.0"
+  description: |
+    REST API for the Project Core domain within the PS (Project Management) suite.
+    Manages the full project lifecycle and all structural planning artifacts. Owns the Work Breakdown Structure (WBS), scheduling (Gantt), dependency management, milestone tracking, baseline creation, and
+  contact:
+    name: PS Team
+    email: ps-team@openleap.io
+  license:
+    name: Proprietary
+
+servers:
+  - url: http://localhost:8410
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+x-owner: team-ps
+x-suite: ps
+x-domain: prj
+x-service: ps-prj-svc
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Project
+    description: "Top-level container for all planning artifacts. Manages project lifecycle, metadata, configuration, "
+
+paths:
+
+  /api/ps/prj/v1/projects:
+    post:
+      operationId: prj_projects_post
+      summary: "Create a new project"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:write]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/projects:
+    get:
+      operationId: prj_projects_get
+      summary: "List projects with filters (status, manager, customer, date range)"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:read]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/projects/{id}:
+    get:
+      operationId: prj_projects_id_get
+      summary: "Get project details"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:read]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/projects/{id}:
+    patch:
+      operationId: prj_projects_id_patch
+      summary: "Update project attributes"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:write]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/projects/{id}:activate:
+    post:
+      operationId: prj_projects_id_activate_post
+      summary: "Activate a draft project"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:write]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/projects/{id}:complete:
+    post:
+      operationId: prj_projects_id_complete_post
+      summary: "Mark project as completed"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:write]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/projects/{id}:cancel:
+    post:
+      operationId: prj_projects_id_cancel_post
+      summary: "Cancel a project"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:write]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/projects/{id}:
+    delete:
+      operationId: prj_projects_id_delete
+      summary: "Delete a project (if allowed by BR-PRJ-010)"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:admin]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/projects/{id}/work-packages:
+    post:
+      operationId: prj_projects_id_work-packages_post
+      summary: "Create a work package in a project"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:write]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/projects/{id}/work-packages:
+    get:
+      operationId: prj_projects_id_work-packages_get
+      summary: "List work packages (flat or tree) with filters"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:read]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/work-packages/{id}:
+    get:
+      operationId: prj_work-packages_id_get
+      summary: "Get work package details"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:read]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/work-packages/{id}:
+    patch:
+      operationId: prj_work-packages_id_patch
+      summary: "Update work package attributes"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:write]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/work-packages/{id}:move:
+    post:
+      operationId: prj_work-packages_id_move_post
+      summary: "Move WP to a different parent or position"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:write]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/work-packages/{id}:
+    delete:
+      operationId: prj_work-packages_id_delete
+      summary: "Delete a work package and its children"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:write]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/projects/{id}/dependencies:
+    post:
+      operationId: prj_projects_id_dependencies_post
+      summary: "Create a dependency between two WPs"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:write]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/projects/{id}/dependencies:
+    get:
+      operationId: prj_projects_id_dependencies_get
+      summary: "List all dependencies in a project"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:read]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/dependencies/{id}:
+    delete:
+      operationId: prj_dependencies_id_delete
+      summary: "Remove a dependency"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:write]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/projects/{id}/baselines:
+    post:
+      operationId: prj_projects_id_baselines_post
+      summary: "Create a baseline snapshot"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:write]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/projects/{id}/baselines:
+    get:
+      operationId: prj_projects_id_baselines_get
+      summary: "List baselines for a project"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:read]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/baselines/{id}:
+    get:
+      operationId: prj_baselines_id_get
+      summary: "Get baseline details with snapshot data"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:read]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/projects/{id}:schedule:
+    post:
+      operationId: prj_projects_id_schedule_post
+      summary: "Trigger auto-scheduling (forward/backward pass)"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:write]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/projects/{id}/critical-path:
+    get:
+      operationId: prj_projects_id_critical-path_get
+      summary: "Get critical path work packages"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:read]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/projects/{id}/gantt:
+    get:
+      operationId: prj_projects_id_gantt_get
+      summary: "Get Gantt chart data (WPs + dependencies + baselines)"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:read]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/templates:
+    post:
+      operationId: prj_templates_post
+      summary: "Create a project template"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:admin]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/templates:
+    get:
+      operationId: prj_templates_get
+      summary: "List project templates"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:read]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+  /api/ps/prj/v1/templates/{id}:instantiate:
+    post:
+      operationId: prj_templates_id_instantiate_post
+      summary: "Create a project from a template"
+      tags:
+        - v1
+      security:
+        - bearerAuth: [ps.prj:write]
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request — validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden — insufficient scope
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict — optimistic lock
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+
+    Project:
+      type: object
+      required:
+        - projectId
+        - tenantId
+        - code
+        - name
+        - status
+        - version
+        - createdAt
+        - updatedAt
+        - createdBy
+        - updatedBy
+      properties:
+        projectId:
+          type: string
+          format: uuid
+          description: "Unique project identifier" 
+        tenantId:
+          type: string
+          format: uuid
+          description: "Owning tenant" 
+        code:
+          type: string
+          description: "Human-readable project code, unique per tenant" 
+        name:
+          type: string
+          description: "Project name, min 1 char, max 255 chars" 
+        description:
+          type: string
+          description: "Project description, max 4000 chars" 
+        status:
+          type: string
+          description: "Project lifecycle status" 
+        projectType:
+          type: string
+          description: "Classification (e.g., internal, customer, R&D)" 
+        priority:
+          type: string
+          description: "Priority: LOW, MEDIUM, HIGH, CRITICAL" 
+        customerId:
+          type: string
+          format: uuid
+          description: "Reference to BP party (customer/sponsor)" 
+        managerId:
+          type: string
+          format: uuid
+          description: "IAM user ID of the project manager" 
+        plannedStart:
+          type: string
+          format: date
+          description: "Planned start date" 
+        plannedEnd:
+          type: string
+          format: date
+          description: "Planned end date" 
+        actualStart:
+          type: string
+          format: date
+          description: "Actual start date" 
+        actualEnd:
+          type: string
+          format: date
+          description: "Actual end date" 
+        calendarId:
+          type: string
+          format: uuid
+          description: "Working calendar reference (from cal-svc)" 
+        lifecycleId:
+          type: string
+          format: uuid
+          description: "Lifecycle template reference (from ps-prt-svc)" 
+        templateId:
+          type: string
+          format: uuid
+          description: "Source template if created from template" 
+        version:
+          type: integer
+          description: "Optimistic lock version" 
+        createdAt:
+          type: string
+          format: date-time
+          description: "Creation timestamp" 
+        updatedAt:
+          type: string
+          format: date-time
+          description: "Last update timestamp" 
+        createdBy:
+          type: string
+          format: uuid
+          description: "IAM user ID of creator" 
+        updatedBy:
+          type: string
+          format: uuid
+          description: "IAM user ID of last updater" 
+
+    ProjectCreate:
+      type: object
+      description: "Request body for creating a Project"
+      properties:
+        # Writable fields only (excludes auto-generated IDs, timestamps, version)
+        name:
+          type: string
+
+    ProjectUpdate:
+      type: object
+      description: "Request body for updating a Project"
+      properties:
+        # Subset of writable fields for partial update
+        name:
+          type: string
+
+    WorkPackage:
+      type: object
+      required:
+        - workPackageId
+        - projectId
+        - code
+        - subject
+        - type
+        - status
+        - sortOrder
+        - version
+      properties:
+        workPackageId:
+          type: string
+          format: uuid
+          description: "Unique work package identifier" 
+        projectId:
+          type: string
+          format: uuid
+          description: "Owning project" 
+        parentId:
+          type: string
+          format: uuid
+          description: "Parent work package ID (null for root)" 
+        code:
+          type: string
+          description: "Human-readable short code (e.g., WP-0042)" 
+        subject:
+          type: string
+          description: "Title, min 1 char, max 500 chars" 
+        description:
+          type: string
+          description: "Detailed description, max 10000 chars" 
+        type:
+          type: string
+          description: "Work package type: PHASE, TASK, FEATURE, BUG, USER_STORY, MILESTONE, EPIC" 
+        status:
+          type: string
+          description: "Status: NEW, IN_PROGRESS, ON_HOLD, DONE, CANCELLED" 
+        priority:
+          type: string
+          description: "Priority: LOW, MEDIUM, HIGH, URGENT" 
+        assigneeId:
+          type: string
+          format: uuid
+          description: "Assigned IAM user ID" 
+        plannedStart:
+          type: string
+          description: "Planned start date" 
+        plannedEnd:
+          type: string
+          description: "Planned end date" 
+        actualStart:
+          type: string
+          description: "Actual start date" 
+        actualEnd:
+          type: string
+          description: "Actual end date" 
+        duration:
+          type: integer
+          description: "Planned duration in working days" 
+        plannedEffort:
+          type: number
+          description: "Planned effort in hours" 
+        percentComplete:
+          type: integer
+          description: "Completion percentage 0-100" 
+        storyPoints:
+          type: integer
+          description: "Story points (agile estimation)" 
+        sortOrder:
+          type: integer
+          description: "Sort order within parent" 
+        version:
+          type: integer
+          description: "Optimistic lock version" 
+
+
+  parameters:
+    tenantId:
+      name: X-Tenant-ID
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Tenant identifier (from JWT or header)
+
+    pageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        default: 0
+      description: Page number (zero-based)
+
+    sizeParam:
+      name: size
+      in: query
+      schema:
+        type: integer
+        default: 25
+        maximum: 100
+      description: Page size

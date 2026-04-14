@@ -1,0 +1,38 @@
+// ============================================================
+// F-PS-002 — Agile & Boards (Composition Node)
+// File: F-PS-002.uvl
+//
+// Companion document: features/compositions/F-PS-002.md
+//
+// Generated: 2026-04-03
+// Template: TPL-UVL-COMP v1.0.0
+// ============================================================
+
+namespace F_PS_002
+
+imports
+    F-PS-002-01 as Product_Backlog
+    F-PS-002-02 as Sprint_Planning_Management
+    F-PS-002-03 as Kanban_Board
+    F-PS-002-04 as Burndown_Chart
+    F-PS-002-05 as Velocity_Tracking
+    F-PS-002-06 as Custom_Boards_Assignee_Version
+
+features
+
+    F-PS-002
+
+        mandatory
+            F-PS-002-01
+            F-PS-002-02
+            F-PS-002-03
+
+        optional
+            F-PS-002-04
+            F-PS-002-05
+            F-PS-002-06
+
+
+constraints
+
+    // Intra-composition constraints (if any)

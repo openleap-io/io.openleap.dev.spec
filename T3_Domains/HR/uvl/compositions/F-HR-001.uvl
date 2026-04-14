@@ -1,0 +1,28 @@
+// F-HR-001.uvl — Employee Management (Composition)
+// Suite: hr | Composition: F-HR-001
+
+namespace hr.F_HR_001
+
+features
+    F_HR_001 {
+        description "Employee Management — employee lifecycle and org structure"
+    }
+        mandatory
+            F_HR_001_01 {
+                description "Employee Roster & Lifecycle"
+                domain "hr.emp"
+            }
+        optional
+            F_HR_001_02 {
+                description "Org Chart & Positions"
+                domain "hr.org"
+            }
+            F_HR_001_03 {
+                description "Employee Self-Service"
+                domain "hr.emp"
+            }
+
+constraints
+    F_HR_001_01 => IAM_UI
+    F_HR_001_02 => IAM_UI
+    F_HR_001_03 => F_HR_001_01

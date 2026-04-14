@@ -1,0 +1,27 @@
+// Composition UVL: F-CRM-001 — Contact & Account Management
+// Template: feature-composition.uvl v1.0.0
+// Generated: 2026-04-03
+
+namespace crm
+
+imports
+    crm.F_CRM_001_01
+    crm.F_CRM_001_02
+    crm.F_CRM_001_03
+    crm.F_CRM_001_04
+    crm.F_CRM_001_05
+    crm.F_CRM_001_06
+    crm.F_CRM_001_07
+    crm.F_CRM_001_08
+
+features
+    F_CRM_001
+        mandatory
+            F_CRM_001_01  // Contact List & Search
+            F_CRM_001_02  // Contact Detail View
+            F_CRM_001_03  // Contact Create/Edit Form
+            F_CRM_001_04  // Account List & Search
+            F_CRM_001_05  // Account Detail View
+            F_CRM_001_06  // Account Create/Edit Form
+            F_CRM_001_07  // Relationship Management
+            F_CRM_001_08  // Duplicate Detection & Merge

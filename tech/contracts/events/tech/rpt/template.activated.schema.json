@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tech.rpt.template.activated",
+  "title": "tech.rpt.template.activated",
+  "type": "object",
+  "required": ["eventId","eventType","timestamp","tenantId","correlationId","producer","schemaVersion","payload"],
+  "properties": {
+    "eventId": {"type":"string","format":"uuid"},
+    "eventType": {"type":"string","const":"tech.rpt.template.activated"},
+    "timestamp": {"type":"string","format":"date-time"},
+    "tenantId": {"type":"string","format":"uuid"},
+    "correlationId": {"type":"string","format":"uuid"},
+    "causationId": {"type":"string","format":"uuid"},
+    "producer": {"type":"string","const":"tech-rpt-svc"},
+    "schemaVersion": {"type":"string","const":"1.0.0"},
+    "payload": {"type":"object","properties":{"templateId":{"type":"string","format":"uuid"},"code":{"type":"string"}}}
+  }
+}

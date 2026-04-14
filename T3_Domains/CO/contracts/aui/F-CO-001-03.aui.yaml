@@ -1,0 +1,86 @@
+# Screen Contract (AUI) — F-CO-001-03
+# Feature: Cost Element Catalog
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-CO-001-03
+name: "Cost Element Catalog"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-cost-elements
+        description: "Load cost element catalog"
+      - task: fill-filters
+        description: "User filters by type and status"
+        operator: enabling
+        enabledBy: load-cost-elements
+      - task: navigate-to-detail
+        description: "User selects a cost element"
+        operator: enabling
+        enabledBy: fill-filters
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Back navigation (link)"
+      - "Page title (display)"
+
+  - id: zone-filters
+    name: "Filter Bar"
+    type: fixed
+    priority: 2
+    dataBinding: "filters"
+    fields:
+      - "Search (text input)"
+      - "Type filter (select: PRIMARY|SECONDARY|All)"
+      - "Status filter (select: ACTIVE|INACTIVE|All)"
+
+  - id: zone-core
+    name: "Core Content"
+    type: fixed
+    priority: 3
+    dataBinding: "content"
+    fields:
+      - "Element ID (display)"
+      - "Name (display)"
+      - "Type (display: PRIMARY|SECONDARY)"
+      - "GL Account (display)"
+      - "Status (display)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.costElementActions"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Cancel (action)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-core
+      action: "Navigate"
+      requiresRole: "ANY_AUTHENTICATED"
+  stateConditions:
+    - action: "Navigate"
+      enabledWhen: "row.selected == true"
+  actionConsequences:
+    - action: "Navigate"
+      onSuccess: "navigate('cost-element-detail', { elementId: row.elementId })"

@@ -1,0 +1,70 @@
+openapi: 3.1.0
+info:
+  title: OPS Documentation Service
+  version: 1.0.0
+  description: |
+    Operational documentation — generate service reports, attach documents to work orders and projects.
+
+    Full endpoint specification derived from domain-specs/ops_doc-spec.md §6.
+  contact:
+    name: team-ops
+    email: ops-engineering@openleap.io
+  x-owner: team-ops
+  x-suite: ops
+  x-domain: doc
+
+servers:
+  - url: http://localhost:8217
+    description: Local development
+  - url: https://api.openleap.io
+    description: Production
+
+paths:
+  /api/ops/doc/v1:
+    get:
+      summary: Service root / health
+      operationId: getServiceInfo
+      tags: [health]
+      responses:
+        '200':
+          description: Service info
+
+  /api/ops/doc/v1/documents:
+    post:
+      summary: Generate operational document
+      operationId: generateDocument
+      tags: [documents]
+      responses:
+        '201':
+          description: Document generated
+
+  /api/ops/doc/v1/documents/{id}/pdf:
+    get:
+      summary: Download document PDF
+      operationId: downloadPdf
+      tags: [documents]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: PDF file
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+
+  # Full paths defined in domain-specs/ops_doc-spec.md §6.
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

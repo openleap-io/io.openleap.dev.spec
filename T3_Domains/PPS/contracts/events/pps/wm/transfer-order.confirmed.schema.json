@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pps.wm.transfer-order.confirmed",
+  "title": "pps.wm.transfer-order.confirmed",
+  "description": "Event published when a warehouse transfer order has been confirmed",
+  "type": "object",
+  "required": ["eventId", "eventType", "timestamp", "tenantId", "correlationId", "producer", "schemaVersion", "payload"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "eventType": { "type": "string", "const": "pps.wm.transfer-order.confirmed" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "correlationId": { "type": "string", "format": "uuid" },
+    "causationId": { "type": "string", "format": "uuid" },
+    "producer": { "type": "string", "const": "pps-wm-svc" },
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "payload": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "transferOrderId": { "type": "string" },
+        "material": { "type": "string" },
+        "plant": { "type": "string" },
+        "sourceStorageLocation": { "type": "string" },
+        "destinationStorageLocation": { "type": "string" },
+        "quantity": { "type": "number" },
+        "unit": { "type": "string" },
+        "confirmedAt": { "type": "string", "format": "date-time" },
+        "confirmedBy": { "type": "string" }
+      }
+    }
+  }
+}

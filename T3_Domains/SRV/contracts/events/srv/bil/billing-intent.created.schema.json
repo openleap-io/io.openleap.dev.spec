@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/srv/bil/billing-intent.created",
+  "title": "BillingIntentCreated",
+  "description": "Raised when a billing intent has been created.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "billingIntentId"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "billingIntentId": { "type": "string", "format": "uuid" }
+  }
+}

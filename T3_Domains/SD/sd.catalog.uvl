@@ -1,0 +1,32 @@
+// sd.catalog.uvl — Catalog Root
+// Suite: sd (Sales & Distribution)
+// Generated: 2026-04-04
+// Template: suite-catalog.uvl v1.0.0
+
+namespace sd
+
+features
+    SD_UI {
+        description "Sales & Distribution features"
+    }
+
+        mandatory
+            F_SD_001 {
+                description "Order Management"
+                uvl "uvl/compositions/F-SD-001.uvl"
+            }
+            F_SD_002 {
+                description "Shipping & Delivery"
+                uvl "uvl/compositions/F-SD-002.uvl"
+            }
+            F_SD_003 {
+                description "Billing & Invoicing"
+                uvl "uvl/compositions/F-SD-003.uvl"
+            }
+
+constraints
+    F_SD_001 => IAM_UI
+    F_SD_002 => IAM_UI
+    F_SD_003 => IAM_UI
+    F_SD_002 => F_SD_001
+    F_SD_003 => F_SD_001

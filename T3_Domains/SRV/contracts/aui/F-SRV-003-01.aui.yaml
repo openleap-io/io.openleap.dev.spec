@@ -1,0 +1,148 @@
+# Screen Contract (AUI) — F-SRV-003-01 Resource Management
+featureId: F-SRV-003-01
+name: "Resource Management"
+
+taskModel:
+  root:
+    operator: alternative
+    children:
+      - task: list-path
+        operator: sequential
+        children:
+          - task: load-resources
+            description: "Fetch paginated resources with filters"
+          - task: view-list
+            description: "Browse resource list"
+            operator: enabling
+            enabledBy: load-resources
+          - task: create-new
+            description: "Open resource creation form"
+            operator: optional
+            featureGate: "role == SRV_RES_EDITOR"
+            absentRule: collapse-up
+      - task: detail-path
+        operator: sequential
+        children:
+          - task: load-detail
+            description: "Fetch resource by ID"
+          - task: view-detail
+            description: "View resource details"
+            operator: enabling
+            enabledBy: load-detail
+          - task: edit-fields
+            description: "Edit resource fields"
+            operator: optional
+            featureGate: "role == SRV_RES_EDITOR"
+            absentRule: collapse-up
+          - task: save
+            description: "Persist resource"
+            operator: enabling
+            enabledBy: edit-fields
+
+zones:
+  - id: zone-list-header
+    name: "Search & Filter"
+    type: fixed
+    priority: 1
+    dataBinding: "viewModel.filters"
+    fields:
+      - "searchText (input: text)"
+      - "typeFilter (select: PERSON|ROOM|ASSET)"
+      - "statusFilter (select: ACTIVE|INACTIVE|ARCHIVED)"
+      - "searchAction (action: search)"
+      - "createAction (action: navigate-to-create, roleGate: SRV_RES_EDITOR)"
+
+  - id: zone-list
+    name: "Resource Table"
+    type: fixed
+    priority: 2
+    dataBinding: "viewModel.resources[]"
+    fields:
+      - "name (display: text, sortable)"
+      - "type (display: badge)"
+      - "status (display: badge)"
+      - "skillTags (display: tag-list, featureGate: display.showSkillTags)"
+      - "editAction (action: navigate-to-detail, roleGate: SRV_RES_EDITOR)"
+
+  - id: zone-pagination
+    name: "Pagination"
+    type: fixed
+    priority: 3
+    dataBinding: "viewModel.pagination"
+
+  - id: zone-form
+    name: "Resource Form"
+    type: fixed
+    priority: 2
+    dataBinding: "viewModel.resource"
+    fields:
+      - "type (select: PERSON|ROOM|ASSET, required, immutableAfterCreate)"
+      - "name (input: text, required, maxLength: 255)"
+      - "externalRefId (input: text, required, maxLength: 100)"
+
+  - id: zone-skills
+    name: "Skill Tags"
+    type: feature-gated
+    featureGate: "display.showSkillTags == true"
+    priority: 3
+    absentRule: panel-section-hidden
+    dataBinding: "viewModel.resource.skillTags"
+    fields:
+      - "skillTags (input: tag, label: srv.res.mgmt.skillTagsLabel)"
+
+  - id: zone-capacity
+    name: "Capacity Settings"
+    type: feature-gated
+    featureGate: "display.showMaxParallel == true"
+    priority: 4
+    absentRule: panel-section-hidden
+    fields:
+      - "maxParallelSessions (input: number, min: 1, default: 1)"
+
+  - id: zone-extension
+    name: "Extension Area"
+    type: variable
+    priority: 5
+    extensionPoint: "ext.resource.customFields"
+    absentRule: collapse-up
+
+  - id: zone-actions
+    name: "Actions"
+    type: fixed
+    priority: 99
+    fields:
+      - "save (action: save-resource, enabled when: allRequiredValid, roleGate: SRV_RES_EDITOR)"
+      - "deactivate (action: deactivate, visible when: status == ACTIVE, roleGate: SRV_RES_EDITOR)"
+      - "archive (action: archive, visible when: status IN [ACTIVE, INACTIVE], roleGate: SRV_RES_ADMIN)"
+      - "cancel (action: navigate-back, always enabled)"
+
+absentRules:
+  - zoneId: zone-skills
+    condition: "display.showSkillTags == false"
+    rule: panel-section-hidden
+  - zoneId: zone-capacity
+    condition: "display.showMaxParallel == false"
+    rule: panel-section-hidden
+  - zoneId: zone-extension
+    condition: "No extension point filled"
+    rule: collapse-up
+
+businessRules:
+  - type: stateCondition
+    rule: "type field immutable after resource creation"
+  - type: roleGate
+    rule: "save/create requires SRV_RES_EDITOR"
+  - type: roleGate
+    rule: "archive requires SRV_RES_ADMIN"
+  - type: actionConsequence
+    action: save
+    consequence: "POST/PATCH /resources → event srv.res.resource.created/updated → toast"
+  - type: actionConsequence
+    action: deactivate
+    consequence: "PATCH /resources/{id} status=INACTIVE → event → warning if future appointments"
+
+extensionZones:
+  - id: zone-extension
+    extensionPoint: "ext.resource.customFields"
+    description: "Custom resource metadata"
+    renderPosition: "after zone-capacity, before zone-actions"

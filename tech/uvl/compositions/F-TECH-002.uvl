@@ -1,0 +1,8 @@
+namespace tech.rpt
+features
+    F_TECH_002 { description "Report Management" }
+        mandatory
+            F_TECH_002_01 { description "Browse Report Templates" }
+            F_TECH_002_02 { description "Manage Report Templates" }
+        optional
+            F_TECH_002_03 { description "Render History" }

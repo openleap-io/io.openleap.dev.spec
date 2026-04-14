@@ -1,0 +1,90 @@
+# Screen Contract (AUI) — F-PPS-002-02
+# Feature: MES Recording
+# Generated: 2026-04-04
+# Template: screen-contract-aui.yaml v1.0.0
+
+featureId: F-PPS-002-02
+name: "MES Recording"
+
+taskModel:
+  root:
+    operator: sequential
+    children:
+      - task: load-reference-data
+        description: "Load recording history and work order context"
+      - task: fill-form
+        description: "User selects recording type and enters quantity"
+        operator: enabling
+        enabledBy: load-reference-data
+      - task: validate-and-submit
+        description: "Validate recording and submit"
+        operator: enabling
+        enabledBy: fill-form
+
+zones:
+  - id: zone-header
+    name: "Action Bar"
+    type: fixed
+    priority: 1
+    dataBinding: "_meta"
+    fields:
+      - "Back navigation (link)"
+      - "Page title (display)"
+      - "Work Order context (display)"
+
+  - id: zone-core
+    name: "Recording Form"
+    type: fixed
+    priority: 2
+    dataBinding: "recording"
+    fields:
+      - "Recording Type (radio: GOOD|SCRAP|DOWNTIME)"
+      - "Quantity (number input)"
+      - "Unit (display)"
+      - "Reason Code (select, conditional)"
+
+  - id: zone-filters
+    name: "Recording History"
+    type: fixed
+    priority: 3
+    dataBinding: "recordingHistory"
+    fields:
+      - "Recorded At (display)"
+      - "Type (display)"
+      - "Quantity (display)"
+      - "Reason Code (display)"
+
+  - id: zone-extension
+    name: "Extension Zone"
+    type: variable
+    priority: 10
+    extensionPoint: "ext.recordingFields"
+    absentRule: panel-section-hidden
+
+  - id: zone-actions
+    name: "Form Actions"
+    type: fixed
+    priority: 99
+    dataBinding: "_meta.allowedActions"
+    fields:
+      - "Cancel (action)"
+      - "Save Recording (action: primary)"
+
+absentRules:
+  - zone: zone-extension
+    condition: "No extension point filled for this product"
+    rule: panel-section-hidden
+
+businessRules:
+  roleGates:
+    - zone: zone-actions
+      action: "Save Recording"
+      requiresRole: "OPERATOR"
+  stateConditions:
+    - action: "Save Recording"
+      enabledWhen: "form.isValid == true AND workOrder.status == 'IN_PROGRESS'"
+    - field: "Reason Code"
+      visibleWhen: "recording.type == 'SCRAP' OR recording.type == 'DOWNTIME'"
+  actionConsequences:
+    - action: "Save Recording"
+      onSuccess: "refreshHistory() + resetForm() + toast('pps.F-PPS-002-02.action.save.success')"

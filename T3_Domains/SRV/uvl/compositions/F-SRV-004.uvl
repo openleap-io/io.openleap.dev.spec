@@ -1,0 +1,11 @@
+namespace srv.F-SRV-004
+features
+    F-SRV-004
+        mandatory
+            F-SRV-004-01   // Session Lifecycle
+            F-SRV-004-02   // Outcome Recording
+        optional
+            F-SRV-004-03   // Proof-of-Service
+
+constraints
+    // Cross-node constraints — see F-SRV-004.md SS2.2

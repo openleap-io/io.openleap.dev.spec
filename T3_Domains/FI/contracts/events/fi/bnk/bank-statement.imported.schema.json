@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/fi/bnk/bank-statement.imported",
+  "title": "BankStatementImported",
+  "description": "Emitted when a bank statement is successfully imported and normalized.",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "statementId"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "statementId": { "type": "string", "format": "uuid" }
+  }
+}

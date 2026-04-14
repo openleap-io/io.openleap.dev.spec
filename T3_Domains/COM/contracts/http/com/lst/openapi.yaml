@@ -1,0 +1,8 @@
+openapi: "3.0.3"
+info:
+  title: "COM LST API"
+  description: "OpenAPI contract for com.lst service"
+  version: "1.0.0"
+paths: {}
+components:
+  schemas: {}

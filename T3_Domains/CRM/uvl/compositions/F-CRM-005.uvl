@@ -1,0 +1,19 @@
+// Composition UVL: F-CRM-005 — Product & Pricing
+// Template: feature-composition.uvl v1.0.0
+// Generated: 2026-04-03
+
+namespace crm
+
+imports
+    crm.F_CRM_005_01
+    crm.F_CRM_005_02
+    crm.F_CRM_005_03
+    crm.F_CRM_005_04
+
+features
+    F_CRM_005
+        optional
+            F_CRM_005_01  // Product Catalog Browser
+            F_CRM_005_02  // Product Create/Edit
+            F_CRM_005_03  // Price Book Management
+            F_CRM_005_04  // Discount Rule Configuration

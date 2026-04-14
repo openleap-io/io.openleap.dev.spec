@@ -1,0 +1,9 @@
+namespace srv.F-SRV-001-03
+features
+    F-SRV-001-03
+        variant.maxPerOffering             Integer 10
+        variant.maxPerOffering.bindingTime String "deploy"
+        variant.showRequirements             Boolean true
+        variant.showRequirements.bindingTime String "deploy"
+constraints
+    F-SRV-001-03 => srv.F-SRV-001-01   // Variants need offering editor

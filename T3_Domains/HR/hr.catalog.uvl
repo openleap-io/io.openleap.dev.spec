@@ -1,0 +1,36 @@
+// hr.catalog.uvl — Catalog Root
+// Suite: hr (Human Resources)
+// Generated: 2026-04-04
+// Template: suite-catalog.uvl v1.0.0
+
+namespace hr
+
+features
+    HR_UI {
+        description "Human resources suite features — employee lifecycle, payroll, leave, recruitment, performance"
+    }
+
+        mandatory
+            F_HR_001 {
+                description "Employee Management"
+                uvl "uvl/compositions/F-HR-001.uvl"
+            }
+            F_HR_002 {
+                description "Payroll & Leave"
+                uvl "uvl/compositions/F-HR-002.uvl"
+            }
+
+        optional
+            F_HR_003 {
+                description "Talent Management"
+                uvl "uvl/compositions/F-HR-003.uvl"
+            }
+
+constraints
+    F_HR_001 => IAM_UI
+    F_HR_002 => IAM_UI
+    F_HR_003 => IAM_UI
+    // Payroll requires employee management
+    F_HR_002 => F_HR_001
+    // Talent management requires employee management (for onboarding)
+    F_HR_003 => F_HR_001

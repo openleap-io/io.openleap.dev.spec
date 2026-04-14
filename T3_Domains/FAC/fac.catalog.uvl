@@ -1,0 +1,35 @@
+// fac.catalog.uvl — Catalog Root
+// Suite: fac (Factoring)
+// Generated: 2026-04-04
+// Template: suite-catalog.uvl v1.0.0
+
+namespace fac
+
+features
+    FAC_UI {
+        description "Factoring suite features — receivables financing, funding, collections, and risk management"
+    }
+
+        mandatory
+            F_FAC_001 {
+                description "Receivables Management"
+                uvl "uvl/compositions/F-FAC-001.uvl"
+            }
+            F_FAC_002 {
+                description "Funding & Settlement"
+                uvl "uvl/compositions/F-FAC-002.uvl"
+            }
+            F_FAC_003 {
+                description "Collections & Risk"
+                uvl "uvl/compositions/F-FAC-003.uvl"
+            }
+
+constraints
+    // All FAC features require IAM authentication
+    F_FAC_001 => IAM_UI
+    F_FAC_002 => IAM_UI
+    F_FAC_003 => IAM_UI
+    // Funding requires receivables management
+    F_FAC_002 => F_FAC_001
+    // Collections requires funding (settlement integration)
+    F_FAC_003 => F_FAC_002

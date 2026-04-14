@@ -1,0 +1,21 @@
+namespace ops.sch
+
+features
+    F_OPS_002_02 {
+        description "Schedule Assignment"
+        optional
+            travelTimeDisplay {
+                description "Show estimated travel time on assignment cards"
+                default true
+            }
+            autoDispatch {
+                description "Send dispatch notification automatically on assignment"
+                default false
+            }
+            conflictWarning {
+                description "Behaviour on scheduling conflict"
+                type String
+                values ["block", "warn", "disabled"]
+                default "warn"
+            }
+    }

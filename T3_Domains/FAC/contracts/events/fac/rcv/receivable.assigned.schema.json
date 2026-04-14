@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openleap.io/fac/rcv/receivable.assigned",
+  "title": "ReceivableAssigned",
+  "description": "Emitted when a receivable is assigned to the factor (ownership transferred from client).",
+  "type": "object",
+  "required": ["eventId", "occurredAt", "tenantId", "receivableId", "assignmentId", "clientPartyId", "debtorPartyId", "amount", "currency"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "receivableId": { "type": "string", "format": "uuid" },
+    "assignmentId": { "type": "string", "format": "uuid" },
+    "invoiceRef": { "type": "string" },
+    "clientPartyId": { "type": "string", "format": "uuid" },
+    "debtorPartyId": { "type": "string", "format": "uuid" },
+    "amount": { "type": "number", "minimum": 0 },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "dueDate": { "type": "string", "format": "date" },
+    "assignedAt": { "type": "string", "format": "date-time" }
+  }
+}

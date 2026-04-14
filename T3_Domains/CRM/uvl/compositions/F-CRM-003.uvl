@@ -1,0 +1,23 @@
+// Composition UVL: F-CRM-003 — Opportunity Management
+// Template: feature-composition.uvl v1.0.0
+// Generated: 2026-04-03
+
+namespace crm
+
+imports
+    crm.F_CRM_003_01
+    crm.F_CRM_003_02
+    crm.F_CRM_003_03
+    crm.F_CRM_003_04
+    crm.F_CRM_003_05
+    crm.F_CRM_003_06
+
+features
+    F_CRM_003
+        mandatory
+            F_CRM_003_01  // Opportunity List & Kanban
+            F_CRM_003_02  // Opportunity Detail View
+            F_CRM_003_03  // Opportunity Create/Edit Form
+            F_CRM_003_04  // Opportunity Line Items
+            F_CRM_003_05  // Stage Progression & Guidance
+            F_CRM_003_06  // Win/Loss Analysis Dashboard

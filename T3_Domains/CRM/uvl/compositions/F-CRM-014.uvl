@@ -1,0 +1,19 @@
+// Composition UVL: F-CRM-014 — Analytics & Forecasting
+// Template: feature-composition.uvl v1.0.0
+// Generated: 2026-04-03
+
+namespace crm
+
+imports
+    crm.F_CRM_014_01
+    crm.F_CRM_014_02
+    crm.F_CRM_014_03
+    crm.F_CRM_014_04
+
+features
+    F_CRM_014
+        optional
+            F_CRM_014_01  // Sales Forecast Dashboard
+            F_CRM_014_02  // Pipeline Analytics
+            F_CRM_014_03  // Activity Analytics
+            F_CRM_014_04  // Predictive Scoring Setup

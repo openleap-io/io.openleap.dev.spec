@@ -1,0 +1,8 @@
+openapi: "3.0.3"
+info:
+  title: "FI FA API"
+  description: "OpenAPI contract for fi.fa service"
+  version: "1.0.0"
+paths: {}
+components:
+  schemas: {}

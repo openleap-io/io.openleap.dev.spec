@@ -1,0 +1,10 @@
+namespace co
+
+features
+    F_CO_002_02 {
+        description "See feature-spec.md"
+    }
+
+        // Attributes
+        Boolean allowReversal { default true, bindingTime deploy }
+        Integer resultsDisplayLimit { default 500, bindingTime runtime }

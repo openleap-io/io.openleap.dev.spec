@@ -1,0 +1,167 @@
+// ============================================================
+// ProductConfig UVL — demo
+// Product: OpenLeap Demo
+// Project: internal / openleap
+//
+// The Demo product selects ALL available features from ALL
+// suites. It serves as:
+//   1. A reference implementation for BFF instantiation
+//   2. A regression test surface — if it compiles, all features
+//      are structurally valid
+//   3. A showcase for the full platform capability
+//
+// Because everything is selected, this config has no negative
+// decisions to document.
+//
+// Generated: 2026-04-03
+// ============================================================
+
+namespace demo
+
+imports
+    // Import suite catalogs directly (no platform root catalog yet)
+    iam   from "../../T1_Platform/iam/iam.catalog.uvl"
+    ps    from "../../T3_Domains/PS/ps.catalog.uvl"
+    srv   from "../../T3_Domains/SRV/srv.catalog.uvl"
+
+
+features
+
+    Demo_Config
+
+        mandatory
+
+            // ==============================================
+            // IAM Suite — all 22 features (5 compositions)
+            // ==============================================
+
+            // F-IAM-001: Principal Management (7 leaves)
+            iam.F_IAM_001.F_IAM_001_01    // Create Human Principal
+            iam.F_IAM_001.F_IAM_001_02    // Create Service Principal
+            iam.F_IAM_001.F_IAM_001_03    // Create System Principal
+            iam.F_IAM_001.F_IAM_001_04    // Create Device Principal (optional in catalog)
+            iam.F_IAM_001.F_IAM_001_05    // Principal Lifecycle Management
+            iam.F_IAM_001.F_IAM_001_06    // Profile Management
+            iam.F_IAM_001.F_IAM_001_07    // Credential Management
+
+            // F-IAM-002: Authorization (4 leaves)
+            iam.F_IAM_002.F_IAM_002_01    // RBAC Management
+            iam.F_IAM_002.F_IAM_002_02    // Permission Check
+            iam.F_IAM_002.F_IAM_002_03    // ABAC Policy Evaluation
+            iam.F_IAM_002.F_IAM_002_04    // Delegation & Impersonation
+
+            // F-IAM-003: Tenant Management (4 leaves)
+            iam.F_IAM_003.F_IAM_003_01    // Tenant Lifecycle
+            iam.F_IAM_003.F_IAM_003_02    // Organization Hierarchy
+            iam.F_IAM_003.F_IAM_003_03    // Tenant Configuration
+            iam.F_IAM_003.F_IAM_003_04    // Tenant Quotas
+
+            // F-IAM-004: Security Audit (4 leaves)
+            iam.F_IAM_004.F_IAM_004_01    // Audit Event Logging
+            iam.F_IAM_004.F_IAM_004_02    // Audit Search & Filtering
+            iam.F_IAM_004.F_IAM_004_03    // Security Alerting
+            iam.F_IAM_004.F_IAM_004_04    // Compliance Reporting
+
+            // F-IAM-005: GDPR Compliance (2 leaves)
+            iam.F_IAM_005.F_IAM_005_01    // Data Export (Art. 15/20)
+            iam.F_IAM_005.F_IAM_005_02    // Data Erasure (Art. 17)
+
+            // ==============================================
+            // PS Suite — all 36 features (6 compositions)
+            // ==============================================
+
+            // F-PS-001: Project Management (10 leaves)
+            ps.F-PS-001-01                // Project Dashboard
+            ps.F-PS-001-02                // Create Project
+            ps.F-PS-001-03                // Project Detail & Edit
+            ps.F-PS-001-04                // Work Package Management
+            ps.F-PS-001-05                // Milestone Tracking
+            ps.F-PS-001-06                // Project Phase Management
+            ps.F-PS-001-07                // Baseline Management
+            ps.F-PS-001-08                // Gantt Chart View
+            ps.F-PS-001-09                // Project Search & Filtering
+            ps.F-PS-001-10                // Project Templates
+
+            // F-PS-002: Agile & Boards (6 leaves, optional in catalog)
+            ps.F-PS-002-01                // Sprint Board
+            ps.F-PS-002-02                // Backlog Management
+            ps.F-PS-002-03                // Sprint Planning
+            ps.F-PS-002-04                // Sprint Retrospective
+            ps.F-PS-002-05                // Burndown Chart
+            ps.F-PS-002-06                // Velocity Tracking
+
+            // F-PS-003: Budget & Cost Control (5 leaves)
+            ps.F-PS-003-01                // Budget Overview
+            ps.F-PS-003-02                // Budget Planning
+            ps.F-PS-003-03                // Cost Type Management
+            ps.F-PS-003-04                // Earned Value Analysis
+            ps.F-PS-003-05                // Budget Alerts
+
+            // F-PS-004: Project Time & Costs (5 leaves)
+            ps.F-PS-004-01                // Time Booking
+            ps.F-PS-004-02                // Time Approval Workflow
+            ps.F-PS-004-03                // Cost Entry
+            ps.F-PS-004-04                // Timesheet Overview
+            ps.F-PS-004-05                // Cost Reports
+
+            // F-PS-005: Project Staffing (5 leaves, optional in catalog)
+            ps.F-PS-005-01                // Resource Planning
+            ps.F-PS-005-02                // Persona Management
+            ps.F-PS-005-03                // Slot Assignment
+            ps.F-PS-005-04                // Capacity Overview
+            ps.F-PS-005-05                // Skill Matching
+
+            // F-PS-006: Portfolio & Program (6 leaves, optional in catalog)
+            ps.F-PS-006-01                // Portfolio Dashboard
+            ps.F-PS-006-02                // Program Management
+            ps.F-PS-006-03                // Gate Reviews
+            ps.F-PS-006-04                // Lifecycle Management
+            ps.F-PS-006-05                // Portfolio Analytics
+            ps.F-PS-006-06                // Strategic Alignment
+
+            // ==============================================
+            // SRV Suite — all 21 leaf features
+            // ==============================================
+            // (SRV uses dash-separated IDs in its catalog)
+
+            // F-SRV-001: Service Catalog (3 leaves)
+            srv.F-SRV-001-01              // Browse Catalog
+            srv.F-SRV-001-02              // Catalog Detail
+            srv.F-SRV-001-03              // Catalog Search
+
+            // F-SRV-002: Reservation (4 leaves)
+            srv.F-SRV-002-01              // Create Reservation
+            srv.F-SRV-002-02              // Reservation Detail
+            srv.F-SRV-002-03              // Reservation List
+            srv.F-SRV-002-04              // Cancel Reservation
+
+            // F-SRV-003: Case Management (3 leaves)
+            srv.F-SRV-003-01              // Create Case
+            srv.F-SRV-003-02              // Case Detail
+            srv.F-SRV-003-03              // Case List
+
+            // F-SRV-004: Session (3 leaves)
+            srv.F-SRV-004-01              // Start Session
+            srv.F-SRV-004-02              // Session Detail
+            srv.F-SRV-004-03              // Session History
+
+            // F-SRV-005: Billing (2 leaves)
+            srv.F-SRV-005-01              // Invoice Generation
+            srv.F-SRV-005-02              // Payment Tracking
+
+            // F-SRV-006: Appointment (3 leaves)
+            srv.F-SRV-006-01              // Book Appointment
+            srv.F-SRV-006-02              // Appointment Calendar
+            srv.F-SRV-006-03              // Appointment Detail
+
+            // F-SRV-007: Entity (3 leaves)
+            srv.F-SRV-007-01              // Entity Registry
+            srv.F-SRV-007-02              // Entity Detail
+            srv.F-SRV-007-03              // Entity Search
+
+
+constraints
+
+    // Demo selects everything — no product-specific constraints needed.
+    // All catalog-level constraints (cross-suite requires, mandatory
+    // compositions) are satisfied by selecting all features.

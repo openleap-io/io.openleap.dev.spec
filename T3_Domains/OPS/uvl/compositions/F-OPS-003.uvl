@@ -1,0 +1,12 @@
+namespace ops.tim
+
+features
+    F_OPS_003 { description "Time & Project Tracking" }
+        mandatory
+            F_OPS_003_01 { description "Time Entry" }
+            F_OPS_003_02 { description "Project Status Board" }
+        optional
+            F_OPS_003_03 { description "Task Management" }
+
+constraints
+    F_OPS_003_03 => F_OPS_003_02
