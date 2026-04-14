@@ -12,7 +12,7 @@ Gaps: §5.3 process flow diagrams (stub), §12.7 extension API endpoints (stub)
 > **Schema alignment:** `service-layer.schema.json`
 > **Companion files:** `contracts/http/tech/jc/openapi.yaml`, `contracts/events/tech/jc/*.schema.json`
 > **Referenced by:** Platform-Feature Specs (F-TECH-003-xx), BFF Contract
-> **Belongs to:** Tech Suite Spec (`spec/T1_Platform/tech/_tech_suite.md`)
+> **Belongs to:** Tech Suite Spec (`T1_Platform/tech/_tech_suite.md`)
 
 > **Meta Information**
 > - **Version:** 2026-04-03
@@ -101,14 +101,14 @@ The Job Control Service (JC) provides a generic job orchestration backbone for t
 
 ### 0.4 Related Documents
 
-- `spec/T1_Platform/tech/_tech_suite.md` — Tech Suite Architecture Specification
-- `spec/T1_Platform/iam/domain-specs/iam_tenant-spec.md` — Tenant Management (source of tenant.deleted event)
-- `spec/T1_Platform/iam/domain-specs/iam_audit-spec.md` — Audit Service (consumes JC events)
-- `spec/T1_Platform/tech/domain-specs/tech_nfs-spec.md` — News Feed Service (downstream consumer)
-- `spec/T1_Platform/tech/domain-specs/tech_rpt-spec.md` — Report Generation Service (job submitter)
-- `spec/T1_Platform/tech/features/leaves/F-TECH-003-01/feature-spec.md` — Browse Jobs & Runners
-- `spec/T1_Platform/tech/features/leaves/F-TECH-003-02/feature-spec.md` — Manage Job Types
-- `spec/T1_Platform/tech/features/leaves/F-TECH-003-03/feature-spec.md` — Job Execution History
+- `T1_Platform/tech/_tech_suite.md` — Tech Suite Architecture Specification
+- `T1_Platform/iam/domain-specs/iam_tenant-spec.md` — Tenant Management (source of tenant.deleted event)
+- `T1_Platform/iam/domain-specs/iam_audit-spec.md` — Audit Service (consumes JC events)
+- `T1_Platform/tech/domain-specs/tech_nfs-spec.md` — News Feed Service (downstream consumer)
+- `T1_Platform/tech/domain-specs/tech_rpt-spec.md` — Report Generation Service (job submitter)
+- `T1_Platform/tech/features/leaves/F-TECH-003-01/feature-spec.md` — Browse Jobs & Runners
+- `T1_Platform/tech/features/leaves/F-TECH-003-02/feature-spec.md` — Manage Job Types
+- `T1_Platform/tech/features/leaves/F-TECH-003-03/feature-spec.md` — Job Execution History
 - `contracts/http/tech/jc/openapi.yaml` — REST API contract
 - `contracts/events/tech/jc/` — Event schema contracts
 
@@ -1384,7 +1384,7 @@ Content-Type: application/json
 
 ### 6.4 OpenAPI Specification
 
-- **Location:** `spec/T1_Platform/tech/contracts/http/tech/jc/openapi.yaml`
+- **Location:** `T1_Platform/tech/contracts/http/tech/jc/openapi.yaml`
 - **Version:** OpenAPI 3.1
 - **Status:** Stub — content to be populated (Q-JC-005)
 
@@ -2279,8 +2279,8 @@ No domain-level ADRs have been issued for `tech-jc-svc` yet. Suite-level decisio
 
 ### 15.2 References
 
-- `spec/T1_Platform/tech/_tech_suite.md` — Tech Suite Specification
-- `concepts/templates/platform/domain/domain-service-spec.md` v1.0.0 — Template
+- `T1_Platform/tech/_tech_suite.md` — Tech Suite Specification
+- `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/templates/platform/domain/domain-service-spec.md` v1.0.0 — Template
 - `io.openleap.dev.guidelines` v4.1.0+ — ADR catalog (ADR-001 through ADR-067)
 - JSON Schema draft-07 specification — https://json-schema.org/draft-07/schema
 - SAP SM36/SM37 Background Processing — SAP Help Portal (for migration reference)

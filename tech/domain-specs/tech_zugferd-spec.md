@@ -12,7 +12,7 @@ Gaps: §5.3 process flow diagrams (stub), §12.7 extension API endpoints (stub)
 > **Schema alignment:** `service-layer.schema.json`
 > **Companion files:** `contracts/http/tech/zugferd/openapi.yaml`
 > **Referenced by:** Platform-Feature Specs (F-TECH-005-xx), BFF Contract
-> **Belongs to:** Tech Suite Spec (`spec/T1_Platform/tech/_tech_suite.md`)
+> **Belongs to:** Tech Suite Spec (`T1_Platform/tech/_tech_suite.md`)
 
 > **Meta Information**
 > - **Version:** 2026-04-03
@@ -103,10 +103,10 @@ The service is fully stateless: it holds no persistent state, owns no database, 
 
 ### 0.4 Related Documents
 
-- `spec/T1_Platform/tech/_tech_suite.md` — Tech suite architecture and ADR-TECH-003 (statelessness)
-- `spec/T1_Platform/tech/domain-specs/tech_dms-spec.md` — Document Management Service (callers store output there)
-- `spec/T1_Platform/tech/features/compositions/F-TECH-005.md` — E-Invoicing feature composition
-- `spec/T1_Platform/tech/features/leaves/F-TECH-005-01/feature-spec.md` — Service Health & Info feature
+- `T1_Platform/tech/_tech_suite.md` — Tech suite architecture and ADR-TECH-003 (statelessness)
+- `T1_Platform/tech/domain-specs/tech_dms-spec.md` — Document Management Service (callers store output there)
+- `T1_Platform/tech/features/compositions/F-TECH-005.md` — E-Invoicing feature composition
+- `T1_Platform/tech/features/leaves/F-TECH-005-01/feature-spec.md` — Service Health & Info feature
 - EN 16931-1:2017 — European standard for electronic invoicing (semantic data model)
 - ZUGFeRD 2.3 / Factur-X 1.0.07 specification (Verband elektronische Rechnung)
 - E-Rechnungsverordnung (ERechV) — German regulation for B2G e-invoicing
@@ -1835,18 +1835,18 @@ The caller (invoicing domain) needs the embedded PDF immediately to complete the
 **Technical Standards:**
 - `TECHNICAL_STANDARDS.md` — Cross-cutting technical conventions
 - `EVENT_STANDARDS.md` — Event structure and routing (reference only; no events in this service)
-- `spec/T1_Platform/tech/_tech_suite.md` — Tech suite architecture including ADR-TECH-003
+- `T1_Platform/tech/_tech_suite.md` — Tech suite architecture including ADR-TECH-003
 
 **Feature Specs:**
-- `spec/T1_Platform/tech/features/compositions/F-TECH-005.md`
-- `spec/T1_Platform/tech/features/leaves/F-TECH-005-01/feature-spec.md`
+- `T1_Platform/tech/features/compositions/F-TECH-005.md`
+- `T1_Platform/tech/features/leaves/F-TECH-005-01/feature-spec.md`
 
 ### 15.3 Status Output Requirements
 
 Output artifacts for this upgrade:
-- `spec/T1_Platform/tech/domain-specs/tech_zugferd-spec.md` — This file (upgraded)
-- `spec/T1_Platform/tech/domain-specs/status/spec-changelog.md` — Shared changelog (tech domain)
-- `spec/T1_Platform/tech/domain-specs/status/spec-open-questions.md` — Shared open questions (tech domain)
+- `T1_Platform/tech/domain-specs/tech_zugferd-spec.md` — This file (upgraded)
+- `T1_Platform/tech/domain-specs/status/spec-changelog.md` — Shared changelog (tech domain)
+- `T1_Platform/tech/domain-specs/status/spec-open-questions.md` — Shared open questions (tech domain)
 
 ### 15.4 Change Log
 

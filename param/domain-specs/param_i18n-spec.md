@@ -97,15 +97,15 @@ This specification defines the `param-i18n-svc` domain service within the Platfo
 
 ### 0.4 Related Documents
 
-- `spec/T1_Platform/param/_param_suite.md` — PARAM Suite Architecture
-- `spec/T1_Platform/param/domain-specs/param_ref-spec.md` — Reference Data Service (upstream dependency for catalog namespace registration)
-- `spec/T1_Platform/param/domain-specs/param_cfg-spec.md` — Platform Configuration Service (sibling domain)
-- `spec/T1_Platform/param/features/compositions/F-PARAM-002.md` — Translation Management feature composition
-- `spec/T1_Platform/param/features/leaves/F-PARAM-002-01/feature-spec.md` — Browse Translations
-- `spec/T1_Platform/param/features/leaves/F-PARAM-002-02/feature-spec.md` — Edit Translations
-- `spec/T1_Platform/param/features/leaves/F-PARAM-002-03/feature-spec.md` — Seed Translation Bundles
-- `concepts/governance/bff-guideline.md` (GOV-BFF-001) — BFF pattern governance
-- `spec/T1_Platform/iam/domain-specs/iam_authz-spec.md` — Authorisation service
+- `T1_Platform/param/_param_suite.md` — PARAM Suite Architecture
+- `T1_Platform/param/domain-specs/param_ref-spec.md` — Reference Data Service (upstream dependency for catalog namespace registration)
+- `T1_Platform/param/domain-specs/param_cfg-spec.md` — Platform Configuration Service (sibling domain)
+- `T1_Platform/param/features/compositions/F-PARAM-002.md` — Translation Management feature composition
+- `T1_Platform/param/features/leaves/F-PARAM-002-01/feature-spec.md` — Browse Translations
+- `T1_Platform/param/features/leaves/F-PARAM-002-02/feature-spec.md` — Edit Translations
+- `T1_Platform/param/features/leaves/F-PARAM-002-03/feature-spec.md` — Seed Translation Bundles
+- `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/bff-guideline.md` (GOV-BFF-001) — BFF pattern governance
+- `T1_Platform/iam/domain-specs/iam_authz-spec.md` — Authorisation service
 
 ---
 
@@ -1094,7 +1094,7 @@ PATCH /api/param/i18n/v1/namespaces/{namespaceId}
 
 | Property | Value |
 |----------|-------|
-| **File** | `spec/T1_Platform/param/contracts/http/param/i18n/openapi.yaml` |
+| **File** | `T1_Platform/param/contracts/http/param/i18n/openapi.yaml` |
 | **Version** | OpenAPI 3.1.0 |
 | **Docs URL** | `http://localhost:8101/swagger-ui.html` (local dev) |
 | **Status** | Stub — full paths defined in this spec §6; implementation-complete OpenAPI must be generated from this domain spec |
@@ -1812,14 +1812,14 @@ No domain-level ADRs have been raised for `param-i18n-svc` yet. Domain-level ADR
 
 | Document | Path | Type |
 |----------|------|------|
-| PARAM Suite Spec | `spec/T1_Platform/param/_param_suite.md` | Suite Architecture |
-| Template (TPL-SVC) | `concepts/templates/platform/domain/domain-service-spec.md` | Template |
+| PARAM Suite Spec | `T1_Platform/param/_param_suite.md` | Suite Architecture |
+| Template (TPL-SVC) | `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/templates/platform/domain/domain-service-spec.md` | Template |
 | Template Registry | `concepts/templates/template-registry.json` | Registry |
-| BFF Guideline | `concepts/governance/bff-guideline.md` | Governance |
+| BFF Guideline | `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/bff-guideline.md` | Governance |
 | namespace.seeded schema | `contracts/events/param/i18n/namespace.seeded.schema.json` | Event Contract |
 | namespace.updated schema | `contracts/events/param/i18n/namespace.updated.schema.json` | Event Contract |
 | i18n OpenAPI stub | `contracts/http/param/i18n/openapi.yaml` | API Contract |
-| F-PARAM-002 composition | `spec/T1_Platform/param/features/compositions/F-PARAM-002.md` | Feature Spec |
+| F-PARAM-002 composition | `T1_Platform/param/features/compositions/F-PARAM-002.md` | Feature Spec |
 | SAP SE63 | Translation Workbench — domain inspiration | External Reference |
 
 ### 15.3 Status Output Requirements

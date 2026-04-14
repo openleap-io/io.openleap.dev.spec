@@ -61,7 +61,7 @@ This document defines the complete architecture of the Operational Services (OPS
 - Finance & Billing Teams
 
 ### 0.3 Related Documents
-- `SYSTEM_OVERVIEW.md` - Overall platform architecture
+- [system-topology.md](https://github.com/openleap-io/io.openleap.dev.hub/blob/main/architecture/system-topology.md) - Overall platform architecture
 - `orchestration.md` - Orchestration patterns and saga guidelines
 - `COM_Suite_Overview.md` - Commerce Suite (sales orders, contracts)
 - `FI_Suite_Specification.md` - Financial Accounting Suite (billing, AR)
@@ -2072,7 +2072,7 @@ Use pessimistic locking (database row locks) when booking resource slots. Lock r
 - Field Service Management Guidelines
 
 **Technical Standards:**
-- `SYSTEM_OVERVIEW.md` - Platform architecture overview
+- [system-topology.md](https://github.com/openleap-io/io.openleap.dev.hub/blob/main/architecture/system-topology.md) - Platform architecture overview
 - `orchestration.md` - Orchestration patterns, saga guidelines
 - `TECHNICAL_STANDARDS.md` - Cross-cutting technical conventions
 - `EVENT_STANDARDS.md` - Event structure and routing

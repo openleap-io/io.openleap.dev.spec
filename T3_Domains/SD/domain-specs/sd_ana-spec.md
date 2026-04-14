@@ -2237,8 +2237,8 @@ Suite-level decisions from `_sd_suite.md` that affect sd.ana:
 
 ### 15.2 References
 
-- `concepts/CONCEPTUAL_STACK.md` — SPLE platform model
-- `concepts/templates/platform/domain/domain-service-spec.md` — TPL-SVC v1.0.0
+- `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/conceptual-stack.md` — SPLE platform model
+- `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/templates/platform/domain/domain-service-spec.md` — TPL-SVC v1.0.0
 - `_sd_suite.md` — SD Suite specification
 - `io.openleap.dev.guidelines` — ADRs referenced throughout this spec
 - SAP SD-IS / LIS documentation — domain inspiration for KPI structure
@@ -2249,8 +2249,8 @@ This spec produces the following status output files (per TPL-SVC §15.3):
 
 | Artifact | Path | Purpose |
 |----------|------|---------|
-| Changelog | `spec/T3_Domains/SD/status/sd_ana-spec-changelog.md` | Records changes in this upgrade |
-| Open Questions | `spec/T3_Domains/SD/status/sd_ana-spec-open-questions.md` | Tracks all open questions for resolution |
+| Changelog | `T3_Domains/SD/status/sd_ana-spec-changelog.md` | Records changes in this upgrade |
+| Open Questions | `T3_Domains/SD/status/sd_ana-spec-open-questions.md` | Tracks all open questions for resolution |
 
 ### 15.4 Change Log
 

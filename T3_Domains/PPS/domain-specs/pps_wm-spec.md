@@ -83,7 +83,7 @@ This specification defines the Warehouse Management domain, which manages physic
 - `pps_im-spec.md` - Inventory Management spec
 - `PUR_procurement.md` - Procurement spec
 - `sd_dlv-spec.md` - SD Delivery spec
-- `SYSTEM_OVERVIEW.md` - Platform architecture overview
+- [system-topology.md](https://github.com/openleap-io/io.openleap.dev.hub/blob/main/architecture/system-topology.md) - Platform architecture overview
 - `DOMAIN_SPEC_TEMPLATE.md` - Template reference
 
 ---

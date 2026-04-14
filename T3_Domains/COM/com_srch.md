@@ -64,7 +64,7 @@ Priority: MEDIUM — duplicate should be resolved
 - **Facet:** A filterable attribute used for search refinement.
 
 ### 0.5 Related Documents
-- Suite-Architektur: `platform/tmpspec/T3_Domains/COM/_com_suite.md`
+- Suite-Architektur: `platform/tmpT3_Domains/COM/_com_suite.md`
 - Nachbar-Spezifikationen: `com_cat.md`, `com_lst.md`
 
 ---

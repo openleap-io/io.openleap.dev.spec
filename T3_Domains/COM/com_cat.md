@@ -69,7 +69,7 @@ Priority: LOW
 - **Aggregate Root:** Primary consistency boundary for domain concepts (here: `ProductView`).
 
 ### 0.5 Related Documents
-- Suite-Architektur: `platform/tmpspec/T3_Domains/COM/_com_suite.md`
+- Suite-Architektur: `platform/tmpT3_Domains/COM/_com_suite.md`
 - Nachbar-Spezifikationen: `com_lst.md`, `com_srch.md`, `com_mpx.md`, `com_cmp.md`, `com_chk.md`
 - Related suite baselines:
   - `platform/T3_Domains/SD/SD_sales.md`

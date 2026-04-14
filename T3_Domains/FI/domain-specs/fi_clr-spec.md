@@ -94,9 +94,9 @@ Minor gaps: Port and repository TBD (OPEN QUESTION)
 - **Reconciliation:** Verifying that subledger state (open items) matches bank facts (vouchers).
 
 ### 0.5 Related Documents
-- Suite architecture: `spec/T3_Domains/FI/_fi_suite_v2_1.md`
+- Suite architecture: `T3_Domains/FI/_fi_suite_v2_1.md`
 - Neighbor specs: `fi_bnk-spec.md`, `fi_ar-spec.md`, `fi_ap-spec.md`, `fi_pst-spec.md`, `fi_gl-spec.md`
-- Platform architecture: `SYSTEM_OVERVIEW.md`
+- Platform architecture: [system-topology.md](https://github.com/openleap-io/io.openleap.dev.hub/blob/main/architecture/system-topology.md)
 
 ---
 

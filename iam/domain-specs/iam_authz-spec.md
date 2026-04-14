@@ -100,15 +100,15 @@ The `iam.authz` domain specification defines fine-grained Role-Based Access Cont
 
 | Document | Path | Type |
 |----------|------|------|
-| IAM Suite Specification | `spec/T1_Platform/iam/_iam_suite.md` | Suite spec |
-| Principal Service Spec | `spec/T1_Platform/iam/domain-specs/iam_principal-spec.md` | Domain spec |
-| Tenant Service Spec | `spec/T1_Platform/iam/domain-specs/iam_tenant-spec.md` | Domain spec |
-| Audit Service Spec | `spec/T1_Platform/iam/domain-specs/iam_audit-spec.md` | Domain spec |
-| F-IAM-002 Authorization Feature Composition | `spec/T1_Platform/iam/features/compositions/F-IAM-002.md` | Feature composition |
-| F-IAM-002-01 RBAC Management | `spec/T1_Platform/iam/features/leaves/F-IAM-002-01/feature-spec.md` | Leaf feature spec |
-| F-IAM-002-02 Permission Check | `spec/T1_Platform/iam/features/leaves/F-IAM-002-02/feature-spec.md` | Leaf feature spec |
-| F-IAM-002-03 ABAC Policy Evaluation | `spec/T1_Platform/iam/features/leaves/F-IAM-002-03/feature-spec.md` | Leaf feature spec |
-| F-IAM-002-04 Delegation & Impersonation | `spec/T1_Platform/iam/features/leaves/F-IAM-002-04/feature-spec.md` | Leaf feature spec |
+| IAM Suite Specification | `T1_Platform/iam/_iam_suite.md` | Suite spec |
+| Principal Service Spec | `T1_Platform/iam/domain-specs/iam_principal-spec.md` | Domain spec |
+| Tenant Service Spec | `T1_Platform/iam/domain-specs/iam_tenant-spec.md` | Domain spec |
+| Audit Service Spec | `T1_Platform/iam/domain-specs/iam_audit-spec.md` | Domain spec |
+| F-IAM-002 Authorization Feature Composition | `T1_Platform/iam/features/compositions/F-IAM-002.md` | Feature composition |
+| F-IAM-002-01 RBAC Management | `T1_Platform/iam/features/leaves/F-IAM-002-01/feature-spec.md` | Leaf feature spec |
+| F-IAM-002-02 Permission Check | `T1_Platform/iam/features/leaves/F-IAM-002-02/feature-spec.md` | Leaf feature spec |
+| F-IAM-002-03 ABAC Policy Evaluation | `T1_Platform/iam/features/leaves/F-IAM-002-03/feature-spec.md` | Leaf feature spec |
+| F-IAM-002-04 Delegation & Impersonation | `T1_Platform/iam/features/leaves/F-IAM-002-04/feature-spec.md` | Leaf feature spec |
 | OpenAPI Contract | `contracts/http/iam/authz/openapi.yaml` | API contract |
 | Event Schemas | `contracts/events/iam/authz/` | Event contracts |
 
@@ -2649,8 +2649,8 @@ No domain-level ADRs specific to `iam.authz` have been created at this time. App
 
 | Document | Location | Purpose |
 |----------|----------|---------|
-| IAM Suite Specification | `spec/T1_Platform/iam/_iam_suite.md` | Suite context |
-| Domain Service Template | `concepts/templates/platform/domain/domain-service-spec.md` | Template reference |
+| IAM Suite Specification | `T1_Platform/iam/_iam_suite.md` | Suite context |
+| Domain Service Template | `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/templates/platform/domain/domain-service-spec.md` | Template reference |
 | Template Registry | `concepts/templates/template-registry.json` | Version tracking |
 | ADR Catalog | `io.openleap.dev.guidelines` | Implementation decisions |
 | NIST SP 800-162 | External: NIST ABAC Guide | ABAC design principles |

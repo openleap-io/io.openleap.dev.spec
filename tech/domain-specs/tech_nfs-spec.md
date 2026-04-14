@@ -12,7 +12,7 @@ Gaps: §5.3 process flow diagrams (stub only), §12.7 extension API endpoints (s
 > **Schema alignment:** `service-layer.schema.json`
 > **Companion files:** `contracts/http/tech/nfs/openapi.yaml`
 > **Referenced by:** Platform-Feature Specs (F-TECH-004-xx), BFF Contract
-> **Belongs to:** Tech Suite Spec (`spec/T1_Platform/tech/_tech_suite.md`)
+> **Belongs to:** Tech Suite Spec (`T1_Platform/tech/_tech_suite.md`)
 >
 > **Migration Note:** Derived from legacy prefix `t1`. API paths migrate from `/api/t1/nfs/v1`
 > to `/api/tech/nfs/v1` per ADR-TECH-004. 6-month dual-prefix compatibility period.
@@ -104,13 +104,13 @@ The News Feed Service (NFS) provides a secure, subscription-driven event distrib
 
 ### 0.4 Related Documents
 
-- `spec/T1_Platform/tech/_tech_suite.md` — Tech Suite Architecture Specification
-- `spec/T1_Platform/iam/domain-specs/iam_tenant-spec.md` — Tenant Management (source of `iam.tenant.deleted`)
-- `spec/T1_Platform/iam/domain-specs/iam_audit-spec.md` — Audit Service (potential consumer of subscription lifecycle events)
-- `spec/T1_Platform/tech/domain-specs/tech_jc-spec.md` — Job Control Service (example event producer)
-- `spec/T1_Platform/tech/domain-specs/tech_dms-spec.md` — Document Management Service (example event producer)
-- `spec/T1_Platform/tech/features/leaves/F-TECH-004-01/feature-spec.md` — Browse Subscriptions
-- `spec/T1_Platform/tech/features/leaves/F-TECH-004-02/feature-spec.md` — Manage Subscriptions
+- `T1_Platform/tech/_tech_suite.md` — Tech Suite Architecture Specification
+- `T1_Platform/iam/domain-specs/iam_tenant-spec.md` — Tenant Management (source of `iam.tenant.deleted`)
+- `T1_Platform/iam/domain-specs/iam_audit-spec.md` — Audit Service (potential consumer of subscription lifecycle events)
+- `T1_Platform/tech/domain-specs/tech_jc-spec.md` — Job Control Service (example event producer)
+- `T1_Platform/tech/domain-specs/tech_dms-spec.md` — Document Management Service (example event producer)
+- `T1_Platform/tech/features/leaves/F-TECH-004-01/feature-spec.md` — Browse Subscriptions
+- `T1_Platform/tech/features/leaves/F-TECH-004-02/feature-spec.md` — Manage Subscriptions
 - `contracts/http/tech/nfs/openapi.yaml` — REST API contract
 
 ---
@@ -1235,7 +1235,7 @@ Content-Type: application/json
 
 | Field | Value |
 |-------|-------|
-| **Specification File** | `spec/T1_Platform/tech/contracts/http/tech/nfs/openapi.yaml` |
+| **Specification File** | `T1_Platform/tech/contracts/http/tech/nfs/openapi.yaml` |
 | **Standard** | OpenAPI 3.1 |
 | **Docs URL** | `/api/tech/nfs/v1/swagger-ui` (development only) |
 
@@ -2039,12 +2039,12 @@ No NFS-specific ADRs have been formally adopted at this time. Key decisions are 
 
 | Reference | Path / URL |
 |-----------|-----------|
-| Tech Suite Specification | `spec/T1_Platform/tech/_tech_suite.md` |
-| Domain Service Spec Template | `concepts/templates/platform/domain/domain-service-spec.md` (TPL-SVC v1.0.0) |
+| Tech Suite Specification | `T1_Platform/tech/_tech_suite.md` |
+| Domain Service Spec Template | `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/templates/platform/domain/domain-service-spec.md` (TPL-SVC v1.0.0) |
 | Template Registry | `concepts/templates/template-registry.json` |
-| Browse Subscriptions Feature | `spec/T1_Platform/tech/features/leaves/F-TECH-004-01/feature-spec.md` |
-| Manage Subscriptions Feature | `spec/T1_Platform/tech/features/leaves/F-TECH-004-02/feature-spec.md` |
-| NFS OpenAPI Contract | `spec/T1_Platform/tech/contracts/http/tech/nfs/openapi.yaml` |
+| Browse Subscriptions Feature | `T1_Platform/tech/features/leaves/F-TECH-004-01/feature-spec.md` |
+| Manage Subscriptions Feature | `T1_Platform/tech/features/leaves/F-TECH-004-02/feature-spec.md` |
+| NFS OpenAPI Contract | `T1_Platform/tech/contracts/http/tech/nfs/openapi.yaml` |
 | ADR-011 (thin events) | `io.openleap.dev.guidelines` |
 | ADR-013 (outbox) | `io.openleap.dev.guidelines` |
 | ADR-067 (extensibility) | `io.openleap.dev.guidelines` |

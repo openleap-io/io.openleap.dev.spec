@@ -91,7 +91,7 @@
 - `srv_ses-spec.md` - Session Execution
 - `srv_ent-spec.md` - Entitlements
 - `srv_bil-spec.md` - Billing Intent
-- `SYSTEM_OVERVIEW.md` - Platform architecture overview
+- [system-topology.md](https://github.com/openleap-io/io.openleap.dev.hub/blob/main/architecture/system-topology.md) - Platform architecture overview
 - `TECHNICAL_STANDARDS.md` - Cross-cutting technical standards
 - `EVENT_STANDARDS.md` - Event envelope and routing conventions
 

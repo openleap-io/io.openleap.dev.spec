@@ -45,7 +45,7 @@
 **Source of Truth Priority:**
 1. This spec (SD.CDM domain model and rules)
 2. `_sd_suite.md` (suite-level ADRs and conventions)
-3. `concepts/CONCEPTUAL_STACK.md` (platform model)
+3. `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/conceptual-stack.md` (platform model)
 4. `io.openleap.dev.guidelines` (implementation patterns)
 
 **Style Guide:**
@@ -2283,8 +2283,8 @@ This spec produces the following status output files:
 
 | File | Purpose |
 |------|---------|
-| `spec/T3_Domains/SD/status/spec-changelog.md` | Detailed record of changes made during upgrade |
-| `spec/T3_Domains/SD/status/spec-open-questions.md` | Consolidated open questions with full detail for tracking |
+| `T3_Domains/SD/status/spec-changelog.md` | Detailed record of changes made during upgrade |
+| `T3_Domains/SD/status/spec-open-questions.md` | Consolidated open questions with full detail for tracking |
 
 **Spec Compliance Summary:**
 

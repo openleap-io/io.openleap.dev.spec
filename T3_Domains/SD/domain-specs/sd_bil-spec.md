@@ -93,8 +93,8 @@ This specification defines the Billing domain (`sd.bil`), which creates billing 
 - `sd_agr-spec.md` — Sales Agreements (upstream: rebate settlement)
 - `fi_acc_core_spec_complete.md` — Financial Accounting (downstream: AR/GL)
 - `DMS_Spec_MinIO.md` — Document Management (downstream: PDF invoice storage)
-- `concepts/governance/template-governance.md` — GOV-TPL-001
-- `concepts/governance/bff-guideline.md` — GOV-BFF-001
+- `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/template-governance.md` — GOV-TPL-001
+- `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/bff-guideline.md` — GOV-BFF-001
 
 ---
 
@@ -2869,9 +2869,9 @@ No domain-level ADRs recorded yet for sd.bil. Domain ADRs should be created when
 | `sd_dlv-spec.md` | Delivery Domain Specification |
 | `sd_ret-spec.md` | Returns Domain Specification |
 | `sd_agr-spec.md` | Sales Agreements Domain Specification |
-| `concepts/templates/platform/domain/domain-service-spec.md` v1.0.0 | Template used |
-| `concepts/governance/template-governance.md` | GOV-TPL-001 |
-| `concepts/governance/bff-guideline.md` | GOV-BFF-001 |
+| `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/templates/platform/domain/domain-service-spec.md` v1.0.0 | Template used |
+| `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/template-governance.md` | GOV-TPL-001 |
+| `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/bff-guideline.md` | GOV-BFF-001 |
 | `io.openleap.dev.guidelines` ADR-002 | CQRS |
 | `io.openleap.dev.guidelines` ADR-003 | Event-driven architecture |
 | `io.openleap.dev.guidelines` ADR-011 | Thin events |
@@ -2893,7 +2893,7 @@ When generating status reports or implementation-status.json entries for this sp
 
 | Field | Value |
 |-------|-------|
-| `spec_file` | `spec/T3_Domains/SD/sd_bil-spec.md` |
+| `spec_file` | `T3_Domains/SD/sd_bil-spec.md` |
 | `template_version` | `TPL-SVC v1.0.0` |
 | `compliance_score` | `~95%` |
 | `open_questions` | `11 (Q-BIL-001 to Q-BIL-011)` |

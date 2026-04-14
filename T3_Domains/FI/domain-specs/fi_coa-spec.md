@@ -97,9 +97,9 @@ Remaining gaps: Port and Repository not yet assigned (OPEN QUESTION)
 - **AccountChangeRequest:** A request submitted from `fi.coa` to `fi.gl` to create, update, or deactivate a GL posting account.
 
 ### 0.5 Related Documents
-- Suite architecture: `spec/T3_Domains/FI/_fi_suiteV2.md`
-- Neighbor domain specs: `spec/T3_Domains/FI/domain-specs/fi_gl-spec.md`, `spec/T3_Domains/FI/domain-specs/fi_rpt-spec.md`
-- Platform architecture: `SYSTEM_OVERVIEW.md`
+- Suite architecture: `T3_Domains/FI/_fi_suiteV2.md`
+- Neighbor domain specs: `T3_Domains/FI/domain-specs/fi_gl-spec.md`, `T3_Domains/FI/domain-specs/fi_rpt-spec.md`
+- Platform architecture: [system-topology.md](https://github.com/openleap-io/io.openleap.dev.hub/blob/main/architecture/system-topology.md)
 - Event standards: `EVENT_STANDARDS.md`
 
 ---

@@ -84,7 +84,7 @@
 
 ### 0.4 Related Documents
 - `_srv_suite.md`, `srv_ses-spec.md`, `srv_apt-spec.md`, `srv_cat-spec.md`, `srv_cas-spec.md`, `srv_ent-spec.md`
-- `SYSTEM_OVERVIEW.md`, `TECHNICAL_STANDARDS.md`, `EVENT_STANDARDS.md`
+- [system-topology.md](https://github.com/openleap-io/io.openleap.dev.hub/blob/main/architecture/system-topology.md), `TECHNICAL_STANDARDS.md`, `EVENT_STANDARDS.md`
 
 ---
 
@@ -2363,7 +2363,7 @@ Retrieve current extension configuration for the tenant.
 | `srv_cat-spec.md` | Domain Spec | Service Catalog — provides billing hints |
 | `srv_ent-spec.md` | Domain Spec | Entitlements — provides coverage info |
 | `srv_cas-spec.md` | Domain Spec | Case Management — provides case grouping context |
-| `concepts/CONCEPTUAL_STACK.md` | Framework | SPLE platform model; extension point definitions |
+| `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/conceptual-stack.md` | Framework | SPLE platform model; extension point definitions |
 | `io.openleap.dev.guidelines` ADR-013 | ADR | Outbox publishing pattern |
 | `io.openleap.dev.guidelines` ADR-067 | ADR | JSONB extensibility / custom fields |
 | SAP SD-BIL documentation | External | Industry reference: VBRK/VBRP billing document structure |
@@ -2375,9 +2375,9 @@ Following the status tracking convention (§14.3 of template):
 
 | Artifact | Location | Purpose |
 |----------|----------|---------|
-| Spec changelog | `spec/T3_Domains/SRV/status/bil-changelog.md` | Track spec version changes |
-| Open questions | `spec/T3_Domains/SRV/status/bil-open-questions.md` | Track unresolved decisions |
-| Implementation status | `landscape/implementation-status.json` | Track impl progress per service |
+| Spec changelog | `T3_Domains/SRV/status/bil-changelog.md` | Track spec version changes |
+| Open questions | `T3_Domains/SRV/status/bil-open-questions.md` | Track unresolved decisions |
+| Implementation status | `https://github.com/openleap-io/io.openleap.dev.hub/blob/main/landscape/impl-status.json` | Track impl progress per service |
 
 **Spec Self-Assessment (v1.2.0):**
 

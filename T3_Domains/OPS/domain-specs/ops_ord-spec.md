@@ -87,7 +87,7 @@ This specification defines the Order Management domain within the Operational Se
 - `ops_prj-spec.md` - Project Management domain
 - `BP_business_partner.md` - Business Partner
 - `COM_Overview.md` - Commerce Suite
-- `SYSTEM_OVERVIEW.md` - Platform architecture overview
+- [system-topology.md](https://github.com/openleap-io/io.openleap.dev.hub/blob/main/architecture/system-topology.md) - Platform architecture overview
 
 ---
 

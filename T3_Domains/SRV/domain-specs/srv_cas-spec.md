@@ -87,12 +87,12 @@
 
 | Document | Path | Type |
 |----------|------|------|
-| SRV Suite Spec | `spec/T3_Domains/SRV/_srv_suite.md` | Suite spec |
-| Appointment Service | `spec/T3_Domains/SRV/srv_apt-spec.md` | Sibling domain |
-| Session Service | `spec/T3_Domains/SRV/srv_ses-spec.md` | Sibling domain |
-| Entitlement Service | `spec/T3_Domains/SRV/srv_ent-spec.md` | Sibling domain |
-| Billing Intent Service | `spec/T3_Domains/SRV/srv_bil-spec.md` | Sibling domain |
-| Business Partner (shared) | `spec/T2_SharedBusiness/bp/` | Upstream reference |
+| SRV Suite Spec | `T3_Domains/SRV/_srv_suite.md` | Suite spec |
+| Appointment Service | `T3_Domains/SRV/srv_apt-spec.md` | Sibling domain |
+| Session Service | `T3_Domains/SRV/srv_ses-spec.md` | Sibling domain |
+| Entitlement Service | `T3_Domains/SRV/srv_ent-spec.md` | Sibling domain |
+| Billing Intent Service | `T3_Domains/SRV/srv_bil-spec.md` | Sibling domain |
+| Business Partner (shared) | `T2_SharedBusiness/bp/` | Upstream reference |
 
 ---
 
@@ -2009,13 +2009,13 @@ The following platform ADRs from `io.openleap.dev.guidelines` apply to this serv
 
 | Reference | Description | Location |
 |-----------|-------------|----------|
-| TPL-SVC v1.0.0 | Domain Service Specification Template | `concepts/templates/platform/domain/domain-service-spec.md` |
+| TPL-SVC v1.0.0 | Domain Service Specification Template | `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/templates/platform/domain/domain-service-spec.md` |
 | ADR-067 | Extensibility Architecture (JSONB custom fields) | `io.openleap.dev.guidelines` |
 | ADR-013 | Outbox Publishing Pattern | `io.openleap.dev.guidelines` |
 | ADR-011 | Thin Events | `io.openleap.dev.guidelines` |
 | SAP IS-H CA | Patient Case Management reference | SAP Help Portal (IS-H) |
 | SAP CRM Case Management | Service case management reference | SAP Help Portal (CRM) |
-| `_srv_suite.md` | SRV Suite Architecture Specification | `spec/T3_Domains/SRV/_srv_suite.md` |
+| `_srv_suite.md` | SRV Suite Architecture Specification | `T3_Domains/SRV/_srv_suite.md` |
 
 ### 15.3 Status Output Requirements
 
@@ -2023,8 +2023,8 @@ The following output artifacts are produced alongside this spec:
 
 | Artifact | Path | Purpose |
 |----------|------|---------|
-| Spec Changelog | `spec/T3_Domains/SRV/status/spec-changelog.md` | Documents changes made in the upgrade |
-| Open Questions | `spec/T3_Domains/SRV/status/spec-open-questions.md` | Tracks all Q-CAS-xxx open questions |
+| Spec Changelog | `T3_Domains/SRV/status/spec-changelog.md` | Documents changes made in the upgrade |
+| Open Questions | `T3_Domains/SRV/status/spec-open-questions.md` | Tracks all Q-CAS-xxx open questions |
 
 ### 15.4 Change Log
 

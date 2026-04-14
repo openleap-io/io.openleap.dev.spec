@@ -1,6 +1,6 @@
 # Open Questions — param.cfg
 
-**Spec file:** `spec/T1_Platform/param/domain-specs/param_cfg-spec.md`
+**Spec file:** `T1_Platform/param/domain-specs/param_cfg-spec.md`
 **Last updated:** 2026-04-03
 
 ---
@@ -72,7 +72,7 @@
 
 # Open Questions — param.i18n
 
-**Spec file:** `spec/T1_Platform/param/domain-specs/param_i18n-spec.md`
+**Spec file:** `T1_Platform/param/domain-specs/param_i18n-spec.md`
 **Last updated:** 2026-04-03
 
 ---
@@ -141,7 +141,7 @@
 
 # Open Questions — param.ref
 
-**Spec file:** `spec/T1_Platform/param/domain-specs/param_ref-spec.md`
+**Spec file:** `T1_Platform/param/domain-specs/param_ref-spec.md`
 **Last updated:** 2026-04-03
 
 ---
@@ -226,7 +226,7 @@
 
 # Open Questions — param.si
 
-**Spec file:** `spec/T1_Platform/param/domain-specs/param_si-spec.md`
+**Spec file:** `T1_Platform/param/domain-specs/param_si-spec.md`
 **Last updated:** 2026-04-03
 
 ---

@@ -83,7 +83,7 @@
 
 ### 0.4 Related Documents
 - `_srv_suite.md`, `srv_apt-spec.md`, `srv_cat-spec.md`, `srv_res-spec.md`, `srv_cas-spec.md`, `srv_ent-spec.md`, `srv_bil-spec.md`
-- `SYSTEM_OVERVIEW.md`, `TECHNICAL_STANDARDS.md`, `EVENT_STANDARDS.md`
+- [system-topology.md](https://github.com/openleap-io/io.openleap.dev.hub/blob/main/architecture/system-topology.md), `TECHNICAL_STANDARDS.md`, `EVENT_STANDARDS.md`
 
 ---
 
@@ -2317,8 +2317,8 @@ Domain-level architecture decisions for `srv.ses`:
 | `srv_apt-spec.md` | Appointment domain specification — source of session creation events |
 | `srv_bil-spec.md` | Billing Intent domain specification — consumes session.completed |
 | `srv_ent-spec.md` | Entitlement domain specification — consumes session.completed |
-| `concepts/governance/template-governance.md` (GOV-TPL-001) | Template governance rules |
-| `concepts/governance/bff-guideline.md` (GOV-BFF-001) | BFF design guidelines |
+| `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/template-governance.md` (GOV-TPL-001) | Template governance rules |
+| `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/bff-guideline.md` (GOV-BFF-001) | BFF design guidelines |
 | ADR-013 (io.openleap.dev.guidelines) | Outbox publishing pattern |
 | ADR-067 (io.openleap.dev.guidelines) | Extensibility architecture (JSONB custom fields) |
 | SAP CS Module (Customer Service) | Domain inspiration: IW41 (service confirmation), QMEL (quality notifications) |
@@ -2330,9 +2330,9 @@ This section defines the expected outputs produced by the spec upgrade process.
 
 | Artifact | Location | Description |
 |----------|----------|-------------|
-| Upgraded spec | `spec/T3_Domains/SRV/srv_ses-spec.md` | This file |
-| Changelog | `spec/T3_Domains/SRV/status/ses-changelog.md` | Summary of changes from the upgrade |
-| Open Questions | `spec/T3_Domains/SRV/status/ses-open-questions.md` | Consolidated open questions register |
+| Upgraded spec | `T3_Domains/SRV/srv_ses-spec.md` | This file |
+| Changelog | `T3_Domains/SRV/status/ses-changelog.md` | Summary of changes from the upgrade |
+| Open Questions | `T3_Domains/SRV/status/ses-open-questions.md` | Consolidated open questions register |
 | OpenAPI spec | `openapi.yaml` (service repository) | Generated from implementation; not in this repo |
 
 ### 15.4 Change Log

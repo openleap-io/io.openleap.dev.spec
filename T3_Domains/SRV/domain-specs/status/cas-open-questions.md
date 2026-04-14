@@ -100,7 +100,7 @@
 
 - **Question:** What are the authoritative feature IDs (F-SRV-005-xx) for case management features in the SRV suite feature catalog?
 - **Why it matters:** The feature IDs in §11 (Feature Dependencies) are currently provisional. They must match the IDs in the SRV feature specs and `_srv_suite.md` to enable correct BFF configuration and feature gating.
-- **Suggested options:** Check `spec/T3_Domains/SRV/_srv_suite.md` feature section and any existing feature specs under `spec/T3_Domains/SRV/features/`.
+- **Suggested options:** Check `T3_Domains/SRV/_srv_suite.md` feature section and any existing feature specs under `T3_Domains/SRV/features/`.
 - **Owner:** TBD
 
 ---

@@ -64,7 +64,7 @@ Priority: MEDIUM — duplicate should be resolved
 - **Channel Order:** An order payload received from a channel; not yet accepted/committed.
 
 ### 0.5 Related Documents
-- Suite-Architektur: `platform/tmpspec/T3_Domains/COM/_com_suite.md`
+- Suite-Architektur: `platform/tmpT3_Domains/COM/_com_suite.md`
 - Neighbor: `com_lst.md`, `com_chk.md`
 - SD baseline: `platform/T3_Domains/SD/SD_sales.md`
 

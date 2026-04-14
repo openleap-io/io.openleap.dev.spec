@@ -1,5 +1,5 @@
 <!-- This file references the authoritative domain spec for the Business Partner service.
-     Source: spec/T2_SharedBusiness/bp/t2-bp-svc-spec.md (template compliance: 90%)
+     Source: T2_SharedBusiness/bp/t2-bp-svc-spec.md (template compliance: 90%)
      Renamed to blueprint convention: domain-specs/t2_bp-spec.md
 
      The full domain spec content is maintained in the specification repository.
@@ -8,7 +8,7 @@
 
 # T2 Business Partner Service — Domain/Service Specification
 
-> **See authoritative source:** `spec/T2_SharedBusiness/bp/t2-bp-svc-spec.md`
+> **See authoritative source:** `T2_SharedBusiness/bp/t2-bp-svc-spec.md`
 >
 > **Template:** `domain-service-spec.md` v1.0.0
 > **Template Compliance:** 90%

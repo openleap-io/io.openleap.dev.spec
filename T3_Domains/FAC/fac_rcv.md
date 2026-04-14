@@ -78,7 +78,7 @@ Priority: LOW
 ### 0.5 Related Documents
 - Suite architecture: `platform/T3_Domains/FAC/_fac_suite.md`
 - Neighbor specs: `fac_fnd.md`, `fac_lim.md`, `fac_rsk.md`, `fac_col.md`
-- Related suites: `platform/T3_Domains/FI/_fi_suite.md`, `platform/tmpspec/T3_Domains/OPS/_ops_suite.md`, `platform/T3_Domains/SRV/_srv_suite.md`
+- Related suites: `platform/T3_Domains/FI/_fi_suite.md`, `platform/tmpT3_Domains/OPS/_ops_suite.md`, `platform/T3_Domains/SRV/_srv_suite.md`
 
 ---
 

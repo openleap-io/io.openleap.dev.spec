@@ -1,6 +1,6 @@
 # Spec Changelog — iam.audit
 
-**Spec file:** `spec/T1_Platform/iam/domain-specs/iam_audit-spec.md`
+**Spec file:** `T1_Platform/iam/domain-specs/iam_audit-spec.md`
 **Upgrade date:** 2026-04-03
 **Upgraded from:** ~30% compliance (despite 95% header claim)
 **Upgraded to:** ~95% compliance (TPL-SVC v1.0.0 fully applied)

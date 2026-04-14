@@ -64,7 +64,7 @@ Priority: LOW
 - **Checkout Session:** UI-driven state machine leading to intent submission.
 
 ### 0.5 Related Documents
-- Suite-Architektur: `platform/tmpspec/T3_Domains/COM/_com_suite.md`
+- Suite-Architektur: `platform/tmpT3_Domains/COM/_com_suite.md`
 - SD baseline: `platform/T3_Domains/SD/SD_sales.md`
 - SRV boundary: `platform/T3_Domains/SRV/_srv_suite.md`
 

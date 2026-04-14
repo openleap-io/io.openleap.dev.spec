@@ -90,7 +90,7 @@ This specification defines the Inventory Management domain, which maintains the 
 
 ### 0.4 Related Documents
 - `_pps_suite.md` - PPS Suite overview
-- `SYSTEM_OVERVIEW.md` - Platform architecture overview
+- [system-topology.md](https://github.com/openleap-io/io.openleap.dev.hub/blob/main/architecture/system-topology.md) - Platform architecture overview
 - `PD_product_definition.md` - Product Definition spec
 - `PUR_procurement.md` - Procurement spec
 - `MES_execution.md` - Manufacturing Execution spec

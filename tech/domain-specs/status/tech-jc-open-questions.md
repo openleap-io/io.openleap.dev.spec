@@ -51,7 +51,7 @@
 
 ## Q-JC-005: OpenAPI Specification Population
 
-- **Question:** The companion file `spec/T1_Platform/tech/contracts/http/tech/jc/openapi.yaml` is currently a 1-line stub. When and by whom will it be populated with the full OpenAPI 3.1 contract derived from this spec?
+- **Question:** The companion file `T1_Platform/tech/contracts/http/tech/jc/openapi.yaml` is currently a 1-line stub. When and by whom will it be populated with the full OpenAPI 3.1 contract derived from this spec?
 - **Why it matters:** The OpenAPI spec is the machine-readable contract consumed by BFF code generation, API gateway configuration, and integration test scaffolding. Without it, BFF development for F-TECH-003-xx cannot proceed with contract-first tooling.
 - **Suggested options:**
   - **A)** Architecture team populates the OpenAPI spec in parallel with this spec upgrade, derived from §6.

@@ -102,13 +102,13 @@ The Document Management Service (DMS) provides centralized storage, versioning, 
 
 ### 0.4 Related Documents
 
-- `spec/T1_Platform/tech/_tech_suite.md` — Tech Suite Architecture Specification
-- `spec/T1_Platform/iam/domain-specs/iam_tenant-spec.md` — Tenant Management (source of tenant.deleted event)
-- `spec/T1_Platform/iam/domain-specs/iam_audit-spec.md` — Audit Service (consumes all DMS events)
-- `spec/T1_Platform/tech/domain-specs/tech_nfs-spec.md` — Notification Service (downstream consumer)
-- `spec/T1_Platform/tech/features/leaves/F-TECH-001-01/feature-spec.md` — Browse Documents
-- `spec/T1_Platform/tech/features/leaves/F-TECH-001-02/feature-spec.md` — Manage Retention Policies
-- `spec/T1_Platform/tech/features/leaves/F-TECH-001-03/feature-spec.md` — Document Audit Trail
+- `T1_Platform/tech/_tech_suite.md` — Tech Suite Architecture Specification
+- `T1_Platform/iam/domain-specs/iam_tenant-spec.md` — Tenant Management (source of tenant.deleted event)
+- `T1_Platform/iam/domain-specs/iam_audit-spec.md` — Audit Service (consumes all DMS events)
+- `T1_Platform/tech/domain-specs/tech_nfs-spec.md` — Notification Service (downstream consumer)
+- `T1_Platform/tech/features/leaves/F-TECH-001-01/feature-spec.md` — Browse Documents
+- `T1_Platform/tech/features/leaves/F-TECH-001-02/feature-spec.md` — Manage Retention Policies
+- `T1_Platform/tech/features/leaves/F-TECH-001-03/feature-spec.md` — Document Audit Trail
 - `contracts/http/tech/dms/openapi.yaml` — REST API contract
 - `contracts/events/tech/dms/` — Event schema contracts
 
@@ -1992,8 +1992,8 @@ No local ADRs have been created for this service yet. Decisions are captured in 
 | OpenLeap Starter v3.0.0 | Internal: `io.openleap.starter` |
 | OpenLeap Dev Guidelines | Internal: `io.openleap.dev.guidelines` |
 | ADR catalog | Internal: `io.openleap.dev.guidelines/adr/` |
-| Tech Suite Spec | `spec/T1_Platform/tech/_tech_suite.md` |
-| IAM Tenant Spec | `spec/T1_Platform/iam/domain-specs/iam_tenant-spec.md` |
+| Tech Suite Spec | `T1_Platform/tech/_tech_suite.md` |
+| IAM Tenant Spec | `T1_Platform/iam/domain-specs/iam_tenant-spec.md` |
 
 ### 15.3 Status Output Requirements
 
@@ -2001,7 +2001,7 @@ When reporting compliance status for this spec, include:
 
 ```
 Spec ID:         tech-dms-svc
-Spec File:       spec/T1_Platform/tech/domain-specs/tech_dms-spec.md
+Spec File:       T1_Platform/tech/domain-specs/tech_dms-spec.md
 Template:        domain-service-spec.md v1.0.0
 Compliance:      ~95%
 Sections:        §0–§15 all present

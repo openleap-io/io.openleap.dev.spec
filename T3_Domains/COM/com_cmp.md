@@ -63,7 +63,7 @@ Priority: LOW
 - **EvidenceRef:** Reference to supporting evidence (likely in `T1.dms`).
 
 ### 0.5 Related Documents
-- Suite-Architektur: `platform/tmpspec/T3_Domains/COM/_com_suite.md`
+- Suite-Architektur: `platform/tmpT3_Domains/COM/_com_suite.md`
 - Neighbor: `com_lst.md`
 
 ---

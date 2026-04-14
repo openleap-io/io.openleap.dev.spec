@@ -1546,7 +1546,7 @@ Maintain CostCenterBalance as a materialized aggregate, updated on each posting.
 ### 15.2 References
 
 - `_co_suite.md` - CO Suite Architecture Specification
-- `SYSTEM_OVERVIEW.md` - Platform architecture
+- [system-topology.md](https://github.com/openleap-io/io.openleap.dev.hub/blob/main/architecture/system-topology.md) - Platform architecture
 - ISO 4217 (Currencies)
 - UCUM (Units of Measure)
 - RFC 3339 (Date/Time format)

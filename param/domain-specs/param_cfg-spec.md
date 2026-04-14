@@ -96,14 +96,14 @@ This specification defines the `param-cfg-svc` domain service within the Platfor
 
 ### 0.4 Related Documents
 
-- `spec/T1_Platform/param/_param_suite.md` — PARAM Suite Architecture
-- `spec/T1_Platform/param/domain-specs/param_ref-spec.md` — Reference Data Service (upstream dependency)
-- `spec/T1_Platform/param/features/compositions/F-PARAM-003.md` — Configuration Management feature composition
-- `spec/T1_Platform/param/features/leaves/F-PARAM-003-01/feature-spec.md` — Browse Configuration
-- `spec/T1_Platform/param/features/leaves/F-PARAM-003-02/feature-spec.md` — Edit Configuration Entry
-- `spec/T1_Platform/param/features/leaves/F-PARAM-003-03/feature-spec.md` — Configuration Audit Trail
-- `concepts/governance/bff-guideline.md` (GOV-BFF-001) — BFF pattern governance
-- `spec/T1_Platform/iam/domain-specs/iam_authz-spec.md` — Authorisation service
+- `T1_Platform/param/_param_suite.md` — PARAM Suite Architecture
+- `T1_Platform/param/domain-specs/param_ref-spec.md` — Reference Data Service (upstream dependency)
+- `T1_Platform/param/features/compositions/F-PARAM-003.md` — Configuration Management feature composition
+- `T1_Platform/param/features/leaves/F-PARAM-003-01/feature-spec.md` — Browse Configuration
+- `T1_Platform/param/features/leaves/F-PARAM-003-02/feature-spec.md` — Edit Configuration Entry
+- `T1_Platform/param/features/leaves/F-PARAM-003-03/feature-spec.md` — Configuration Audit Trail
+- `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/bff-guideline.md` (GOV-BFF-001) — BFF pattern governance
+- `T1_Platform/iam/domain-specs/iam_authz-spec.md` — Authorisation service
 
 ---
 
@@ -1108,7 +1108,7 @@ No business operations (non-CRUD actions) are defined for this service. All oper
 
 | Property | Value |
 |----------|-------|
-| **Location** | `spec/T1_Platform/param/contracts/http/param/cfg/openapi.yaml` |
+| **Location** | `T1_Platform/param/contracts/http/param/cfg/openapi.yaml` |
 | **Version** | OpenAPI 3.1 |
 | **Docs URL** | `http://localhost:8102/swagger-ui.html` (local development) |
 | **Status** | Stub — full specification to be generated from this domain spec §6 |
@@ -1853,7 +1853,7 @@ Domain-level ADR references:
 
 ### 14.5 Suite-Level ADR References
 
-Suite-level architecture decisions are documented in `spec/T1_Platform/param/_param_suite.md`:
+Suite-level architecture decisions are documented in `T1_Platform/param/_param_suite.md`:
 - §4 Integration Patterns: EDA + REST decision
 - §4.2 Flow 3: Config Entry Change → All Consumers
 - §SS9 Architecture Decisions: Suite-level ADR catalog
@@ -1884,14 +1884,14 @@ Suite-level architecture decisions are documented in `spec/T1_Platform/param/_pa
 
 | Reference | Description |
 |-----------|-------------|
-| `spec/T1_Platform/param/_param_suite.md` | PARAM Suite Architecture Specification |
-| `spec/T1_Platform/param/domain-specs/param_ref-spec.md` | Reference Data Service Specification (upstream) |
-| `spec/T1_Platform/param/features/compositions/F-PARAM-003.md` | Configuration Management Feature Composition |
-| `spec/T1_Platform/param/contracts/http/param/cfg/openapi.yaml` | OpenAPI stub for param-cfg-svc |
-| `spec/T1_Platform/param/contracts/events/param/cfg/config.changed.schema.json` | Event schema for param.cfg.config.changed |
-| `concepts/templates/platform/domain/domain-service-spec.md` | TPL-SVC v1.0.0 |
-| `concepts/governance/template-governance.md` | GOV-TPL-001 |
-| `concepts/governance/bff-guideline.md` | GOV-BFF-001 |
+| `T1_Platform/param/_param_suite.md` | PARAM Suite Architecture Specification |
+| `T1_Platform/param/domain-specs/param_ref-spec.md` | Reference Data Service Specification (upstream) |
+| `T1_Platform/param/features/compositions/F-PARAM-003.md` | Configuration Management Feature Composition |
+| `T1_Platform/param/contracts/http/param/cfg/openapi.yaml` | OpenAPI stub for param-cfg-svc |
+| `T1_Platform/param/contracts/events/param/cfg/config.changed.schema.json` | Event schema for param.cfg.config.changed |
+| `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/templates/platform/domain/domain-service-spec.md` | TPL-SVC v1.0.0 |
+| `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/template-governance.md` | GOV-TPL-001 |
+| `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/bff-guideline.md` | GOV-BFF-001 |
 | `io.openleap.dev.guidelines` (ADR-001 through ADR-067) | Backend development guidelines |
 | SAP BC (SM30, RZ10, TVARVC) | Legacy equivalent: table view and profile parameter management |
 

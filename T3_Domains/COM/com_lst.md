@@ -66,7 +66,7 @@ Priority: LOW
 - **Publication:** The act of pushing/activating a listing in an external channel.
 
 ### 0.5 Related Documents
-- Suite-Architektur: `platform/tmpspec/T3_Domains/COM/_com_suite.md`
+- Suite-Architektur: `platform/tmpT3_Domains/COM/_com_suite.md`
 - Nachbar-Spezifikationen: `com_cat.md`, `com_cmp.md`, `com_mpx.md`
 
 ---

@@ -91,11 +91,11 @@ This specification defines the `iam-audit-svc` domain service within the Identit
 
 ### 0.4 Related Documents
 
-- `spec/T1_Platform/iam/_iam_suite.md` — IAM Suite Architecture
-- `spec/T1_Platform/iam/domain-specs/iam_authz-spec.md` — Authorization domain (upstream producer)
-- `spec/T1_Platform/iam/domain-specs/iam_user-spec.md` — User domain (upstream producer)
-- `spec/T1_Platform/iam/features/compositions/F-IAM-004.md` — Security Audit feature composition
-- `concepts/governance/bff-guideline.md` (GOV-BFF-001) — BFF pattern governance
+- `T1_Platform/iam/_iam_suite.md` — IAM Suite Architecture
+- `T1_Platform/iam/domain-specs/iam_authz-spec.md` — Authorization domain (upstream producer)
+- `T1_Platform/iam/domain-specs/iam_user-spec.md` — User domain (upstream producer)
+- `T1_Platform/iam/features/compositions/F-IAM-004.md` — Security Audit feature composition
+- `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/bff-guideline.md` (GOV-BFF-001) — BFF pattern governance
 
 ---
 
@@ -2639,16 +2639,16 @@ Domain-level ADRs for `iam-audit-svc` are tracked in the service repository unde
 
 | Reference | Description | Location |
 |-----------|-------------|----------|
-| TPL-SVC v1.0.0 | Domain Service Specification Template | `concepts/templates/platform/domain/domain-service-spec.md` |
-| IAM Suite Spec | Parent suite architecture | `spec/T1_Platform/iam/_iam_suite.md` |
-| F-IAM-004 Composition | Security Audit feature composition | `spec/T1_Platform/iam/features/compositions/F-IAM-004.md` |
-| F-IAM-004-01 Feature Spec | Security Event Logging | `spec/T1_Platform/iam/features/leaves/F-IAM-004-01/feature-spec.md` |
-| F-IAM-004-02 Feature Spec | Audit Query & Reporting | `spec/T1_Platform/iam/features/leaves/F-IAM-004-02/feature-spec.md` |
-| F-IAM-004-03 Feature Spec | Audit Export & Archival | `spec/T1_Platform/iam/features/leaves/F-IAM-004-03/feature-spec.md` |
-| F-IAM-004-04 Feature Spec | SIEM Integration | `spec/T1_Platform/iam/features/leaves/F-IAM-004-04/feature-spec.md` |
+| TPL-SVC v1.0.0 | Domain Service Specification Template | `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/templates/platform/domain/domain-service-spec.md` |
+| IAM Suite Spec | Parent suite architecture | `T1_Platform/iam/_iam_suite.md` |
+| F-IAM-004 Composition | Security Audit feature composition | `T1_Platform/iam/features/compositions/F-IAM-004.md` |
+| F-IAM-004-01 Feature Spec | Security Event Logging | `T1_Platform/iam/features/leaves/F-IAM-004-01/feature-spec.md` |
+| F-IAM-004-02 Feature Spec | Audit Query & Reporting | `T1_Platform/iam/features/leaves/F-IAM-004-02/feature-spec.md` |
+| F-IAM-004-03 Feature Spec | Audit Export & Archival | `T1_Platform/iam/features/leaves/F-IAM-004-03/feature-spec.md` |
+| F-IAM-004-04 Feature Spec | SIEM Integration | `T1_Platform/iam/features/leaves/F-IAM-004-04/feature-spec.md` |
 | ADR-013 | Outbox publishing pattern | `io.openleap.dev.guidelines` |
 | ADR-067 | Extensibility architecture (JSONB custom fields) | `io.openleap.dev.guidelines` |
-| GOV-BFF-001 | BFF pattern guideline | `concepts/governance/bff-guideline.md` |
+| GOV-BFF-001 | BFF pattern guideline | `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/bff-guideline.md` |
 | OpenAPI Contract | REST API contract | `contracts/http/iam/audit/openapi.yaml` |
 | Event Schemas | Event envelope schemas | `contracts/events/iam/audit/` |
 | SAP SM20 | SAP Security Audit Log (domain inspiration) | SAP Help Portal |

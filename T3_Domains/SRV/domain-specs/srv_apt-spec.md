@@ -91,7 +91,7 @@
 ### 0.4 Related Documents
 - `_srv_suite.md` - SRV Suite Architecture
 - `srv_cat-spec.md`, `srv_res-spec.md`, `srv_ses-spec.md`, `srv_ent-spec.md`, `srv_bil-spec.md`, `srv_cas-spec.md`
-- `SYSTEM_OVERVIEW.md`, `TECHNICAL_STANDARDS.md`, `EVENT_STANDARDS.md`
+- [system-topology.md](https://github.com/openleap-io/io.openleap.dev.hub/blob/main/architecture/system-topology.md), `TECHNICAL_STANDARDS.md`, `EVENT_STANDARDS.md`
 
 ---
 
@@ -2687,13 +2687,13 @@ Failure Mode:  fail-open (failure logged; cancellation not rolled back)
 ### 15.2 References
 
 **Business Documents:**
-- SRV Suite Spec: `spec/T3_Domains/SRV/_srv_suite.md`
+- SRV Suite Spec: `T3_Domains/SRV/_srv_suite.md`
 - Related domain specs: `srv_cat-spec.md`, `srv_res-spec.md`, `srv_ses-spec.md`, `srv_bil-spec.md`
 
 **Technical Standards:**
 - `TECHNICAL_STANDARDS.md` — Cross-cutting technical conventions
 - `EVENT_STANDARDS.md` — Event structure and routing
-- `concepts/governance/template-governance.md` (GOV-TPL-001) — Template governance
+- `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/template-governance.md` (GOV-TPL-001) — Template governance
 
 **Dev Guidelines ADRs (io.openleap.dev.guidelines):**
 - ADR-002: CQRS

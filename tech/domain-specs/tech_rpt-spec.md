@@ -12,7 +12,7 @@ Gaps: §5.3 process flow diagrams (stub), §12.7 extension API endpoints (stub)
 > **Schema alignment:** `service-layer.schema.json`
 > **Companion files:** `contracts/http/tech/rpt/openapi.yaml`, `contracts/events/tech/rpt/*.schema.json`
 > **Referenced by:** Platform-Feature Specs (F-TECH-002-xx), BFF Contract
-> **Belongs to:** Tech Suite Spec (`spec/T1_Platform/tech/_tech_suite.md`)
+> **Belongs to:** Tech Suite Spec (`T1_Platform/tech/_tech_suite.md`)
 
 > **Meta Information**
 > - **Version:** 2026-04-03
@@ -100,15 +100,15 @@ The Report Generation Service (RPT) provides centralized Jasper-based report tem
 
 ### 0.4 Related Documents
 
-- `spec/T1_Platform/tech/_tech_suite.md` — Tech Suite Architecture Specification
-- `spec/T1_Platform/iam/domain-specs/iam_tenant-spec.md` — Tenant Management (source of `iam.tenant.deleted` event)
-- `spec/T1_Platform/iam/domain-specs/iam_audit-spec.md` — Audit Service (consumes RPT events)
-- `spec/T1_Platform/tech/domain-specs/tech_dms-spec.md` — Document Management Service (template file storage + output storage)
-- `spec/T1_Platform/tech/domain-specs/tech_jc-spec.md` — Job Control Service (render job execution)
-- `spec/T1_Platform/tech/domain-specs/tech_nfs-spec.md` — News Feed Service (downstream consumer)
-- `spec/T1_Platform/tech/features/leaves/F-TECH-002-01/feature-spec.md` — Browse Report Templates
-- `spec/T1_Platform/tech/features/leaves/F-TECH-002-02/feature-spec.md` — Manage Report Templates
-- `spec/T1_Platform/tech/features/leaves/F-TECH-002-03/feature-spec.md` — Render History
+- `T1_Platform/tech/_tech_suite.md` — Tech Suite Architecture Specification
+- `T1_Platform/iam/domain-specs/iam_tenant-spec.md` — Tenant Management (source of `iam.tenant.deleted` event)
+- `T1_Platform/iam/domain-specs/iam_audit-spec.md` — Audit Service (consumes RPT events)
+- `T1_Platform/tech/domain-specs/tech_dms-spec.md` — Document Management Service (template file storage + output storage)
+- `T1_Platform/tech/domain-specs/tech_jc-spec.md` — Job Control Service (render job execution)
+- `T1_Platform/tech/domain-specs/tech_nfs-spec.md` — News Feed Service (downstream consumer)
+- `T1_Platform/tech/features/leaves/F-TECH-002-01/feature-spec.md` — Browse Report Templates
+- `T1_Platform/tech/features/leaves/F-TECH-002-02/feature-spec.md` — Manage Report Templates
+- `T1_Platform/tech/features/leaves/F-TECH-002-03/feature-spec.md` — Render History
 - `contracts/http/tech/rpt/openapi.yaml` — REST API contract
 - `contracts/events/tech/rpt/` — Event schema contracts
 
@@ -1244,7 +1244,7 @@ Authorization: Bearer {token}
 
 | Property | Value |
 |----------|-------|
-| **Location** | `spec/T1_Platform/tech/contracts/http/tech/rpt/openapi.yaml` |
+| **Location** | `T1_Platform/tech/contracts/http/tech/rpt/openapi.yaml` |
 | **Version** | OpenAPI 3.1 |
 | **Status** | Stub — see Q-RPT-007 |
 
@@ -2189,20 +2189,20 @@ No domain-specific ADRs have been raised for `tech-rpt-svc` in v1.0.0. Decisions
 
 | Document | Location | Description |
 |----------|----------|-------------|
-| Tech Suite Spec | `spec/T1_Platform/tech/_tech_suite.md` | Suite architecture and ubiquitous language |
-| DMS Spec | `spec/T1_Platform/tech/domain-specs/tech_dms-spec.md` | Document Management Service |
-| JC Spec | `spec/T1_Platform/tech/domain-specs/tech_jc-spec.md` | Job Control Service |
-| NFS Spec | `spec/T1_Platform/tech/domain-specs/tech_nfs-spec.md` | News Feed Service |
-| IAM Tenant Spec | `spec/T1_Platform/iam/domain-specs/iam_tenant-spec.md` | Tenant lifecycle events |
-| Domain Service Template | `concepts/templates/platform/domain/domain-service-spec.md` | TPL-SVC v1.0.0 |
+| Tech Suite Spec | `T1_Platform/tech/_tech_suite.md` | Suite architecture and ubiquitous language |
+| DMS Spec | `T1_Platform/tech/domain-specs/tech_dms-spec.md` | Document Management Service |
+| JC Spec | `T1_Platform/tech/domain-specs/tech_jc-spec.md` | Job Control Service |
+| NFS Spec | `T1_Platform/tech/domain-specs/tech_nfs-spec.md` | News Feed Service |
+| IAM Tenant Spec | `T1_Platform/iam/domain-specs/iam_tenant-spec.md` | Tenant lifecycle events |
+| Domain Service Template | `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/templates/platform/domain/domain-service-spec.md` | TPL-SVC v1.0.0 |
 | Dev Guidelines ADR-011 | `io.openleap.dev.guidelines` | Thin events |
 | Dev Guidelines ADR-013 | `io.openleap.dev.guidelines` | Outbox publishing |
 | Dev Guidelines ADR-067 | `io.openleap.dev.guidelines` | Extensibility architecture |
-| Feature: Browse Templates | `spec/T1_Platform/tech/features/leaves/F-TECH-002-01/feature-spec.md` | UI feature spec |
-| Feature: Manage Templates | `spec/T1_Platform/tech/features/leaves/F-TECH-002-02/feature-spec.md` | UI feature spec |
-| Feature: Render History | `spec/T1_Platform/tech/features/leaves/F-TECH-002-03/feature-spec.md` | UI feature spec |
-| RPT Event Schemas | `spec/T1_Platform/tech/contracts/events/tech/rpt/` | JSON Schema for all published events |
-| RPT OpenAPI Contract | `spec/T1_Platform/tech/contracts/http/tech/rpt/openapi.yaml` | REST API contract (stub — Q-RPT-007) |
+| Feature: Browse Templates | `T1_Platform/tech/features/leaves/F-TECH-002-01/feature-spec.md` | UI feature spec |
+| Feature: Manage Templates | `T1_Platform/tech/features/leaves/F-TECH-002-02/feature-spec.md` | UI feature spec |
+| Feature: Render History | `T1_Platform/tech/features/leaves/F-TECH-002-03/feature-spec.md` | UI feature spec |
+| RPT Event Schemas | `T1_Platform/tech/contracts/events/tech/rpt/` | JSON Schema for all published events |
+| RPT OpenAPI Contract | `T1_Platform/tech/contracts/http/tech/rpt/openapi.yaml` | REST API contract (stub — Q-RPT-007) |
 
 ### 15.3 Status Output Requirements
 

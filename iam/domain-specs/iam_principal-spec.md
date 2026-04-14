@@ -7,7 +7,7 @@ Present sections: §0-§15
 
 > **Meta Information**
 > - **Version:** 2026-04-03
-> - **Template:** `concepts/templates/platform/domain/domain-service-spec.md` v1.0.0
+> - **Template:** `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/templates/platform/domain/domain-service-spec.md` v1.0.0
 > - **Template Compliance:** ~95%
 > - **Author(s):** OpenLeap Architecture Team
 > - **Status:** DRAFT
@@ -97,11 +97,11 @@ This spec is the source of truth for:
 
 | Document | Location | Relationship |
 |----------|----------|--------------|
-| IAM Suite Spec | `spec/T1_Platform/iam/iam-suite-spec.md` | Parent suite |
-| iam.authz Spec | `spec/T1_Platform/iam/domain-specs/iam_authz-spec.md` | Consumer of principal events |
-| iam.audit Spec | `spec/T1_Platform/iam/domain-specs/iam_audit-spec.md` | Audit consumer |
-| GDPR Feature Spec | `spec/T1_Platform/iam/features/F-IAM-005-01.md` | GDPR export feature |
-| BFF Guideline | `concepts/governance/bff-guideline.md` | GOV-BFF-001 |
+| IAM Suite Spec | `T1_Platform/iam/iam-suite-spec.md` | Parent suite |
+| iam.authz Spec | `T1_Platform/iam/domain-specs/iam_authz-spec.md` | Consumer of principal events |
+| iam.audit Spec | `T1_Platform/iam/domain-specs/iam_audit-spec.md` | Audit consumer |
+| GDPR Feature Spec | `T1_Platform/iam/features/F-IAM-005-01.md` | GDPR export feature |
+| BFF Guideline | `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/bff-guideline.md` | GOV-BFF-001 |
 | ADR Catalog | `io.openleap.dev.guidelines` | ADR-001 through ADR-067 |
 
 ---
@@ -1619,7 +1619,7 @@ CREATE INDEX idx_outbox_status_created ON iam_principal_outbox_events (status, c
 
 ### 11.1 Purpose
 
-This section maps domain service capabilities to the leaf features that expose them. Each feature has a dedicated feature spec (`spec/T1_Platform/iam/features/F-IAM-XXX-YY.md`) that provides actor stories, acceptance criteria, and AUI screen contracts.
+This section maps domain service capabilities to the leaf features that expose them. Each feature has a dedicated feature spec (`T1_Platform/iam/features/F-IAM-XXX-YY.md`) that provides actor stories, acceptance criteria, and AUI screen contracts.
 
 ### 11.2 Feature Dependency Register
 
@@ -1909,12 +1909,12 @@ No deprecated elements at time of writing (v1.0.0).
 
 | Reference | Location | Description |
 |-----------|----------|-------------|
-| IAM Suite Spec | `spec/T1_Platform/iam/iam-suite-spec.md` | Parent suite architecture |
-| Domain Service Template | `concepts/templates/platform/domain/domain-service-spec.md` v1.0.0 | Template used for this spec |
-| Template Governance | `concepts/governance/template-governance.md` (GOV-TPL-001) | Template versioning policy |
-| BFF Guideline | `concepts/governance/bff-guideline.md` (GOV-BFF-001) | BFF pattern for product UIs |
-| Conceptual Stack | `concepts/CONCEPTUAL_STACK.md` | SPLE platform model |
-| Artifact Catalog | `concepts/ARTIFACT_CATALOG.md` | Normative artifact definitions |
+| IAM Suite Spec | `T1_Platform/iam/iam-suite-spec.md` | Parent suite architecture |
+| Domain Service Template | `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/templates/platform/domain/domain-service-spec.md` v1.0.0 | Template used for this spec |
+| Template Governance | `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/template-governance.md` (GOV-TPL-001) | Template versioning policy |
+| BFF Guideline | `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/bff-guideline.md` (GOV-BFF-001) | BFF pattern for product UIs |
+| Conceptual Stack | `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/conceptual-stack.md` | SPLE platform model |
+| Artifact Catalog | `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/artifact-catalog.md` | Normative artifact definitions |
 | ADR Catalog | `io.openleap.dev.guidelines` | All 63 ADR references |
 | OpenAPI Contract | `contracts/http/iam/principal/openapi.yaml` | Machine-readable API contract |
 | Event Schemas | `contracts/events/iam/principal/` | JSON Schema for all events |

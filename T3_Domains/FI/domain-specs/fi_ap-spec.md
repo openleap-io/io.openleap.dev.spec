@@ -92,7 +92,7 @@ This document specifies the **Accounts Payable (fi.ap)** domain, which manages t
 - `fi_ar_DOMAIN_SPEC_v2.0.md` - Accounts Receivable specification (symmetric)
 - `BP_business_partner.md` - Vendor master data
 - `FI_Suite_Specification_v2.0.md` - FI Suite architecture
-- `OPENLEAP_PLATFORM_GENERAL.md` - Platform conventions
+- `https://github.com/openleap-io/io.openleap.dev.hub/blob/main/architecture/four-tier-architecture.md` - Platform conventions
 
 ---
 

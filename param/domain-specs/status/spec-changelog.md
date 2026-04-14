@@ -1,6 +1,6 @@
 # Spec Changelog — param.cfg
 
-**Spec file:** `spec/T1_Platform/param/domain-specs/param_cfg-spec.md`
+**Spec file:** `T1_Platform/param/domain-specs/param_cfg-spec.md`
 **Upgrade date:** 2026-04-03
 **Upgraded from:** Migration stub only (~0% compliance — no domain content)
 **Upgraded to:** ~95% compliance (TPL-SVC v1.0.0 fully applied)
@@ -82,7 +82,7 @@
 
 # Spec Changelog — param.i18n
 
-**Spec file:** `spec/T1_Platform/param/domain-specs/param_i18n-spec.md`
+**Spec file:** `T1_Platform/param/domain-specs/param_i18n-spec.md`
 **Upgrade date:** 2026-04-03
 **Upgraded from:** Migration stub only (~0% compliance — 22 lines, no domain content)
 **Upgraded to:** ~95% compliance (TPL-SVC v1.0.0 fully applied)
@@ -155,7 +155,7 @@
 
 # Spec Changelog — param.ref
 
-**Spec file:** `spec/T1_Platform/param/domain-specs/param_ref-spec.md`
+**Spec file:** `T1_Platform/param/domain-specs/param_ref-spec.md`
 **Upgrade date:** 2026-04-03
 **Upgraded from:** Migration stub only (~0% compliance — 22 lines, no domain content)
 **Upgraded to:** ~95% compliance (TPL-SVC v1.0.0 fully applied)
@@ -240,7 +240,7 @@
 
 # Spec Changelog — param.si
 
-**Spec file:** `spec/T1_Platform/param/domain-specs/param_si-spec.md`
+**Spec file:** `T1_Platform/param/domain-specs/param_si-spec.md`
 **Upgrade date:** 2026-04-03
 **Upgraded from:** Migration stub only (~0% compliance — 22 lines, no domain content; source file `t1-si-svc-spec.md` referenced in stub was not found)
 **Upgraded to:** ~95% compliance (TPL-SVC v1.0.0 fully applied)

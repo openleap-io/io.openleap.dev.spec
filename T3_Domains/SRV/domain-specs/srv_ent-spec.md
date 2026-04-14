@@ -84,11 +84,11 @@
 
 | Document | Path | Type |
 |----------|------|------|
-| SRV Suite Spec | `spec/T3_Domains/SRV/_srv_suite.md` | Suite Spec |
-| Service Catalog Spec | `spec/T3_Domains/SRV/srv_cat-spec.md` | Domain Spec |
-| Appointment Spec | `spec/T3_Domains/SRV/srv_apt-spec.md` | Domain Spec |
-| Session Spec | `spec/T3_Domains/SRV/srv_ses-spec.md` | Domain Spec |
-| Billing Intent Spec | `spec/T3_Domains/SRV/srv_bil-spec.md` | Domain Spec |
+| SRV Suite Spec | `T3_Domains/SRV/_srv_suite.md` | Suite Spec |
+| Service Catalog Spec | `T3_Domains/SRV/srv_cat-spec.md` | Domain Spec |
+| Appointment Spec | `T3_Domains/SRV/srv_apt-spec.md` | Domain Spec |
+| Session Spec | `T3_Domains/SRV/srv_ses-spec.md` | Domain Spec |
+| Billing Intent Spec | `T3_Domains/SRV/srv_bil-spec.md` | Domain Spec |
 
 ---
 
@@ -2080,13 +2080,13 @@ The following ADRs from `io.openleap.dev.guidelines` apply to this service:
 
 | Reference | Description |
 |-----------|-------------|
-| `spec/T3_Domains/SRV/_srv_suite.md` | SRV Suite Specification |
-| `spec/T3_Domains/SRV/srv_cat-spec.md` | Service Catalog — service offering definitions |
-| `spec/T3_Domains/SRV/srv_apt-spec.md` | Appointment & Booking — quota reservation consumer |
-| `spec/T3_Domains/SRV/srv_ses-spec.md` | Session Execution — quota consumption trigger |
-| `spec/T3_Domains/SRV/srv_bil-spec.md` | Billing Intent — downstream consumer of quota events |
-| `concepts/templates/platform/domain/domain-service-spec.md` | TPL-SVC v1.0.0 |
-| `concepts/governance/template-governance.md` | GOV-TPL-001 |
+| `T3_Domains/SRV/_srv_suite.md` | SRV Suite Specification |
+| `T3_Domains/SRV/srv_cat-spec.md` | Service Catalog — service offering definitions |
+| `T3_Domains/SRV/srv_apt-spec.md` | Appointment & Booking — quota reservation consumer |
+| `T3_Domains/SRV/srv_ses-spec.md` | Session Execution — quota consumption trigger |
+| `T3_Domains/SRV/srv_bil-spec.md` | Billing Intent — downstream consumer of quota events |
+| `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/templates/platform/domain/domain-service-spec.md` | TPL-SVC v1.0.0 |
+| `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/template-governance.md` | GOV-TPL-001 |
 | `io.openleap.dev.guidelines` | ADR catalog; implementation guidelines |
 | SAP CRM Service Contracts (SD-SC) | Domain reference for entitlement/contract patterns |
 
@@ -2096,8 +2096,8 @@ This spec produces the following status output files per GOV-TPL-001 §6:
 
 | File | Location | Description |
 |------|----------|-------------|
-| `spec-changelog.md` | `spec/T3_Domains/SRV/status/srv_ent-changelog.md` | Full upgrade changelog |
-| `spec-open-questions.md` | `spec/T3_Domains/SRV/status/srv_ent-open-questions.md` | Tracked open questions |
+| `spec-changelog.md` | `T3_Domains/SRV/status/srv_ent-changelog.md` | Full upgrade changelog |
+| `spec-open-questions.md` | `T3_Domains/SRV/status/srv_ent-open-questions.md` | Tracked open questions |
 
 ### 15.4 Change Log
 

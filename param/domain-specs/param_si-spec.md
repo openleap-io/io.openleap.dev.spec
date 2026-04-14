@@ -97,15 +97,15 @@ This specification defines the `param-si-svc` domain service within the Platform
 
 ### 0.4 Related Documents
 
-- `spec/T1_Platform/param/_param_suite.md` — PARAM Suite Architecture
-- `spec/T1_Platform/param/domain-specs/param_ref-spec.md` — Reference Data Service (upstream for type catalogs)
-- `spec/T1_Platform/param/domain-specs/param_i18n-spec.md` — Internationalization Service (downstream: resolves unit labels)
-- `spec/T1_Platform/param/features/compositions/F-PARAM-004.md` — Unit Management feature composition
-- `spec/T1_Platform/param/features/leaves/F-PARAM-004-01/feature-spec.md` — Browse Units & Prefixes
-- `spec/T1_Platform/param/features/leaves/F-PARAM-004-02/feature-spec.md` — Manage Custom Units
-- `spec/T1_Platform/param/features/leaves/F-PARAM-004-03/feature-spec.md` — Unit Conversion Tool
-- `concepts/governance/bff-guideline.md` (GOV-BFF-001) — BFF pattern governance
-- `spec/T1_Platform/iam/domain-specs/iam_authz-spec.md` — Authorisation service
+- `T1_Platform/param/_param_suite.md` — PARAM Suite Architecture
+- `T1_Platform/param/domain-specs/param_ref-spec.md` — Reference Data Service (upstream for type catalogs)
+- `T1_Platform/param/domain-specs/param_i18n-spec.md` — Internationalization Service (downstream: resolves unit labels)
+- `T1_Platform/param/features/compositions/F-PARAM-004.md` — Unit Management feature composition
+- `T1_Platform/param/features/leaves/F-PARAM-004-01/feature-spec.md` — Browse Units & Prefixes
+- `T1_Platform/param/features/leaves/F-PARAM-004-02/feature-spec.md` — Manage Custom Units
+- `T1_Platform/param/features/leaves/F-PARAM-004-03/feature-spec.md` — Unit Conversion Tool
+- `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/bff-guideline.md` (GOV-BFF-001) — BFF pattern governance
+- `T1_Platform/iam/domain-specs/iam_authz-spec.md` — Authorisation service
 
 ---
 
@@ -2235,11 +2235,11 @@ Domain-level ADR decisions specific to `param-si-svc`:
 
 | Document | Location | Description |
 |----------|----------|-------------|
-| PARAM Suite Spec | `spec/T1_Platform/param/_param_suite.md` | Suite architecture and bounded context map |
-| F-PARAM-004 Composition | `spec/T1_Platform/param/features/compositions/F-PARAM-004.md` | Unit Management feature composition |
-| F-PARAM-004-01 | `spec/T1_Platform/param/features/leaves/F-PARAM-004-01/feature-spec.md` | Browse Units & Prefixes |
-| F-PARAM-004-02 | `spec/T1_Platform/param/features/leaves/F-PARAM-004-02/feature-spec.md` | Manage Custom Units |
-| F-PARAM-004-03 | `spec/T1_Platform/param/features/leaves/F-PARAM-004-03/feature-spec.md` | Unit Conversion Tool |
+| PARAM Suite Spec | `T1_Platform/param/_param_suite.md` | Suite architecture and bounded context map |
+| F-PARAM-004 Composition | `T1_Platform/param/features/compositions/F-PARAM-004.md` | Unit Management feature composition |
+| F-PARAM-004-01 | `T1_Platform/param/features/leaves/F-PARAM-004-01/feature-spec.md` | Browse Units & Prefixes |
+| F-PARAM-004-02 | `T1_Platform/param/features/leaves/F-PARAM-004-02/feature-spec.md` | Manage Custom Units |
+| F-PARAM-004-03 | `T1_Platform/param/features/leaves/F-PARAM-004-03/feature-spec.md` | Unit Conversion Tool |
 | BIPM SI Brochure | https://www.bipm.org/en/publications/si-brochure | Authoritative SI unit definitions (9th edition) |
 | ISO 31 / ISO 80000 | ISO standard catalog | Quantities and units standards used in engineering |
 | UNECE Recommendation 20 | UN/CEFACT rec. 20 | Units of measure for trade applications |
@@ -2250,8 +2250,8 @@ Domain-level ADR decisions specific to `param-si-svc`:
 ### 15.3 Status Output Requirements
 
 Spec status files for CI/tooling integration:
-- `spec/T1_Platform/param/domain-specs/status/spec-changelog.md` — change log for this spec
-- `spec/T1_Platform/param/domain-specs/status/spec-open-questions.md` — tracked open questions
+- `T1_Platform/param/domain-specs/status/spec-changelog.md` — change log for this spec
+- `T1_Platform/param/domain-specs/status/spec-open-questions.md` — tracked open questions
 
 ### 15.4 Change Log
 

@@ -95,14 +95,14 @@ The Tenant Management Service manages the full lifecycle of tenants, organizatio
 
 ### 0.4 Related Documents
 
-- `spec/T1_Platform/iam/_iam_suite.md` — IAM Suite Architecture Specification
-- `spec/T1_Platform/iam/domain-specs/iam_principal-spec.md` — Principal Management (downstream consumer)
-- `spec/T1_Platform/iam/domain-specs/iam_authz-spec.md` — Authorization Service (consumes tenant.suspended events)
-- `spec/T1_Platform/iam/domain-specs/iam_audit-spec.md` — Audit Service (consumes all tenant events)
-- `spec/T1_Platform/iam/features/leaves/F-IAM-003-01/feature-spec.md` — Tenant Lifecycle Feature
-- `spec/T1_Platform/iam/features/leaves/F-IAM-003-02/feature-spec.md` — Organization Hierarchy Feature
-- `spec/T1_Platform/iam/features/leaves/F-IAM-003-03/feature-spec.md` — Tenant Configuration Feature
-- `spec/T1_Platform/iam/features/leaves/F-IAM-003-04/feature-spec.md` — Tenant Quotas Feature
+- `T1_Platform/iam/_iam_suite.md` — IAM Suite Architecture Specification
+- `T1_Platform/iam/domain-specs/iam_principal-spec.md` — Principal Management (downstream consumer)
+- `T1_Platform/iam/domain-specs/iam_authz-spec.md` — Authorization Service (consumes tenant.suspended events)
+- `T1_Platform/iam/domain-specs/iam_audit-spec.md` — Audit Service (consumes all tenant events)
+- `T1_Platform/iam/features/leaves/F-IAM-003-01/feature-spec.md` — Tenant Lifecycle Feature
+- `T1_Platform/iam/features/leaves/F-IAM-003-02/feature-spec.md` — Organization Hierarchy Feature
+- `T1_Platform/iam/features/leaves/F-IAM-003-03/feature-spec.md` — Tenant Configuration Feature
+- `T1_Platform/iam/features/leaves/F-IAM-003-04/feature-spec.md` — Tenant Quotas Feature
 - `contracts/http/iam/tenant/openapi.yaml` — REST API contract
 - `contracts/events/iam/tenant/` — Event schema contracts
 
@@ -2783,11 +2783,11 @@ Relevant IAM suite-level architecture decisions:
 
 | Reference | Location | Purpose |
 |-----------|----------|---------|
-| IAM Suite Specification | `spec/T1_Platform/iam/_iam_suite.md` | Suite architecture, bounded contexts, integration patterns |
-| Domain Service Template | `concepts/templates/platform/domain/domain-service-spec.md` | TPL-SVC v1.0.0 — this spec's template |
+| IAM Suite Specification | `T1_Platform/iam/_iam_suite.md` | Suite architecture, bounded contexts, integration patterns |
+| Domain Service Template | `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/templates/platform/domain/domain-service-spec.md` | TPL-SVC v1.0.0 — this spec's template |
 | Template Registry | `concepts/templates/template-registry.json` | Authoritative template versions |
-| Tenant Lifecycle Feature | `spec/T1_Platform/iam/features/leaves/F-IAM-003-01/feature-spec.md` | Feature spec for tenant lifecycle UI |
-| Organization Hierarchy Feature | `spec/T1_Platform/iam/features/leaves/F-IAM-003-02/feature-spec.md` | Feature spec for org management UI |
+| Tenant Lifecycle Feature | `T1_Platform/iam/features/leaves/F-IAM-003-01/feature-spec.md` | Feature spec for tenant lifecycle UI |
+| Organization Hierarchy Feature | `T1_Platform/iam/features/leaves/F-IAM-003-02/feature-spec.md` | Feature spec for org management UI |
 | OpenAPI Contract | `contracts/http/iam/tenant/openapi.yaml` | Machine-readable REST API contract |
 | Event Schemas | `contracts/events/iam/tenant/` | JSON Schema files for all published events |
 | Dev Guidelines ADR Catalog | `io.openleap.dev.guidelines` (external repo) | ADR-001 through ADR-067 |

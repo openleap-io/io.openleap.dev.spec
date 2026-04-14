@@ -99,15 +99,15 @@ This specification defines the `param-ref-svc` domain service within the Platfor
 
 ### 0.4 Related Documents
 
-- `spec/T1_Platform/param/_param_suite.md` — PARAM Suite Architecture
-- `spec/T1_Platform/param/domain-specs/param_i18n-spec.md` — Internationalization Service (downstream: registers CATALOG namespaces when catalog is created)
-- `spec/T1_Platform/param/domain-specs/param_cfg-spec.md` — Platform Configuration Service (downstream: validates config value references)
-- `spec/T1_Platform/param/features/compositions/F-PARAM-001.md` — Reference Data Management feature composition
-- `spec/T1_Platform/param/features/leaves/F-PARAM-001-01/feature-spec.md` — Browse Catalogs
-- `spec/T1_Platform/param/features/leaves/F-PARAM-001-02/feature-spec.md` — Manage Catalog Codes
-- `spec/T1_Platform/param/features/leaves/F-PARAM-001-03/feature-spec.md` — Bulk Import/Export
-- `concepts/governance/bff-guideline.md` (GOV-BFF-001) — BFF pattern governance
-- `spec/T1_Platform/iam/domain-specs/iam_authz-spec.md` — Authorisation service
+- `T1_Platform/param/_param_suite.md` — PARAM Suite Architecture
+- `T1_Platform/param/domain-specs/param_i18n-spec.md` — Internationalization Service (downstream: registers CATALOG namespaces when catalog is created)
+- `T1_Platform/param/domain-specs/param_cfg-spec.md` — Platform Configuration Service (downstream: validates config value references)
+- `T1_Platform/param/features/compositions/F-PARAM-001.md` — Reference Data Management feature composition
+- `T1_Platform/param/features/leaves/F-PARAM-001-01/feature-spec.md` — Browse Catalogs
+- `T1_Platform/param/features/leaves/F-PARAM-001-02/feature-spec.md` — Manage Catalog Codes
+- `T1_Platform/param/features/leaves/F-PARAM-001-03/feature-spec.md` — Bulk Import/Export
+- `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/bff-guideline.md` (GOV-BFF-001) — BFF pattern governance
+- `T1_Platform/iam/domain-specs/iam_authz-spec.md` — Authorisation service
 
 ---
 
@@ -2061,7 +2061,7 @@ Extension points for this service are intentionally minimal — the `Catalog` ag
 
 ### 14.5 Suite-Level ADR References
 
-The PARAM suite inherits all platform ADRs listed in §14.4. Suite-level architectural decisions are documented in `spec/T1_Platform/param/_param_suite.md`. No PARAM-suite-specific ADRs have been raised that deviate from platform defaults for this domain.
+The PARAM suite inherits all platform ADRs listed in §14.4. Suite-level architectural decisions are documented in `T1_Platform/param/_param_suite.md`. No PARAM-suite-specific ADRs have been raised that deviate from platform defaults for this domain.
 
 ---
 
@@ -2088,26 +2088,26 @@ The PARAM suite inherits all platform ADRs listed in §14.4. Suite-level archite
 
 | Reference | Path / URL |
 |-----------|------------|
-| PARAM Suite Architecture | `spec/T1_Platform/param/_param_suite.md` |
-| F-PARAM-001 Feature Composition | `spec/T1_Platform/param/features/compositions/F-PARAM-001.md` |
-| F-PARAM-001-01 Feature Spec | `spec/T1_Platform/param/features/leaves/F-PARAM-001-01/feature-spec.md` |
-| F-PARAM-001-02 Feature Spec | `spec/T1_Platform/param/features/leaves/F-PARAM-001-02/feature-spec.md` |
-| F-PARAM-001-03 Feature Spec | `spec/T1_Platform/param/features/leaves/F-PARAM-001-03/feature-spec.md` |
-| OpenAPI Contract (stub) | `spec/T1_Platform/param/contracts/http/param/ref/openapi.yaml` |
-| Event Schema: catalog.created | `spec/T1_Platform/param/contracts/events/param/ref/catalog.created.schema.json` |
-| Event Schema: catalog.updated | `spec/T1_Platform/param/contracts/events/param/ref/catalog.updated.schema.json` |
-| Event Schema: catalog.deprecated | `spec/T1_Platform/param/contracts/events/param/ref/catalog.deprecated.schema.json` |
-| Template Governance | `concepts/governance/template-governance.md` (GOV-TPL-001) |
-| BFF Guideline | `concepts/governance/bff-guideline.md` (GOV-BFF-001) |
-| Domain Service Template | `concepts/templates/platform/domain/domain-service-spec.md` (TPL-SVC v1.0.0) |
-| param-i18n-svc | `spec/T1_Platform/param/domain-specs/param_i18n-spec.md` |
-| param-cfg-svc | `spec/T1_Platform/param/domain-specs/param_cfg-spec.md` |
-| iam-authz-svc | `spec/T1_Platform/iam/domain-specs/iam_authz-spec.md` |
+| PARAM Suite Architecture | `T1_Platform/param/_param_suite.md` |
+| F-PARAM-001 Feature Composition | `T1_Platform/param/features/compositions/F-PARAM-001.md` |
+| F-PARAM-001-01 Feature Spec | `T1_Platform/param/features/leaves/F-PARAM-001-01/feature-spec.md` |
+| F-PARAM-001-02 Feature Spec | `T1_Platform/param/features/leaves/F-PARAM-001-02/feature-spec.md` |
+| F-PARAM-001-03 Feature Spec | `T1_Platform/param/features/leaves/F-PARAM-001-03/feature-spec.md` |
+| OpenAPI Contract (stub) | `T1_Platform/param/contracts/http/param/ref/openapi.yaml` |
+| Event Schema: catalog.created | `T1_Platform/param/contracts/events/param/ref/catalog.created.schema.json` |
+| Event Schema: catalog.updated | `T1_Platform/param/contracts/events/param/ref/catalog.updated.schema.json` |
+| Event Schema: catalog.deprecated | `T1_Platform/param/contracts/events/param/ref/catalog.deprecated.schema.json` |
+| Template Governance | `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/template-governance.md` (GOV-TPL-001) |
+| BFF Guideline | `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/bff-guideline.md` (GOV-BFF-001) |
+| Domain Service Template | `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/templates/platform/domain/domain-service-spec.md` (TPL-SVC v1.0.0) |
+| param-i18n-svc | `T1_Platform/param/domain-specs/param_i18n-spec.md` |
+| param-cfg-svc | `T1_Platform/param/domain-specs/param_cfg-spec.md` |
+| iam-authz-svc | `T1_Platform/iam/domain-specs/iam_authz-spec.md` |
 
 ### 15.3 Status Output Requirements
 
-- **spec-changelog.md:** `spec/T1_Platform/param/domain-specs/status/spec-changelog.md`
-- **spec-open-questions.md:** `spec/T1_Platform/param/domain-specs/status/spec-open-questions.md`
+- **spec-changelog.md:** `T1_Platform/param/domain-specs/status/spec-changelog.md`
+- **spec-open-questions.md:** `T1_Platform/param/domain-specs/status/spec-open-questions.md`
 
 These files track the upgrade history and outstanding open questions for the param suite domain specs.
 

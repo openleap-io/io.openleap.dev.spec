@@ -1,6 +1,6 @@
 # Open Questions — iam.audit
 
-**Spec file:** `spec/T1_Platform/iam/domain-specs/iam_audit-spec.md`
+**Spec file:** `T1_Platform/iam/domain-specs/iam_audit-spec.md`
 **Generated:** 2026-04-03
 
 ---

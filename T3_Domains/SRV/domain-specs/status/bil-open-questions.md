@@ -4,7 +4,7 @@
 
 - **Question:** What port does `srv-bil-svc` run on?
 - **Why it matters:** Required for service registry, local dev setup, and Docker Compose configuration. Missing port blocks implementation onboarding.
-- **Suggested options:** Assign next available port in the SRV port range (check existing SRV service port allocations in `landscape/implementation-status.json`).
+- **Suggested options:** Assign next available port in the SRV port range (check existing SRV service port allocations in `https://github.com/openleap-io/io.openleap.dev.hub/blob/main/landscape/impl-status.json`).
 - **Owner:** TBD
 
 ---

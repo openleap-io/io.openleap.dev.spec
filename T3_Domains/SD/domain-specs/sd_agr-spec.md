@@ -2717,8 +2717,8 @@ The following ADRs from `io.openleap.dev.guidelines` are directly applied in thi
 | `_sd_suite.md` | SD Suite Architecture Specification |
 | `sd_ord-spec.md` | Sales Orders Domain Spec — primary consumer of agreement validation |
 | `sd_bil-spec.md` | Billing Domain Spec — creates credit memos for rebate settlements |
-| `concepts/templates/platform/domain/domain-service-spec.md` v1.0.0 | Template used for this specification |
-| `concepts/governance/template-governance.md` | Template governance rules (GOV-TPL-001) |
+| `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/templates/platform/domain/domain-service-spec.md` v1.0.0 | Template used for this specification |
+| `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/template-governance.md` | Template governance rules (GOV-TPL-001) |
 | SAP Help: VA41/VA42 | SAP transaction reference for sales contracts |
 | SAP Help: MEB1/MEB3/MEB4 | SAP transaction reference for rebate agreement creation and settlement |
 | ISO 4217 | Currency codes used throughout this specification |

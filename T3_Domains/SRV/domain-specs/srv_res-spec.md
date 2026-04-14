@@ -83,7 +83,7 @@
 
 ### 0.4 Related Documents
 - `_srv_suite.md`, `srv_apt-spec.md`, `srv_cat-spec.md`, `srv_ses-spec.md`
-- `SYSTEM_OVERVIEW.md`, `TECHNICAL_STANDARDS.md`, `EVENT_STANDARDS.md`
+- [system-topology.md](https://github.com/openleap-io/io.openleap.dev.hub/blob/main/architecture/system-topology.md), `TECHNICAL_STANDARDS.md`, `EVENT_STANDARDS.md`
 
 ---
 
@@ -2041,8 +2041,8 @@ The following platform-level ADRs from `io.openleap.dev.guidelines` apply to thi
 | `srv_cat-spec.md` | Service Catalog domain — source of skill/requirement metadata for eligibility filtering |
 | `srv_ses-spec.md` | Session Execution domain — consumer of resource assignment events |
 | `io.openleap.dev.guidelines` | Backend development guidelines — ADR catalog (ADR-001 through ADR-067+) |
-| `concepts/governance/bff-guideline.md` | BFF governance (GOV-BFF-001) — BFF field-level security for custom fields |
-| `concepts/governance/template-governance.md` | Template governance (GOV-TPL-001) |
+| `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/bff-guideline.md` | BFF governance (GOV-BFF-001) — BFF field-level security for custom fields |
+| `https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/governance/template-governance.md` | Template governance (GOV-TPL-001) |
 
 ### 15.3 Status Output Requirements
 
