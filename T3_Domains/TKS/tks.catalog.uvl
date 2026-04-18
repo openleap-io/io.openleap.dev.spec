@@ -1,0 +1,71 @@
+// TKS Suite — Catalog UVL
+// Template: suite-catalog.uvl v1.0.0
+// Generated: 2026-04-18
+// Companion to: _tks_suite.md SS6
+
+namespace tks
+
+imports
+    tks.F_TKS_100
+    tks.F_TKS_110
+    tks.F_TKS_120
+    tks.F_TKS_130
+    tks.F_TKS_140
+    tks.F_TKS_200
+    tks.F_TKS_300
+    tks.F_TKS_310
+    tks.F_TKS_320
+    tks.F_TKS_400
+    tks.F_TKS_410
+    tks.F_TKS_420
+    tks.F_TKS_500
+    tks.F_TKS_510
+    tks.F_TKS_520
+    tks.F_TKS_900
+
+features
+    TKS_UI
+        mandatory
+            F_TKS_100   // Ticket Lifecycle
+            F_TKS_110   // Comments & Notes
+            F_TKS_130   // Queue & Assignment
+            F_TKS_200   // Multi-Channel Intake
+            F_TKS_900   // T4 Reporting Projection
+        optional
+            F_TKS_120   // SLA & Escalation
+            F_TKS_140   // Ticket Attachments
+            F_TKS_300   // Knowledge Articles
+            F_TKS_310   // KB Versioning & Approval
+            F_TKS_320   // KB Search & Suggest
+            F_TKS_400   // Configuration Items
+            F_TKS_410   // CI Relationships & Impact
+            F_TKS_420   // Ticket ↔ CI Linkage
+            F_TKS_500   // AI Ticket Summary
+            F_TKS_510   // AI Auto-Triage
+            F_TKS_520   // AI Writing Assistant
+
+constraints
+    // === Intra-suite feature dependencies ===
+    F_TKS_310 => F_TKS_300   // Versioning & Approval requires Articles
+    F_TKS_320 => F_TKS_300   // Search & Suggest requires Articles
+    F_TKS_410 => F_TKS_400   // Relationships require CIs
+    F_TKS_420 => F_TKS_400   // Ticket↔CI link requires CIs
+    F_TKS_420 => F_TKS_100   // and requires Ticket Lifecycle
+    F_TKS_510 => F_TKS_130   // Auto-Triage populates queue + assignment
+    F_TKS_500 => F_TKS_100   // Summary targets tickets
+    F_TKS_520 => F_TKS_100   // Writing assist operates on tickets
+
+    // === Cross-suite dependencies (expressed at platform catalog level) ===
+    // F_TKS_100 requires IAM_UI and IAM_AUDIT
+    // F_TKS_110 requires BP party lookup
+    // F_TKS_120 requires SHARED_CAP (calendar / business-hours)
+    // F_TKS_120 requires SHARED_WF (escalation rules)
+    // F_TKS_130 requires SHARED_WF (assignment rules)
+    // F_TKS_140 requires TECH_DMS
+    // F_TKS_210 requires TECH_EMAIL
+    // F_TKS_320 requires TECH_SEARCH
+    // F_TKS_320 requires TECH_AI
+    // F_TKS_500 requires TECH_AI
+    // F_TKS_510 requires TECH_AI
+    // F_TKS_510 requires SHARED_WF
+    // F_TKS_520 requires TECH_AI

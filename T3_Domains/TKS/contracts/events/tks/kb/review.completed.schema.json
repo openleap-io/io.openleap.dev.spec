@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openleap.io/schemas/events/tks.kb.review.completed.schema.json",
+  "title": "ReviewCompleted",
+  "description": "Event schema for tks.kb.review.completed",
+  "type": "object",
+  "required": [
+    "eventId",
+    "eventType",
+    "timestamp",
+    "tenantId",
+    "correlationId",
+    "producer",
+    "schemaVersion",
+    "payload"
+  ],
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "eventType": {
+      "type": "string",
+      "const": "tks.kb.review.completed"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "tenantId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "correlationId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "causationId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "producer": {
+      "type": "string",
+      "const": "tks-kb-svc"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "payload": {
+      "type": "object",
+      "properties": {
+        "aggregateId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "occurredAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

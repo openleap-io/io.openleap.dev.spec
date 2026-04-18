@@ -1,0 +1,328 @@
+openapi: '3.1.0'
+info:
+  title: TKS CMDB Service API
+  version: 1.0.0
+  description: REST API for the TKS CMDB Service (cmdb bounded context)
+  contact:
+    name: team-tks
+    email: tks-team@openleap.io
+x-owner: team-tks
+x-suite: tks
+x-domain: cmdb
+x-service: tks-cmdb-svc
+
+servers:
+  - url: http://localhost:8503/api/tks/cmdb/v1
+    description: Local development
+  - url: https://api.openleap.io/api/tks/cmdb/v1
+    description: Production
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: CI Types
+  - name: Configuration Items
+  - name: Relationships
+  - name: Ticket-CI Links
+  - name: Analysis
+
+paths:
+  /ci-types:
+    get:
+      summary: List CI types
+      operationId: listCiTypes
+      tags: [CI Types]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/CiType" } } } } }
+    post:
+      summary: Define CI type
+      operationId: createCiType
+      tags: [CI Types]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CiTypeCreateRequest" }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: "#/components/schemas/CiType" } } } }
+
+  /ci-types/{id}:
+    get:
+      summary: Get CI type
+      operationId: getCiType
+      tags: [CI Types]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/CiType" } } } }
+    patch:
+      summary: Update CI type
+      operationId: updateCiType
+      tags: [CI Types]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object } } }
+      responses:
+        '200': { description: OK }
+
+  /cis:
+    get:
+      summary: List / query configuration items
+      operationId: listCis
+      tags: [Configuration Items]
+      parameters:
+        - { name: type, in: query, schema: { type: string, format: uuid } }
+        - { name: status, in: query, schema: { type: string, enum: [PLANNED, ACTIVE, RETIRED] } }
+        - name: attribute
+          in: query
+          schema: { type: array, items: { type: string } }
+          explode: true
+          description: "`attribute.{name}={value}` filter pairs (typed)"
+        - { name: page, in: query, schema: { type: integer, default: 0 } }
+        - { name: size, in: query, schema: { type: integer, default: 50 } }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/ConfigurationItem" } } } } }
+    post:
+      summary: Create CI
+      operationId: createCi
+      tags: [Configuration Items]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CiCreateRequest" }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: "#/components/schemas/ConfigurationItem" } } } }
+
+  /cis/{id}:
+    get:
+      summary: Get CI
+      operationId: getCi
+      tags: [Configuration Items]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/ConfigurationItem" } } } }
+    patch:
+      summary: Update CI
+      operationId: updateCi
+      tags: [Configuration Items]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+        - { name: If-Match, in: header, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object } } }
+      responses:
+        '200': { description: OK }
+
+  /cis/{id}/retire:
+    post:
+      summary: Retire CI (cascades relationships to ARCHIVED)
+      operationId: retireCi
+      tags: [Configuration Items]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        '200': { description: OK }
+
+  /cis/{id}/impact:
+    get:
+      summary: Impact graph
+      operationId: impactAnalysis
+      tags: [Analysis]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+        - { name: depth, in: query, schema: { type: integer, default: 3, minimum: 1, maximum: 5 } }
+        - { name: direction, in: query, schema: { type: string, enum: [DOWNSTREAM, UPSTREAM, BOTH], default: BOTH } }
+      responses:
+        '200':
+          description: Impact graph
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ImpactGraph" }
+
+  /relationships:
+    get:
+      summary: List relationships for a CI
+      operationId: listRelationships
+      tags: [Relationships]
+      parameters:
+        - { name: ciId, in: query, required: true, schema: { type: string, format: uuid } }
+        - { name: direction, in: query, schema: { type: string, enum: [OUTGOING, INCOMING, BOTH], default: BOTH } }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/CiRelationship" } } } } }
+    post:
+      summary: Create relationship edge
+      operationId: createRelationship
+      tags: [Relationships]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CiRelationshipCreateRequest" }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: "#/components/schemas/CiRelationship" } } } }
+        '422': { description: Cycle / type mismatch }
+
+  /relationships/{id}:
+    delete:
+      summary: Remove relationship
+      operationId: removeRelationship
+      tags: [Relationships]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        '204': { description: Removed }
+
+  /ticket-ci-links:
+    get:
+      summary: List ticket ↔ CI links
+      operationId: listTicketCiLinks
+      tags: [Ticket-CI Links]
+      parameters:
+        - { name: ticketId, in: query, schema: { type: string, format: uuid } }
+        - { name: ciId, in: query, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/TicketCiLink" } } } } }
+    post:
+      summary: Link ticket to CI
+      operationId: linkTicketToCi
+      tags: [Ticket-CI Links]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TicketCiLinkCreateRequest" }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: "#/components/schemas/TicketCiLink" } } } }
+
+  /ticket-ci-links/{id}:
+    delete:
+      summary: Unlink
+      operationId: unlinkTicketCi
+      tags: [Ticket-CI Links]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        '204': { description: Removed }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    CiType:
+      type: object
+      required: [id, tenantId, name, attributeSchema, allowedRelationshipTypes, status]
+      properties:
+        id: { type: string, format: uuid }
+        tenantId: { type: string, format: uuid }
+        name: { type: string }
+        description: { type: string }
+        attributeSchema: { type: object, additionalProperties: true, description: "JSON Schema for CI attributes" }
+        allowedRelationshipTypes: { type: array, items: { type: string } }
+        status: { type: string, enum: [ACTIVE, ARCHIVED] }
+
+    CiTypeCreateRequest:
+      type: object
+      required: [name, attributeSchema, allowedRelationshipTypes]
+      properties:
+        name: { type: string }
+        description: { type: string }
+        attributeSchema: { type: object, additionalProperties: true }
+        allowedRelationshipTypes: { type: array, items: { type: string } }
+
+    ConfigurationItem:
+      type: object
+      required: [id, tenantId, typeId, name, status, version]
+      properties:
+        id: { type: string, format: uuid }
+        tenantId: { type: string, format: uuid }
+        typeId: { type: string, format: uuid }
+        name: { type: string }
+        externalRef: { type: string, nullable: true }
+        attributes: { type: object, additionalProperties: true }
+        ownerPartyId: { type: string, format: uuid, nullable: true }
+        status: { type: string, enum: [PLANNED, ACTIVE, RETIRED] }
+        createdAt: { type: string, format: date-time }
+        retiredAt: { type: string, format: date-time, nullable: true }
+        version: { type: integer }
+
+    CiCreateRequest:
+      type: object
+      required: [typeId, name]
+      properties:
+        typeId: { type: string, format: uuid }
+        name: { type: string }
+        externalRef: { type: string }
+        attributes: { type: object, additionalProperties: true }
+        ownerPartyId: { type: string, format: uuid }
+        status: { type: string, enum: [PLANNED, ACTIVE] }
+
+    CiRelationship:
+      type: object
+      required: [id, tenantId, sourceCiId, targetCiId, relationshipType]
+      properties:
+        id: { type: string, format: uuid }
+        tenantId: { type: string, format: uuid }
+        sourceCiId: { type: string, format: uuid }
+        targetCiId: { type: string, format: uuid }
+        relationshipType: { type: string }
+        strength: { type: integer, minimum: 0, maximum: 100, nullable: true }
+        createdAt: { type: string, format: date-time }
+
+    CiRelationshipCreateRequest:
+      type: object
+      required: [sourceCiId, targetCiId, relationshipType]
+      properties:
+        sourceCiId: { type: string, format: uuid }
+        targetCiId: { type: string, format: uuid }
+        relationshipType: { type: string }
+        strength: { type: integer }
+
+    TicketCiLink:
+      type: object
+      required: [id, tenantId, ticketId, ciId, linkReason]
+      properties:
+        id: { type: string, format: uuid }
+        tenantId: { type: string, format: uuid }
+        ticketId: { type: string, format: uuid }
+        ciId: { type: string, format: uuid }
+        linkReason: { type: string, enum: [AFFECTED, CAUSED_BY, WORKAROUND_ON, INFORMATIONAL] }
+        createdAt: { type: string, format: date-time }
+        createdByPrincipalId: { type: string, format: uuid }
+
+    TicketCiLinkCreateRequest:
+      type: object
+      required: [ticketId, ciId, linkReason]
+      properties:
+        ticketId: { type: string, format: uuid }
+        ciId: { type: string, format: uuid }
+        linkReason: { type: string, enum: [AFFECTED, CAUSED_BY, WORKAROUND_ON, INFORMATIONAL] }
+
+    ImpactGraph:
+      type: object
+      required: [rootCiId, nodes, edges]
+      properties:
+        rootCiId: { type: string, format: uuid }
+        depth: { type: integer }
+        nodes:
+          type: array
+          items:
+            type: object
+            required: [ciId, name, typeName, status]
+            properties:
+              ciId: { type: string, format: uuid }
+              name: { type: string }
+              typeName: { type: string }
+              status: { type: string }
+        edges:
+          type: array
+          items:
+            type: object
+            required: [sourceCiId, targetCiId, relationshipType]
+            properties:
+              sourceCiId: { type: string, format: uuid }
+              targetCiId: { type: string, format: uuid }
+              relationshipType: { type: string }

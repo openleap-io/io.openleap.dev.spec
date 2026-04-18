@@ -1,0 +1,365 @@
+openapi: '3.1.0'
+info:
+  title: TKS Knowledge Base Service API
+  version: 1.0.0
+  description: REST API for the TKS Knowledge Base Service (kb bounded context)
+  contact:
+    name: team-tks
+    email: tks-team@openleap.io
+x-owner: team-tks
+x-suite: tks
+x-domain: kb
+x-service: tks-kb-svc
+
+servers:
+  - url: http://localhost:8502/api/tks/kb/v1
+    description: Local development
+  - url: https://api.openleap.io/api/tks/kb/v1
+    description: Production
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Articles
+  - name: Versions
+  - name: Reviews
+  - name: Categories
+  - name: Tags
+  - name: Search
+
+paths:
+  /articles:
+    get:
+      summary: List articles
+      operationId: listArticles
+      tags: [Articles]
+      parameters:
+        - { name: category, in: query, schema: { type: string, format: uuid } }
+        - { name: tag, in: query, schema: { type: string, format: uuid } }
+        - { name: visibility, in: query, schema: { type: string, enum: [INTERNAL, CUSTOMER, PUBLIC] } }
+        - { name: status, in: query, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer, default: 0 } }
+        - { name: size, in: query, schema: { type: integer, default: 50 } }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/Article" } } } } }
+    post:
+      summary: Create draft article
+      operationId: createArticle
+      tags: [Articles]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ArticleCreateRequest" }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: "#/components/schemas/Article" } } } }
+
+  /articles/{id}:
+    get:
+      summary: Get article (current version)
+      operationId: getArticle
+      tags: [Articles]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/ArticleWithVersion" } } } }
+        '404': { description: Not found }
+    patch:
+      summary: Update draft (creates new version)
+      operationId: updateArticle
+      tags: [Articles]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title: { type: string }
+                body: { type: string }
+                summary: { type: string }
+                visibility: { type: string, enum: [INTERNAL, CUSTOMER, PUBLIC] }
+                categoryIds: { type: array, items: { type: string, format: uuid } }
+                tagIds: { type: array, items: { type: string, format: uuid } }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/ArticleWithVersion" } } } }
+
+  /articles/by-slug/{slug}:
+    get:
+      summary: Get article by slug
+      operationId: getArticleBySlug
+      tags: [Articles]
+      parameters: [ { name: slug, in: path, required: true, schema: { type: string } } ]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/ArticleWithVersion" } } } }
+
+  /articles/{id}/versions:
+    get:
+      summary: List article versions
+      operationId: listArticleVersions
+      tags: [Versions]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/ArticleVersion" } } } } }
+
+  /articles/{id}/versions/{n}:
+    get:
+      summary: Get specific version
+      operationId: getArticleVersion
+      tags: [Versions]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+        - { name: n, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/ArticleVersion" } } } }
+
+  /articles/{id}/submit:
+    post:
+      summary: Submit for review
+      operationId: submitArticle
+      tags: [Articles]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                approverPrincipalId: { type: string, format: uuid }
+      responses:
+        '201': { description: Review created, content: { application/json: { schema: { $ref: "#/components/schemas/ReviewRequest" } } } }
+
+  /articles/{id}/publish:
+    post:
+      summary: Publish (requires APPROVED)
+      operationId: publishArticle
+      tags: [Articles]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/Article" } } } }
+        '422': { description: Not approved }
+
+  /articles/{id}/archive:
+    post:
+      summary: Archive article
+      operationId: archiveArticle
+      tags: [Articles]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        '200': { description: OK }
+
+  /articles/search:
+    get:
+      summary: Search (delegates to tech.search)
+      operationId: searchArticles
+      tags: [Search]
+      parameters:
+        - { name: q, in: query, required: true, schema: { type: string } }
+        - { name: visibility, in: query, schema: { type: string, enum: [INTERNAL, CUSTOMER, PUBLIC] } }
+        - { name: page, in: query, schema: { type: integer, default: 0 } }
+        - { name: size, in: query, schema: { type: integer, default: 20 } }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/Article" } } } } }
+
+  /articles/suggest:
+    post:
+      summary: Suggest articles for an incoming ticket or inbound message
+      operationId: suggestArticles
+      tags: [Search]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text]
+              properties:
+                text: { type: string }
+                category: { type: string }
+                visibility: { type: string, enum: [INTERNAL, CUSTOMER, PUBLIC] }
+                limit: { type: integer, default: 5, maximum: 20 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    articleId: { type: string, format: uuid }
+                    title: { type: string }
+                    score: { type: number, format: float }
+
+  /review-requests:
+    get:
+      summary: List reviews assigned to caller
+      operationId: listReviewRequests
+      tags: [Reviews]
+      parameters:
+        - { name: status, in: query, schema: { type: string, enum: [OPEN, APPROVED, REJECTED, WITHDRAWN] } }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/ReviewRequest" } } } } }
+
+  /review-requests/{id}/decide:
+    post:
+      summary: Approve / reject
+      operationId: decideReview
+      tags: [Reviews]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [decision]
+              properties:
+                decision: { type: string, enum: [APPROVED, REJECTED] }
+                reason: { type: string }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/ReviewRequest" } } } }
+
+  /categories:
+    get:
+      summary: List categories
+      operationId: listCategories
+      tags: [Categories]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/Category" } } } } }
+    post:
+      summary: Create category
+      operationId: createCategory
+      tags: [Categories]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, slug]
+              properties:
+                name: { type: string }
+                slug: { type: string }
+                parentId: { type: string, format: uuid }
+                visibility: { type: string, enum: [INTERNAL, CUSTOMER, PUBLIC] }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: "#/components/schemas/Category" } } } }
+
+  /tags:
+    get:
+      summary: List tags
+      operationId: listTags
+      tags: [Tags]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/Tag" } } } } }
+    post:
+      summary: Create tag
+      operationId: createTag
+      tags: [Tags]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: "#/components/schemas/Tag" } } } }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Article:
+      type: object
+      required: [id, tenantId, slug, title, visibility, status]
+      properties:
+        id: { type: string, format: uuid }
+        tenantId: { type: string, format: uuid }
+        slug: { type: string }
+        title: { type: string }
+        currentVersionId: { type: string, format: uuid, nullable: true }
+        categoryIds: { type: array, items: { type: string, format: uuid } }
+        tagIds: { type: array, items: { type: string, format: uuid } }
+        visibility: { type: string, enum: [INTERNAL, CUSTOMER, PUBLIC] }
+        ownerPrincipalId: { type: string, format: uuid }
+        status: { type: string, enum: [DRAFT, REVIEW, APPROVED, PUBLISHED, ARCHIVED] }
+        createdAt: { type: string, format: date-time }
+        publishedAt: { type: string, format: date-time, nullable: true }
+        archivedAt: { type: string, format: date-time, nullable: true }
+
+    ArticleCreateRequest:
+      type: object
+      required: [slug, title, body, visibility]
+      properties:
+        slug: { type: string }
+        title: { type: string }
+        body: { type: string }
+        summary: { type: string }
+        visibility: { type: string, enum: [INTERNAL, CUSTOMER, PUBLIC] }
+        categoryIds: { type: array, items: { type: string, format: uuid } }
+        tagIds: { type: array, items: { type: string, format: uuid } }
+
+    ArticleVersion:
+      type: object
+      required: [id, articleId, number, authorPrincipalId, body, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        articleId: { type: string, format: uuid }
+        number: { type: integer }
+        authorPrincipalId: { type: string, format: uuid }
+        body: { type: string }
+        summary: { type: string, nullable: true }
+        attachmentDmsIds: { type: array, items: { type: string, format: uuid } }
+        reviewRequestId: { type: string, format: uuid, nullable: true }
+        reviewerPrincipalId: { type: string, format: uuid, nullable: true }
+        approvedAt: { type: string, format: date-time, nullable: true }
+        createdAt: { type: string, format: date-time }
+
+    ArticleWithVersion:
+      allOf:
+        - $ref: "#/components/schemas/Article"
+        - type: object
+          properties:
+            currentVersion: { $ref: "#/components/schemas/ArticleVersion" }
+
+    ReviewRequest:
+      type: object
+      required: [id, tenantId, articleVersionId, requesterPrincipalId, status]
+      properties:
+        id: { type: string, format: uuid }
+        tenantId: { type: string, format: uuid }
+        articleVersionId: { type: string, format: uuid }
+        requesterPrincipalId: { type: string, format: uuid }
+        approverPrincipalId: { type: string, format: uuid, nullable: true }
+        status: { type: string, enum: [OPEN, APPROVED, REJECTED, WITHDRAWN] }
+        decisionReason: { type: string, nullable: true }
+        decidedAt: { type: string, format: date-time, nullable: true }
+
+    Category:
+      type: object
+      required: [id, tenantId, name, slug]
+      properties:
+        id: { type: string, format: uuid }
+        tenantId: { type: string, format: uuid }
+        parentId: { type: string, format: uuid, nullable: true }
+        name: { type: string }
+        slug: { type: string }
+        visibility: { type: string, enum: [INTERNAL, CUSTOMER, PUBLIC] }
+
+    Tag:
+      type: object
+      required: [id, tenantId, name]
+      properties:
+        id: { type: string, format: uuid }
+        tenantId: { type: string, format: uuid }
+        name: { type: string }

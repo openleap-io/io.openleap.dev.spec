@@ -1,0 +1,456 @@
+openapi: '3.1.0'
+info:
+  title: TKS Ticket Service API
+  version: 1.0.0
+  description: REST API for the TKS Ticket Service (tkt bounded context)
+  contact:
+    name: team-tks
+    email: tks-team@openleap.io
+x-owner: team-tks
+x-suite: tks
+x-domain: tkt
+x-service: tks-tkt-svc
+
+servers:
+  - url: http://localhost:8500/api/tks/tkt/v1
+    description: Local development
+  - url: https://api.openleap.io/api/tks/tkt/v1
+    description: Production
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Tickets
+  - name: Comments
+  - name: SLA Policies
+  - name: Attachments
+  - name: Extensions
+
+paths:
+  /tickets:
+    get:
+      summary: List tickets
+      operationId: listTickets
+      tags: [Tickets]
+      parameters:
+        - { name: assigneePrincipalId, in: query, schema: { type: string, format: uuid } }
+        - { name: status, in: query, schema: { type: string } }
+        - { name: priority, in: query, schema: { type: string } }
+        - { name: category, in: query, schema: { type: string } }
+        - { name: createdFrom, in: query, schema: { type: string, format: date-time } }
+        - { name: page, in: query, schema: { type: integer, default: 0 } }
+        - { name: size, in: query, schema: { type: integer, default: 50, maximum: 200 } }
+        - { name: sort, in: query, schema: { type: string, default: "createdAt,desc" } }
+      responses:
+        '200': { description: Page of tickets, content: { application/json: { schema: { $ref: "#/components/schemas/TicketPage" } } } }
+        '401': { description: Unauthorized }
+        '403': { description: Forbidden }
+    post:
+      summary: Create ticket
+      operationId: createTicket
+      tags: [Tickets]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TicketCreateRequest" }
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location: { schema: { type: string } }
+            ETag: { schema: { type: string } }
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Ticket" }
+        '400': { description: Validation error }
+        '422': { description: Business rule violation }
+
+  /tickets/{id}:
+    get:
+      summary: Get ticket
+      operationId: getTicket
+      tags: [Tickets]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/Ticket" } } } }
+        '404': { description: Not found }
+    patch:
+      summary: Partial update
+      operationId: updateTicket
+      tags: [Tickets]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+        - { name: If-Match, in: header, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TicketUpdateRequest" }
+      responses:
+        '200': { description: Updated, content: { application/json: { schema: { $ref: "#/components/schemas/Ticket" } } } }
+        '412': { description: Optimistic lock failed }
+        '422': { description: Invalid state transition }
+
+  /tickets/{id}/assign:
+    post:
+      summary: Assign ticket
+      operationId: assignTicket
+      tags: [Tickets]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [assigneePrincipalId]
+              properties:
+                assigneePrincipalId: { type: string, format: uuid }
+                reason: { type: string }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/Ticket" } } } }
+
+  /tickets/{id}/transition:
+    post:
+      summary: Change status
+      operationId: transitionTicket
+      tags: [Tickets]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [to]
+              properties:
+                to: { type: string, enum: [NEW, OPEN, IN_PROGRESS, WAITING_CUSTOMER, WAITING_3RD_PARTY, RESOLVED, CLOSED, REOPENED] }
+                reason: { type: string }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/Ticket" } } } }
+        '422': { description: Invalid transition }
+
+  /tickets/{id}/resolve:
+    post:
+      summary: Resolve
+      operationId: resolveTicket
+      tags: [Tickets]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                resolution: { type: string }
+                resolutionCode: { type: string }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/Ticket" } } } }
+
+  /tickets/{id}/reopen:
+    post:
+      summary: Reopen
+      operationId: reopenTicket
+      tags: [Tickets]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/Ticket" } } } }
+
+  /tickets/{id}/escalate:
+    post:
+      summary: Escalate (idempotent; typically called by shared-wf-svc)
+      operationId: escalateTicket
+      tags: [Tickets]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+        - { name: Idempotency-Key, in: header, required: true, schema: { type: string } }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason: { type: string }
+                toQueueId: { type: string, format: uuid }
+                toAssigneePrincipalId: { type: string, format: uuid }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/Ticket" } } } }
+
+  /tickets/{id}/comments:
+    get:
+      summary: List comments
+      operationId: listTicketComments
+      tags: [Comments]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/TicketComment" } } } } }
+    post:
+      summary: Add comment
+      operationId: addTicketComment
+      tags: [Comments]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CommentCreateRequest" }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: "#/components/schemas/TicketComment" } } } }
+
+  /tickets/{id}/attachments:
+    post:
+      summary: Link a tech.dms document
+      operationId: linkAttachment
+      tags: [Attachments]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [dmsDocumentId]
+              properties:
+                dmsDocumentId: { type: string, format: uuid }
+      responses:
+        '201': { description: Linked }
+
+  /tickets/{id}/attachments/{attId}:
+    delete:
+      summary: Unlink attachment
+      operationId: unlinkAttachment
+      tags: [Attachments]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+        - { name: attId, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '204': { description: Removed }
+
+  /tickets/{id}/timeline:
+    get:
+      summary: Unified timeline (state, assignment, comments)
+      operationId: getTicketTimeline
+      tags: [Tickets]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/TimelineEntry" } } } } }
+
+  /sla-policies:
+    get:
+      summary: List SLA policies
+      operationId: listSlaPolicies
+      tags: [SLA Policies]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/SLAPolicy" } } } } }
+    post:
+      summary: Create SLA policy
+      operationId: createSlaPolicy
+      tags: [SLA Policies]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SLAPolicyCreateRequest" }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: "#/components/schemas/SLAPolicy" } } } }
+
+  /sla-policies/{id}:
+    get:
+      summary: Get SLA policy
+      operationId: getSlaPolicy
+      tags: [SLA Policies]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/SLAPolicy" } } } }
+    patch:
+      summary: Update SLA policy
+      operationId: updateSlaPolicy
+      tags: [SLA Policies]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object } } }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/SLAPolicy" } } } }
+
+  /extensions/hooks:
+    get:
+      summary: List registered extension hooks
+      operationId: listExtensionHooks
+      tags: [Extensions]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: array, items: { type: object } } } } }
+    post:
+      summary: Register extension hook
+      operationId: registerExtensionHook
+      tags: [Extensions]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object } } }
+      responses:
+        '201': { description: Created }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Ticket:
+      type: object
+      required: [id, tenantId, number, title, status, priority, createdAt, version]
+      properties:
+        id: { type: string, format: uuid }
+        tenantId: { type: string, format: uuid }
+        number: { type: string, pattern: "^[A-Z]{2,4}-\\d+$" }
+        title: { type: string, maxLength: 255 }
+        description: { type: string }
+        reporterPartyId: { type: string, format: uuid }
+        assigneePrincipalId: { type: string, format: uuid, nullable: true }
+        queueId: { type: string, format: uuid, nullable: true }
+        priority: { type: string, enum: [LOW, MEDIUM, HIGH, URGENT, CRITICAL] }
+        severity: { type: string, enum: [SEV4, SEV3, SEV2, SEV1], nullable: true }
+        category: { type: string }
+        source: { type: string, enum: [CH_EMAIL, CH_WEB, CH_CHAT, CH_WEBHOOK, CH_API, INTERNAL] }
+        status: { type: string, enum: [NEW, OPEN, IN_PROGRESS, WAITING_CUSTOMER, WAITING_3RD_PARTY, RESOLVED, CLOSED, REOPENED] }
+        slaPolicyId: { type: string, format: uuid, nullable: true }
+        slaClock: { $ref: "#/components/schemas/SLAClock" }
+        linkedCiIds:
+          type: array
+          items: { type: string, format: uuid }
+        attachmentDmsIds:
+          type: array
+          items: { type: string, format: uuid }
+        createdAt: { type: string, format: date-time }
+        resolvedAt: { type: string, format: date-time, nullable: true }
+        closedAt: { type: string, format: date-time, nullable: true }
+        version: { type: integer }
+
+    TicketPage:
+      type: object
+      properties:
+        content:
+          type: array
+          items: { $ref: "#/components/schemas/Ticket" }
+        page:
+          type: object
+          properties:
+            size: { type: integer }
+            totalElements: { type: integer }
+            totalPages: { type: integer }
+            number: { type: integer }
+
+    TicketCreateRequest:
+      type: object
+      required: [title, reporterPartyId, priority, source]
+      properties:
+        title: { type: string, maxLength: 255 }
+        description: { type: string }
+        reporterPartyId: { type: string, format: uuid }
+        assigneePrincipalId: { type: string, format: uuid }
+        queueId: { type: string, format: uuid }
+        priority: { type: string, enum: [LOW, MEDIUM, HIGH, URGENT, CRITICAL] }
+        severity: { type: string, enum: [SEV4, SEV3, SEV2, SEV1] }
+        category: { type: string }
+        source: { type: string, enum: [CH_EMAIL, CH_WEB, CH_CHAT, CH_WEBHOOK, CH_API, INTERNAL] }
+        slaPolicyId: { type: string, format: uuid }
+        linkedCiIds:
+          type: array
+          items: { type: string, format: uuid }
+
+    TicketUpdateRequest:
+      type: object
+      properties:
+        title: { type: string, maxLength: 255 }
+        description: { type: string }
+        priority: { type: string, enum: [LOW, MEDIUM, HIGH, URGENT, CRITICAL] }
+        severity: { type: string, enum: [SEV4, SEV3, SEV2, SEV1] }
+        category: { type: string }
+        queueId: { type: string, format: uuid }
+
+    TicketComment:
+      type: object
+      required: [id, ticketId, authorPartyId, visibility, body, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        ticketId: { type: string, format: uuid }
+        authorPartyId: { type: string, format: uuid }
+        visibility: { type: string, enum: [INTERNAL, PUBLIC] }
+        body: { type: string }
+        attachmentDmsIds:
+          type: array
+          items: { type: string, format: uuid }
+        channelMessageId: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+
+    CommentCreateRequest:
+      type: object
+      required: [body, visibility]
+      properties:
+        body: { type: string }
+        visibility: { type: string, enum: [INTERNAL, PUBLIC] }
+        attachmentDmsIds:
+          type: array
+          items: { type: string, format: uuid }
+
+    SLAClock:
+      type: object
+      properties:
+        firstResponseElapsed: { type: string, description: "ISO-8601 duration" }
+        resolutionElapsed: { type: string, description: "ISO-8601 duration" }
+        breachRiskPct: { type: integer, minimum: 0, maximum: 100 }
+        pauseReasons:
+          type: array
+          items:
+            type: object
+            properties:
+              from: { type: string, format: date-time }
+              to: { type: string, format: date-time, nullable: true }
+              reason: { type: string }
+
+    SLAPolicy:
+      type: object
+      required: [id, tenantId, name, firstResponseTarget, resolutionTarget, status]
+      properties:
+        id: { type: string, format: uuid }
+        tenantId: { type: string, format: uuid }
+        name: { type: string }
+        appliesWhen:
+          type: object
+          additionalProperties: true
+        firstResponseTarget: { type: string, description: "ISO-8601 duration" }
+        resolutionTarget: { type: string, description: "ISO-8601 duration" }
+        businessHoursProfileId: { type: string, format: uuid }
+        escalationThresholdPct: { type: integer, minimum: 1, maximum: 99, default: 80 }
+        status: { type: string, enum: [DRAFT, ACTIVE, ARCHIVED] }
+
+    SLAPolicyCreateRequest:
+      type: object
+      required: [name, firstResponseTarget, resolutionTarget]
+      properties:
+        name: { type: string }
+        appliesWhen:
+          type: object
+          additionalProperties: true
+        firstResponseTarget: { type: string }
+        resolutionTarget: { type: string }
+        businessHoursProfileId: { type: string, format: uuid }
+        escalationThresholdPct: { type: integer }
+
+    TimelineEntry:
+      type: object
+      required: [kind, occurredAt]
+      properties:
+        kind: { type: string, enum: [CREATED, STATUS_CHANGED, ASSIGNED, COMMENTED, RESOLVED, REOPENED, ESCALATED, ATTACHMENT_LINKED] }
+        occurredAt: { type: string, format: date-time }
+        actorPrincipalId: { type: string, format: uuid, nullable: true }
+        details:
+          type: object
+          additionalProperties: true

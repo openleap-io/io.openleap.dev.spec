@@ -11,10 +11,10 @@
 > **Owner:** Domain Engineering Team
 
 > **Meta Information**
-> - **Version:** 2026-04-03
+> - **Version:** 2026-04-18
 > - **Template:** `domain-service-spec.md` v1.0.0
 > - **Template Compliance:** 95%+
-> - **Status:** DRAFT
+> - **Status:** DEPRECATED — superseded by `tech-email-svc` (see `T1_Platform/tech/domain-specs/tech_email-spec.md`). Routing-key bridge `crm.email.*` active for 60 days; API path `/api/crm/email/v1` returns HTTP 308 during grace period.
 > - **Service ID:** `crm-email-svc`
 > - **Suite:** `crm`
 > - **Domain:** `email`

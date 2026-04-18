@@ -1,0 +1,280 @@
+openapi: '3.1.0'
+info:
+  title: TKS Channel Service API
+  version: 1.0.0
+  description: REST API for the TKS Channel Service (ch bounded context)
+  contact:
+    name: team-tks
+    email: tks-team@openleap.io
+x-owner: team-tks
+x-suite: tks
+x-domain: ch
+x-service: tks-ch-svc
+
+servers:
+  - url: http://localhost:8501/api/tks/ch/v1
+    description: Local development
+  - url: https://api.openleap.io/api/tks/ch/v1
+    description: Production
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Channels
+  - name: Conversations
+  - name: Inbound
+  - name: Outbound
+
+paths:
+  /channels:
+    get:
+      summary: List channels
+      operationId: listChannels
+      tags: [Channels]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/Channel" } } } } }
+    post:
+      summary: Register channel
+      operationId: createChannel
+      tags: [Channels]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ChannelCreateRequest" }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: "#/components/schemas/Channel" } } } }
+
+  /channels/{id}:
+    get:
+      summary: Get channel
+      operationId: getChannel
+      tags: [Channels]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/Channel" } } } }
+    patch:
+      summary: Update channel config
+      operationId: updateChannel
+      tags: [Channels]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object } } }
+      responses:
+        '200': { description: OK }
+
+  /channels/{id}/disable:
+    post:
+      summary: Disable channel
+      operationId: disableChannel
+      tags: [Channels]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        '200': { description: OK }
+
+  /channels/{id}/enable:
+    post:
+      summary: Enable channel
+      operationId: enableChannel
+      tags: [Channels]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        '200': { description: OK }
+
+  /webhooks/{channelId}:
+    post:
+      summary: Public inbound webhook (HMAC-validated)
+      operationId: receiveWebhook
+      tags: [Inbound]
+      security: []
+      parameters:
+        - { name: channelId, in: path, required: true, schema: { type: string, format: uuid } }
+        - { name: X-Signature, in: header, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      responses:
+        '202': { description: Accepted }
+        '401': { description: Invalid signature }
+
+  /web/{channelId}/submit:
+    post:
+      summary: Public web-form submit
+      operationId: submitWebForm
+      tags: [Inbound]
+      security: []
+      parameters:
+        - { name: channelId, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [subject, body, reporterEmail]
+              properties:
+                subject: { type: string }
+                body: { type: string }
+                reporterEmail: { type: string, format: email }
+                reporterName: { type: string }
+                captchaToken: { type: string }
+                attachments:
+                  type: array
+                  items: { type: string, format: uuid }
+      responses:
+        '202': { description: Accepted, content: { application/json: { schema: { type: object, properties: { conversationId: { type: string, format: uuid } } } } } }
+
+  /conversations:
+    get:
+      summary: List conversations
+      operationId: listConversations
+      tags: [Conversations]
+      parameters:
+        - { name: channelId, in: query, schema: { type: string, format: uuid } }
+        - { name: reporterPartyId, in: query, schema: { type: string, format: uuid } }
+        - { name: status, in: query, schema: { type: string, enum: [OPEN, CLOSED] } }
+        - { name: page, in: query, schema: { type: integer, default: 0 } }
+        - { name: size, in: query, schema: { type: integer, default: 50 } }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/Conversation" } } } } }
+
+  /conversations/{id}:
+    get:
+      summary: Get conversation with messages
+      operationId: getConversation
+      tags: [Conversations]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/ConversationDetail" } } } }
+
+  /conversations/{id}/replies:
+    post:
+      summary: Queue outbound reply
+      operationId: sendReply
+      tags: [Outbound]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [body, ticketId]
+              properties:
+                ticketId: { type: string, format: uuid }
+                body: { type: string }
+                attachmentDmsIds:
+                  type: array
+                  items: { type: string, format: uuid }
+      responses:
+        '202': { description: Queued, content: { application/json: { schema: { $ref: "#/components/schemas/OutboundReply" } } } }
+
+  /conversations/{id}/close:
+    post:
+      summary: Close conversation
+      operationId: closeConversation
+      tags: [Conversations]
+      parameters: [ { name: id, in: path, required: true, schema: { type: string, format: uuid } } ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason: { type: string, enum: [RESOLVED, SPAM, DUPLICATE, ABANDONED] }
+      responses:
+        '200': { description: OK }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Channel:
+      type: object
+      required: [id, tenantId, type, name, status]
+      properties:
+        id: { type: string, format: uuid }
+        tenantId: { type: string, format: uuid }
+        type: { type: string, enum: [EMAIL, WEB_FORM, CHAT, WEBHOOK, API] }
+        name: { type: string }
+        config:
+          type: object
+          additionalProperties: true
+        status: { type: string, enum: [ACTIVE, DISABLED] }
+        autoCreateTicket: { type: boolean, default: true }
+        aiTriageEnabled: { type: boolean, default: false }
+        defaultQueueId: { type: string, format: uuid, nullable: true }
+        version: { type: integer }
+
+    ChannelCreateRequest:
+      type: object
+      required: [type, name, config]
+      properties:
+        type: { type: string, enum: [EMAIL, WEB_FORM, CHAT, WEBHOOK, API] }
+        name: { type: string }
+        config: { type: object, additionalProperties: true }
+        autoCreateTicket: { type: boolean }
+        aiTriageEnabled: { type: boolean }
+        defaultQueueId: { type: string, format: uuid }
+
+    Conversation:
+      type: object
+      required: [id, tenantId, channelId, status, lastActivityAt]
+      properties:
+        id: { type: string, format: uuid }
+        tenantId: { type: string, format: uuid }
+        channelId: { type: string, format: uuid }
+        ticketId: { type: string, format: uuid, nullable: true }
+        threadKey: { type: string }
+        reporterPartyId: { type: string, format: uuid, nullable: true }
+        status: { type: string, enum: [OPEN, CLOSED] }
+        lastActivityAt: { type: string, format: date-time }
+
+    ConversationDetail:
+      allOf:
+        - $ref: "#/components/schemas/Conversation"
+        - type: object
+          properties:
+            messages:
+              type: array
+              items: { $ref: "#/components/schemas/InboundMessage" }
+
+    InboundMessage:
+      type: object
+      required: [id, conversationId, classification, receivedAt]
+      properties:
+        id: { type: string, format: uuid }
+        conversationId: { type: string, format: uuid }
+        normalizedBody: { type: string }
+        subject: { type: string, nullable: true }
+        providerMessageId: { type: string }
+        classification: { type: string, enum: [NEW, FOLLOW_UP, SPAM, DUPLICATE] }
+        aiTriageResult:
+          type: object
+          nullable: true
+          properties:
+            category: { type: string }
+            priority: { type: string }
+            suggestedKbArticleId: { type: string, format: uuid }
+        receivedAt: { type: string, format: date-time }
+
+    OutboundReply:
+      type: object
+      required: [id, tenantId, conversationId, ticketId, channelId, status]
+      properties:
+        id: { type: string, format: uuid }
+        tenantId: { type: string, format: uuid }
+        conversationId: { type: string, format: uuid }
+        ticketId: { type: string, format: uuid }
+        channelId: { type: string, format: uuid }
+        body: { type: string }
+        status: { type: string, enum: [QUEUED, SENT, FAILED] }
+        providerRef: { type: string, nullable: true }

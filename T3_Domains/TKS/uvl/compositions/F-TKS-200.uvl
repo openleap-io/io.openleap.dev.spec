@@ -1,0 +1,19 @@
+// Composition UVL: F-TKS-200
+// Template: feature-composition.uvl v1.0.0
+// Generated: 2026-04-18
+
+namespace tks
+
+imports
+    tks.F_TKS_210
+    tks.F_TKS_220
+    tks.F_TKS_230
+    tks.F_TKS_240
+
+features
+    F_TKS_200
+        alternative
+            F_TKS_210  // Email Channel Adapter
+            F_TKS_220  // Web Form / Portal
+            F_TKS_230  // Webhook Channel
+            F_TKS_240  // Chat Channel (placeholder)

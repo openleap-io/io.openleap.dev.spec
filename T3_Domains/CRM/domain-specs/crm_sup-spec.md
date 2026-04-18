@@ -11,10 +11,10 @@
 > **Owner:** Domain Engineering Team
 
 > **Meta Information**
-> - **Version:** 2026-04-03
+> - **Version:** 2026-04-18
 > - **Template:** `domain-service-spec.md` v1.0.0
 > - **Template Compliance:** 95%+
-> - **Status:** DRAFT
+> - **Status:** DEPRECATED — superseded by `tks-tkt-svc` (tickets + SLA + comments) and `tks-kb-svc` (knowledge). See `T3_Domains/TKS/_tks_suite.md` and §13 Migration below. Routing-key bridge `crm.sup.*` → `tks.tkt.*` active for 60 days; API path `/api/crm/sup/v1` returns HTTP 308 during grace period.
 > - **Service ID:** `crm-sup-svc`
 > - **Suite:** `crm`
 > - **Domain:** `sup`
@@ -258,9 +258,50 @@ This service handles **Confidential (PII)** data. GDPR requirements apply: right
 
 ## 13. Migration & Evolution
 
-- Flyway migration scripts: `V{version}__{description}.sql`
-- API versioning: `/api/crm/{domain}/v1` with 6-month deprecation for breaking changes
-- All migrations must be backward-compatible
+**This service is DEPRECATED.** It is being superseded by two new services in the TKS suite:
+
+- `tks-tkt-svc` — takes over `Ticket`, `TicketComment`, `SLAPolicy` and their events
+- `tks-kb-svc` — takes over `KnowledgeArticle` and its events
+
+### 13.1 Data Mapping
+
+| Origin (`crm_support`) | Target | Notes |
+|---|---|---|
+| `tickets.*` | `tks_tkt.tickets.*` | Field-for-field; `source='CH_EMAIL'` default for pre-TKS records |
+| `ticketcomments.*` | `tks_tkt.ticket_comments.*` | Field-for-field; visibility preserved |
+| `slapolicys.*` | `tks_tkt.sla_policies.*` | Field-for-field; business-hours profile pointer added (default = tenant default in `shared.cap`) |
+| `knowledgearticles.*` | `tks_kb.articles` + first `tks_kb.article_versions` row | Existing body becomes version 1; `status` mapped DRAFT / APPROVED / PUBLISHED |
+
+### 13.2 Event Routing-Key Bridge
+
+For 60 days after `tks-tkt-svc` and `tks-kb-svc` go live:
+
+| Legacy (crm.sup) | Re-emitted as |
+|---|---|
+| `crm.sup.ticket.created` | `tks.tkt.ticket.created` |
+| `crm.sup.ticket.assigned` | `tks.tkt.ticket.assigned` |
+| `crm.sup.ticket.escalated` | `tks.tkt.ticket.escalated` |
+| `crm.sup.ticket.resolved` | `tks.tkt.ticket.resolved` |
+| `crm.sup.ticket.reopened` | `tks.tkt.ticket.reopened` |
+| `crm.sup.s_l_a.breached` | `tks.tkt.sla.breached` |
+
+Bridge sits in the TKS event pipeline; new consumers subscribe only to `tks.*` keys.
+
+### 13.3 API Redirects
+
+`/api/crm/sup/v1/*` returns HTTP 308 to the corresponding `/api/tks/tkt/v1/*` or `/api/tks/kb/v1/*` path for 60 days. After the grace period, endpoints return 410 Gone.
+
+### 13.4 Timeline
+
+- 2026 Q3 (alongside TKS v1.0 GA): this service frozen (no new features, security patches only).
+- 2026 Q3 + 60 days: routing-key bridge and HTTP 308 redirects disabled.
+- Two minor versions after TKS v1.0 (target 2027 Q1): status = `RETIRED`; code and schema removed; data migration script `V0002__migrate_from_crm_support.sql` applied in `tks-tkt-svc` / `tks-kb-svc`.
+
+### 13.5 Legacy House-keeping
+
+- Flyway scripts: `V{version}__{description}.sql` (security patches only).
+- No new feature work SHOULD land on this spec.
+- Products composing new offerings MUST select `F-TKS-*` features instead of `F-CRM-016-*`.
 
 ---
 

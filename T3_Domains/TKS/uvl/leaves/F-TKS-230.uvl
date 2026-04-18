@@ -1,0 +1,8 @@
+// Leaf UVL: F-TKS-230
+// Template: feature-leaf.uvl v1.0.0
+// Generated: 2026-04-18
+
+namespace tks
+
+features
+    F_TKS_230

@@ -1,0 +1,51 @@
+# AUI Screen Contract: F-TKS-100-02
+# Template: screen-contract-aui.yaml v1.0.0
+# Generated: 2026-04-18
+
+featureId: F-TKS-100-02
+featureName: "Ticket Detail & Timeline"
+suite: tks
+version: 1.0.0
+
+taskModel:
+  rootOperator: concurrent
+  description: User interacts with header, body, and action zones independently.
+
+zones:
+  - name: header
+    type: fixed
+    priority: high
+    description: Page title, breadcrumb, primary actions.
+    dataBinding: static
+  - name: filterPanel
+    type: variable
+    priority: medium
+    description: Filters / search / saved views (when applicable).
+    dataBinding: query-params
+  - name: mainContent
+    type: variable
+    priority: high
+    description: Primary content (list, detail, or form body).
+    dataBinding: view-model
+  - name: sidebar
+    type: variable
+    priority: low
+    description: Contextual information (party info, SLA, linked CIs, suggested articles).
+    dataBinding: view-model
+  - name: actions
+    type: fixed
+    priority: high
+    description: Primary / secondary actions.
+    dataBinding: view-model
+
+absentRules:
+  - when: aiTriageEnabled == false
+    hide: [sidebar.aiSuggestions]
+  - when: visibilityScope == 'PUBLIC'
+    hide: [actions.internalNote]
+
+backend:
+  primaryService: tks.tkt
+  requiredScopes:
+    - tks.read
+    - tks.write

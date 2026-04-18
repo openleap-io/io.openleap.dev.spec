@@ -1,0 +1,15 @@
+// Composition UVL: F-TKS-100
+// Template: feature-composition.uvl v1.0.0
+// Generated: 2026-04-18
+
+namespace tks
+
+imports
+    tks.F_TKS_100_01
+    tks.F_TKS_100_02
+
+features
+    F_TKS_100
+        mandatory
+            F_TKS_100_01  // Create Ticket (agent form)
+            F_TKS_100_02  // Ticket Detail & Timeline

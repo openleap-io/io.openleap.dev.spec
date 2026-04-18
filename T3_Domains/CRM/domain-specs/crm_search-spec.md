@@ -11,10 +11,10 @@
 > **Owner:** Domain Engineering Team
 
 > **Meta Information**
-> - **Version:** 2026-04-03
+> - **Version:** 2026-04-18
 > - **Template:** `domain-service-spec.md` v1.0.0
 > - **Template Compliance:** 95%+
-> - **Status:** DRAFT
+> - **Status:** DEPRECATED — superseded by `tech-search-svc` (see `T1_Platform/tech/domain-specs/tech_search-spec.md`). API path `/api/crm/search/v1` returns HTTP 308 during 60-day grace period.
 > - **Service ID:** `crm-search-svc`
 > - **Suite:** `crm`
 > - **Domain:** `search`
