@@ -1,0 +1,63 @@
+// Template Meta
+// Template-ID:   TPL-UVL-CAT
+// Version:       1.0.0
+// Last Updated:  2026-04-21
+// Changelog:
+//   1.0.0 (2026-04-21) — Initial catalog for the auto suite (T2 Common).
+
+// ============================================================
+// auto Suite — UI Feature Catalog (UVL Root)
+// File: auto.catalog.uvl
+// Tier: T2 Common
+//
+// Machine-readable root of the auto suite's UI feature tree.
+// Imports composition node UVL files and assembles them under
+// a single suite root feature.
+//
+// This file is imported by catalog.uvl (the platform root).
+//
+// Companion document: _auto_suite.md (SS6 Feature Catalog)
+// ============================================================
+
+namespace auto
+
+imports
+    // Composition nodes — authored as placeholders until leaf
+    // feature specs are written. Uncomment when leaf UVL files
+    // are added under uvl/compositions/.
+    // F-AUTO-NTF-001 as NotificationCenter
+    // F-AUTO-NTF-002 as NotificationPreferences
+    // F-AUTO-NTF-003 as ChannelConfiguration
+    // F-AUTO-NTF-004 as TemplateManagement
+    // F-AUTO-NTF-005 as DigestAndQuietHours
+    // F-AUTO-WF-001  as WorkflowBuilder
+    // F-AUTO-WF-002  as WorkflowTemplateLibrary
+    // F-AUTO-WF-003  as WorkflowMonitorAndLogs
+    // F-AUTO-WF-004  as AssignmentAndEscalationRules
+
+features
+
+    // Suite root — the top-level feature representing the auto
+    // suite's entire UI capability.
+    // This is the node that the platform catalog.uvl references.
+    Auto_UI
+
+        optional
+            // TODO: Populate with F-AUTO-* composition node references
+            // once leaf feature specs are authored (target 2026 Q3).
+            // Placeholder: empty group until feature specs exist.
+
+
+constraints
+
+    // --------------------------------------------------------
+    // Suite-level cross-tree constraints — populated when
+    // feature specs exist.
+    //
+    // Anticipated constraints:
+    //   F-AUTO-NTF-005 => F-AUTO-NTF-002  // digest needs preferences
+    //   F-AUTO-WF-004  => F-AUTO-WF-001   // escalation needs workflow builder
+    //
+    // Cross-suite: auto consumes iam + shared + any T3 events
+    // (surfaced in leaf .uvl files, not here).
+    // --------------------------------------------------------

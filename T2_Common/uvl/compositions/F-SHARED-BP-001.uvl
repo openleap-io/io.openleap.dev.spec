@@ -1,0 +1,25 @@
+    namespace F-SHARED-BP-001
+
+    imports
+        F-SHARED-BP-001-01
+F-SHARED-BP-001-02
+F-SHARED-BP-001-03
+F-SHARED-BP-001-04
+F-SHARED-BP-001-05
+
+    features
+
+        F-SHARED-BP-001 "Party Management"
+
+            mandatory
+        F-SHARED-BP-001-01
+        F-SHARED-BP-001-02
+        F-SHARED-BP-001-03
+        F-SHARED-BP-001-04
+
+    optional
+        F-SHARED-BP-001-05
+
+
+    constraints
+

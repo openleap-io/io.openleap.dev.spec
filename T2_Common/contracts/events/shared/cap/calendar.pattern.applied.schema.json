@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openleap.io/schemas/events/shared.cap.calendar.pattern.applied",
+  "title": "shared.cap.calendar.pattern.applied Event",
+  "description": "Working pattern applied",
+  "type": "object",
+  "required": [
+    "eventId",
+    "eventType",
+    "timestamp",
+    "tenantId",
+    "correlationId",
+    "producer",
+    "schemaVersion",
+    "payload"
+  ],
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "eventType": {
+      "type": "string",
+      "const": "shared.cap.calendar.pattern.applied"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "tenantId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "correlationId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "causationId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "producer": {
+      "type": "string",
+      "const": "shared-cap-svc"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Domain payload for shared.cap.calendar.pattern.applied"
+    }
+  },
+  "additionalProperties": false
+}

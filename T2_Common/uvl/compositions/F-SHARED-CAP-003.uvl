@@ -1,0 +1,17 @@
+    namespace F-SHARED-CAP-003
+
+    imports
+        F-SHARED-CAP-003-01
+
+    features
+
+        F-SHARED-CAP-003 "Period Management"
+
+            mandatory
+        F-SHARED-CAP-003-01
+
+
+    constraints
+
+F-SHARED-CAP-003 => F-SHARED-CAP-001
+

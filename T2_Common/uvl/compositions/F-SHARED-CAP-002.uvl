@@ -1,0 +1,21 @@
+    namespace F-SHARED-CAP-002
+
+    imports
+        F-SHARED-CAP-002-01
+F-SHARED-CAP-002-02
+
+    features
+
+        F-SHARED-CAP-002 "Booking Management"
+
+            mandatory
+        F-SHARED-CAP-002-01
+
+    optional
+        F-SHARED-CAP-002-02
+
+
+    constraints
+
+F-SHARED-CAP-002 => F-SHARED-CAP-001
+

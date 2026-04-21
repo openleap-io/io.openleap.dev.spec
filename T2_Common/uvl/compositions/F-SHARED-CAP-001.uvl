@@ -1,0 +1,21 @@
+    namespace F-SHARED-CAP-001
+
+    imports
+        F-SHARED-CAP-001-01
+F-SHARED-CAP-001-02
+F-SHARED-CAP-001-03
+F-SHARED-CAP-001-04
+
+    features
+
+        F-SHARED-CAP-001 "Calendar Management"
+
+            mandatory
+        F-SHARED-CAP-001-01
+        F-SHARED-CAP-001-02
+        F-SHARED-CAP-001-03
+        F-SHARED-CAP-001-04
+
+
+    constraints
+

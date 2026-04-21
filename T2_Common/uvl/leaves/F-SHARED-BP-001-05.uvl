@@ -1,0 +1,14 @@
+namespace F-SHARED-BP-001-05
+
+features
+
+    F-SHARED-BP-001-05 "Party Relationships"
+        optional
+        attributes
+            pagination_pageSize Integer 20
+            mode_readOnly Boolean false
+
+constraints
+
+    // Cross-suite: requires T1 reference data
+    // F-SHARED-BP-001-05 => ref.F-T1-REF-001

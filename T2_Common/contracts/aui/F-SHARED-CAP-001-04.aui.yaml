@@ -1,0 +1,72 @@
+# AUI Screen Contract for F-SHARED-CAP-001-04 — Availability Query
+# Template: screen-contract-aui.yaml v1.0.0
+# Generated: 2026-04-03
+
+featureId: "F-SHARED-CAP-001-04"
+featureName: "Availability Query"
+suite: "t2"
+domain: "cap"
+status: "draft"
+
+taskModel:
+  root:
+    operator: "sequential"
+    children:
+      - id: "load"
+        operator: "enabling"
+        description: "Load initial data before user interaction"
+      - id: "interact"
+        operator: "sequential"
+        children:
+          - id: "fillForm"
+            operator: "concurrent"
+            description: "User fills form fields (any order)"
+          - id: "submit"
+            operator: "alternative"
+            description: "User submits or cancels"
+            children:
+              - id: "save"
+                description: "Submit the form"
+              - id: "cancel"
+                description: "Discard changes"
+
+zones:
+  - id: "header"
+    type: "fixed"
+    priority: 1
+    description: "Breadcrumb and page title"
+
+  - id: "coreData"
+    type: "fixed"
+    priority: 2
+    description: "Core form fields from shared-cap-svc domain model"
+    dataBinding:
+      service: "shared-cap-svc"
+      endpoint: "/api/shared/cap/v1/..."
+
+  - id: "extensions"
+    type: "feature-gated"
+    priority: 3
+    description: "Extension zone for T3 domain-specific fields"
+    extensionPointId: "ext.f_t2_002_04.customFields"
+
+  - id: "actions"
+    type: "fixed"
+    priority: 4
+    description: "Action buttons (Save, Cancel)"
+
+absentRules:
+  - zone: "extensions"
+    whenAbsent: "collapse-up"
+    reason: "No T3 extensions configured for this product"
+
+businessRules:
+  - id: "roleGate"
+    condition: "user.hasAnyRole(CAP_VIEWER | CAP_USER | CAP_ADMIN | BOOKING_USER)"
+    action: "enable"
+    target: "all"
+
+  - id: "readOnlyMode"
+    condition: "feature.mode_readOnly == true"
+    action: "disable"
+    target: "zones.coreData, zones.actions.save"

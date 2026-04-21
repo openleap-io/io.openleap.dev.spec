@@ -1,0 +1,84 @@
+// Template Meta
+// Template-ID:   TPL-UVL-CAT
+// Version:       1.0.0
+// Last Updated:  2026-04-03
+// Changelog:
+//   1.0.0 (2026-04-03) — Initial versioned baseline.
+
+// ============================================================
+// shared Suite — UI Feature Catalog (UVL Root)
+// File: shared.catalog.uvl
+// Tier: T2 Common
+//
+// This is the machine-readable root of the shared suite's
+// UI feature tree. It imports all composition node UVL
+// files in this suite and assembles them under a single
+// suite root feature.
+//
+// This file is imported by catalog.uvl (the platform root).
+//
+// Companion document: _shared_suite.md (SS6 Feature Catalog)
+//
+// Authoring rules:
+//   - Add an import line for every composition .uvl file in this suite.
+//   - Add the corresponding feature reference under the
+//     suite root's group.
+//   - The group type at the suite root is `optional` —
+//     ProductConfigs select which composition nodes to include.
+//   - Mandatory suite-level cross-tree constraints go in
+//     the constraints block here.
+//   - Feature-level constraints stay in individual .uvl files.
+// ============================================================
+
+namespace shared
+
+imports
+    // Import every composition node in this suite.
+    // One import per composition node defined in SS6.1 of _shared_suite.md.
+    F-SHARED-BP-001 as PartyManagement
+    F-SHARED-CAP-001 as CalendarManagement
+    F-SHARED-CAP-002 as BookingManagement
+    F-SHARED-CAP-003 as PeriodManagement
+
+features
+
+    // Suite root — the top-level feature representing the shared
+    // suite's entire UI capability.
+    // This is the node that the platform catalog.uvl references.
+    Shared_UI
+
+        optional
+            // List every top-level composition node.
+            // Products select which capability areas they need.
+            F-SHARED-BP-001    // Party Management        [mandatory in most configs]
+            F-SHARED-CAP-001    // Calendar Management      [mandatory in most configs]
+            F-SHARED-CAP-002    // Booking Management       [optional]
+            F-SHARED-CAP-003    // Period Management         [optional]
+
+
+constraints
+
+    // --------------------------------------------------------
+    // Suite-level cross-tree constraints.
+    //
+    // Place here only constraints that span multiple
+    // composition nodes within this suite, or that represent
+    // suite-level requirements on other suites.
+    //
+    // Feature-level cross-suite requires (e.g., F-SHARED-BP-001-03
+    // requires ref.F-T1-xxx) belong in the leaf .uvl file,
+    // NOT here.
+    // --------------------------------------------------------
+
+    // Booking Management requires Calendar Management:
+    // Bookings reserve slots which are derived from calendars.
+    F-SHARED-CAP-002 => F-SHARED-CAP-001
+
+    // Period Management requires Calendar Management:
+    // Periods are owned by calendars.
+    F-SHARED-CAP-003 => F-SHARED-CAP-001
+
+    // Cross-suite: all T2 features require T1 reference data.
+    // (Surfaced here for visibility; enforced in leaf .uvl files.)
+    // F-SHARED-BP-001 => ref.F-T1-REF-001
+    // F-SHARED-CAP-001 => ref.F-T1-REF-001

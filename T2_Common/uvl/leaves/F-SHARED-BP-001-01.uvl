@@ -1,0 +1,14 @@
+namespace F-SHARED-BP-001-01
+
+features
+
+    F-SHARED-BP-001-01 "Create/Update Party"
+        mandatory
+        attributes
+            pagination_pageSize Integer 20
+            mode_readOnly Boolean false
+
+constraints
+
+    // Cross-suite: requires T1 reference data
+    // F-SHARED-BP-001-01 => ref.F-T1-REF-001

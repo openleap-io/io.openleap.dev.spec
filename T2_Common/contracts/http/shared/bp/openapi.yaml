@@ -1,0 +1,206 @@
+openapi: "3.1.0"
+info:
+  title: T2 Business Partner Service API
+  version: "1.0.0"
+  description: REST API for the T2 Business Partner (bp) domain.
+  contact:
+    name: team-shared
+    email: t2-team@openleap.io
+x-owner: team-shared
+x-suite: t2
+x-domain: bp
+servers:
+  - url: /api/shared/bp/v1
+    description: Base path
+security:
+  - bearerAuth: []
+paths:
+  /parties:
+    get:
+      operationId: listParties
+      summary: List parties with optional filters
+      tags: [Party]
+      parameters:
+        - name: kind
+          in: query
+          schema:
+            type: string
+            enum: [PERSON, ORGANIZATION]
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [DRAFT, ACTIVE, SUSPENDED, ARCHIVED]
+        - name: page
+          in: query
+          schema: { type: integer, default: 0 }
+        - name: size
+          in: query
+          schema: { type: integer, default: 20 }
+      responses:
+        "200":
+          description: Page of parties
+    post:
+      operationId: createParty
+      summary: Create a new party (Person or Organization)
+      tags: [Party]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePartyRequest"
+      responses:
+        "201":
+          description: Party created
+        "422":
+          description: Validation error
+  /parties/{id}:
+    get:
+      operationId: getParty
+      summary: Get party by ID
+      tags: [Party]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Party details
+        "404":
+          description: Party not found
+    patch:
+      operationId: updateParty
+      summary: Update party attributes
+      tags: [Party]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Party updated
+  /parties/{id}/roles:
+    get:
+      operationId: listRoles
+      summary: List roles for a party
+      tags: [PartyRole]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: List of roles
+    post:
+      operationId: assignRole
+      summary: Assign a role to a party
+      tags: [PartyRole]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "201":
+          description: Role assigned
+  /parties/{id}/sites:
+    get:
+      operationId: listSites
+      summary: List sites and addresses for a party
+      tags: [Address]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: List of party sites with addresses
+    post:
+      operationId: addSite
+      summary: Add a site with address to a party
+      tags: [Address]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "201":
+          description: Site created
+  /parties/{id}/contacts:
+    get:
+      operationId: listContacts
+      summary: List contact points for a party
+      tags: [Contact]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: List of contact points
+    post:
+      operationId: addContact
+      summary: Add a contact point to a party
+      tags: [Contact]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "201":
+          description: Contact point created
+  /parties/{id}/relationships:
+    get:
+      operationId: listRelationships
+      summary: List relationships for a party
+      tags: [Relationship]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: List of relationships
+    post:
+      operationId: createRelationship
+      summary: Create a relationship between two parties
+      tags: [Relationship]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "201":
+          description: Relationship created
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    CreatePartyRequest:
+      type: object
+      required: [kind]
+      properties:
+        kind:
+          type: string
+          enum: [PERSON, ORGANIZATION]
+        displayName:
+          type: string
+        givenName:
+          type: string
+        familyName:
+          type: string
+        legalName:
+          type: string
