@@ -1,6 +1,7 @@
-<!-- TEMPLATE COMPLIANCE: ~92%
-Present sections: §0 (Purpose/Scope), §1 (Business Context), §2 (Service Identity), §3 (Domain Model - full aggregates), §4 (Business Rules), §5 (Use Cases - 6 UCs), §6 (REST API - endpoint table + examples), §7 (Events - full schema refs), §8 (Data Model - table-level), §9 (Security - permission matrix), §10 (Quality Attributes), §11 (Feature Dependencies), §12 (Extension Points), §13 (Migration Notes), §14 (Decisions & Open Questions), §15 (Appendix)
-Remaining gaps: Port and Repository not yet assigned (OPEN QUESTION)
+<!-- TEMPLATE COMPLIANCE: ~95%
+Present sections: §0–§15 all present with full sub-section hierarchy per TPL-SVC v1.0.0.
+Content depth: Full attribute tables, request/response JSON, event envelopes, table definitions, extension points (all 5 types), cross-domain workflows, use case detail flows.
+Remaining gaps: Port and Repository not yet assigned (OPEN QUESTION); feature IDs TBD pending Phase 3 feature specs.
 -->
 # FI.COA - Chart of Accounts Structures Domain / Service Specification
 
@@ -15,7 +16,7 @@ Remaining gaps: Port and Repository not yet assigned (OPEN QUESTION)
 > **Meta Information**
 > - **Version:** 2026-04-04
 > - **Template:** `domain-service-spec.md` v1.0.0
-> - **Template Compliance:** ~92%
+> - **Template Compliance:** ~95% — remaining gaps: port/repository assignment, feature IDs pending Phase 3
 > - **Author(s):** OpenLeap Architecture Team
 > - **Status:** DRAFT
 > - **Suite:** `fi`
@@ -56,6 +57,8 @@ Remaining gaps: Port and Repository not yet assigned (OPEN QUESTION)
 > - Use MUST/SHOULD/MAY for normative statements.
 > - Keep terminology consistent (Aggregate, Domain Service, Application Service, Command, Event).
 > - Avoid ambiguous words ("often", "maybe") unless explicitly noting uncertainty.
+> - Keep examples minimal and clearly marked as examples.
+> - Do not add implementation code unless the chapter explicitly requires it.
 
 ---
 
@@ -97,9 +100,9 @@ Remaining gaps: Port and Repository not yet assigned (OPEN QUESTION)
 - **AccountChangeRequest:** A request submitted from `fi.coa` to `fi.gl` to create, update, or deactivate a GL posting account.
 
 ### 0.5 Related Documents
-- Suite architecture: `T3_Domains/FI/_fi_suiteV2.md`
-- Neighbor domain specs: `T3_Domains/FI/domain-specs/fi_gl-spec.md`, `T3_Domains/FI/domain-specs/fi_rpt-spec.md`
-- Platform architecture: [system-topology.md](https://github.com/openleap-io/io.openleap.dev.hub/blob/main/architecture/system-topology.md)
+- Suite architecture: `spec/T3_Domains/FI/_fi_suiteV2.md`
+- Neighbor domain specs: `spec/T3_Domains/FI/domain-specs/fi_gl-spec.md`, `spec/T3_Domains/FI/domain-specs/fi_rpt-spec.md`
+- Platform architecture: `SYSTEM_OVERVIEW.md`
 - Event standards: `EVENT_STANDARDS.md`
 
 ---
@@ -160,7 +163,22 @@ graph TB
 | Bounded Context | `bc:chart-of-accounts` |
 | Service ID | `fi-coa-svc` |
 | Base Package | `io.openleap.fi.coa` |
-| Authoritative Sources | FI Suite Spec (`_fi_suiteV2.md`), IFRS/GAAP chart of accounts standards |
+
+**Responsibilities:**
+- Maintain versioned, effective-dated chart structures (hierarchies) for financial reporting
+- Manage chart node trees (GROUP / SUMMARY / LEAF) within structures
+- Map LEAF nodes to `fi.gl` posting account codes (by reference)
+- Provide query APIs for chart navigation, node lookup, and mapping retrieval
+- Steer GL account lifecycle changes via AccountChangeRequest workflow to `fi.gl`
+- Support multi-framework reporting structures (IFRS, GAAP, LOCAL, MGMT)
+
+**Authoritative Sources:**
+
+| Source Type | Description | Access Pattern |
+|-------------|-------------|----------------|
+| REST API | Chart structures, nodes, mappings, account change requests | Synchronous |
+| Database | `coa_chart_structures`, `coa_chart_nodes`, `coa_node_mappings`, `coa_account_change_requests` | Direct (owner) |
+| Events | `fi.coa.chartStructure.*`, `fi.coa.nodeMapping.*`, `fi.coa.accountChangeRequest.*` | Asynchronous |
 
 ---
 
@@ -284,6 +302,14 @@ stateDiagram-v2
     SUPERSEDED --> [*]
 ```
 
+**State Descriptions:**
+
+| State | Description | Business Meaning |
+|-------|-------------|------------------|
+| DRAFT | Initial creation state | Structure is being prepared; nodes and mappings can be added, modified, or removed freely |
+| PUBLISHED | Active operational state | Structure is locked, immutable, and available for reporting consumers |
+| SUPERSEDED | Terminal archival state | Structure has been replaced by a newer published version; retained for historical audit |
+
 **State Transitions:**
 
 | From | To | Trigger | Guard / Precondition | Side Effects |
@@ -367,13 +393,82 @@ stateDiagram-v2
 
 ### 3.4 Enumerations
 
-| Enum | Values | Description |
-|------|--------|-------------|
-| ChartStructureStatus | DRAFT, PUBLISHED, SUPERSEDED | ChartStructure lifecycle |
-| AccountingFramework | IFRS, GAAP, LOCAL, MGMT | Target accounting framework |
-| NodeType | GROUP, SUMMARY, LEAF | Node classification within hierarchy |
-| AccountChangeRequestType | CREATE, UPDATE, DEACTIVATE | GL account change type |
-| AccountChangeRequestStatus | PENDING, ACCEPTED, REJECTED | Request resolution state |
+#### ChartStructureStatus
+
+**Description:** Lifecycle state of a chart structure version.
+
+| Value | Description | Deprecated |
+|-------|-------------|------------|
+| `DRAFT` | Structure is being prepared; mutable. Nodes and mappings can be added, updated, or removed. | No |
+| `PUBLISHED` | Structure is active and locked. Available for reporting consumers. Immutable (BR-COA-004). | No |
+| `SUPERSEDED` | Structure has been replaced by a newer published version with the same code+framework. Retained for audit. | No |
+
+#### AccountingFramework
+
+**Description:** The accounting standard or reporting framework a chart structure targets. Inspired by SAP FI-GL chart of accounts types (operating chart, group chart, country chart).
+
+| Value | Description | Deprecated |
+|-------|-------------|------------|
+| `IFRS` | International Financial Reporting Standards. Used for consolidated, internationally comparable financial statements. Equivalent to SAP "group chart of accounts". | No |
+| `GAAP` | Generally Accepted Accounting Principles (US GAAP or equivalent national standard). Used for statutory reporting in jurisdictions following GAAP. | No |
+| `LOCAL` | Local/country-specific statutory chart (e.g., German SKR03/SKR04, French PCG). Equivalent to SAP "country chart of accounts". | No |
+| `MGMT` | Management reporting framework. Internal, non-statutory groupings used for cost center analysis, segment reporting, or executive dashboards. | No |
+
+#### NodeType
+
+**Description:** Classification of a chart node within the reporting hierarchy.
+
+| Value | Description | Deprecated |
+|-------|-------------|------------|
+| `GROUP` | Top-level grouping node (e.g., "Assets", "Liabilities & Equity", "Revenue"). Has no direct GL mappings. Contains SUMMARY or LEAF children. | No |
+| `SUMMARY` | Intermediate roll-up node (e.g., "Current Assets", "Non-Current Assets"). Aggregates child LEAF or SUMMARY nodes. No direct GL mappings. | No |
+| `LEAF` | Terminal node that carries NodeMappings to `fi.gl` posting account codes. Represents the lowest level of the reporting hierarchy (e.g., "Cash and Cash Equivalents", "Trade Receivables"). | No |
+
+#### AccountChangeRequestType
+
+**Description:** Type of GL account lifecycle change being requested from `fi.coa` to `fi.gl`.
+
+| Value | Description | Deprecated |
+|-------|-------------|------------|
+| `CREATE` | Request `fi.gl` to create a new posting account with the specified account code. | No |
+| `UPDATE` | Request `fi.gl` to update an existing posting account (e.g., change name, account group). | No |
+| `DEACTIVATE` | Request `fi.gl` to deactivate a posting account so it can no longer receive postings. | No |
+
+#### AccountChangeRequestStatus
+
+**Description:** Resolution state of an AccountChangeRequest.
+
+| Value | Description | Deprecated |
+|-------|-------------|------------|
+| `PENDING` | Request has been submitted to `fi.gl` and is awaiting processing. | No |
+| `ACCEPTED` | `fi.gl` has processed the request successfully. The GL account has been created, updated, or deactivated. | No |
+| `REJECTED` | `fi.gl` has rejected the request (e.g., duplicate account code, policy violation). | No |
+
+### 3.5 Shared Types
+
+#### EffectiveDateRange
+
+| Property | Value |
+|----------|-------|
+| **Type ID** | `type:effective-date-range` |
+| **Name** | `EffectiveDateRange` |
+
+**Description:** A date range representing the validity period of a versioned entity. Used across financial domain aggregates to control effective-dating of structures and configurations.
+
+**Attributes:**
+
+| Attribute | Type | Format | Description | Constraints |
+|-----------|------|--------|-------------|-------------|
+| validFrom | string | date | Effective start date (inclusive) | Required, ISO 8601 |
+| validTo | string | date | Effective end date (inclusive) | Optional; MUST be >= validFrom if provided |
+
+**Validation Rules:**
+- `validFrom` MUST be a valid ISO 8601 date
+- `validTo` MUST be >= `validFrom` when provided
+- If `validTo` is null, the range is open-ended (no expiry)
+
+**Used By:**
+- `agg:chart-structure` (validFrom, validTo attributes)
 
 ---
 
@@ -403,6 +498,52 @@ stateDiagram-v2
 - Message: `"A ChartStructure with code '{code}' and framework '{framework}' already exists for the given validity period."`
 - HTTP: 409 Conflict
 
+#### BR-COA-002: Node Code Unique Within Structure
+
+**Business Context:** Each chart node must be uniquely identifiable within its parent structure for unambiguous reporting reference and lookup. Duplicate codes would make it impossible to determine which node a mapping or report line refers to.
+
+**Rule Statement:** `ChartNode.code` MUST be unique within the scope of a single `ChartStructure`.
+
+**Applies To:**
+- Aggregate: ChartStructure (ChartNode child)
+- Operations: Create, Update
+
+**Enforcement:** Unique constraint at database level (`uq_coa_node_struct_code`) plus Application Service pre-check.
+
+**Validation Logic:** `if existsNodeWithCode(chartStructureId, code, excludeNodeId) throw DuplicateNodeCodeException`
+
+**Error Handling:**
+- **Error Code:** `COA-VAL-002`
+- **Error Message:** `"Node code '{code}' already exists in chart structure '{chartStructureId}'."`
+- **User action:** Choose a different node code or update the existing node.
+
+**Examples:**
+- **Valid:** Adding node code `"1100"` to a structure that does not yet contain a node with that code.
+- **Invalid:** Adding node code `"1000"` when a node with code `"1000"` already exists in the same structure.
+
+#### BR-COA-003: Admin-Only Publish
+
+**Business Context:** Publishing a chart structure makes it available for reporting and locks it permanently (BR-COA-004). This is a high-impact, irreversible operation that must be restricted to authorized finance administrators.
+
+**Rule Statement:** Only a principal with role `FI_COA_ADMIN` MAY transition a ChartStructure from DRAFT to PUBLISHED.
+
+**Applies To:**
+- Aggregate: ChartStructure
+- Operations: Publish
+
+**Enforcement:** Application Service checks principal roles from JWT claims before executing the publish command.
+
+**Validation Logic:** `if !currentPrincipal.hasRole('FI_COA_ADMIN') throw InsufficientPrivilegeException`
+
+**Error Handling:**
+- **Error Code:** `COA-BIZ-003`
+- **Error Message:** `"Only principals with role FI_COA_ADMIN may publish a chart structure."`
+- **User action:** Contact a Finance Administrator to publish the structure.
+
+**Examples:**
+- **Valid:** User with role `FI_COA_ADMIN` publishes a DRAFT structure.
+- **Invalid:** User with role `FI_COA_EDITOR` attempts to publish — rejected with 403.
+
 #### BR-COA-004: Published Structure Read-Only
 **Business Context:** Published chart structures serve as audit-stable reporting references. Once published, they must not change to ensure consistent historical reporting.
 **Rule Statement:** Once a ChartStructure transitions to PUBLISHED, no mutations MUST be permitted on the structure or its ChartNodes/NodeMappings.
@@ -414,17 +555,74 @@ stateDiagram-v2
 - Message: `"ChartStructure '{id}' is PUBLISHED and cannot be modified. Create a new version instead."`
 - HTTP: 409 Conflict
 
+#### BR-COA-005: Mapping Weight Sum
+
+**Business Context:** When a LEAF node maps to multiple GL accounts (proportional allocation), the weights should sum to 1.0 to ensure complete reporting coverage. A sum less than 1.0 means some portion of the account balance is unallocated; a sum greater than 1.0 means over-allocation.
+
+**Rule Statement:** When multiple NodeMappings exist for the same `nodeId`, their `weight` values SHOULD sum to 1.0.
+
+**Applies To:**
+- Value Object: NodeMapping
+- Operations: Create, Update
+
+**Enforcement:** Application Service emits a warning (not a hard error) when weight sum deviates from 1.0. See OQ-COA-004 for strictness decision.
+
+**Validation Logic:** `if sum(weights for nodeId) != 1.0 emit WARNING`
+
+**Error Handling:**
+- **Error Code:** `COA-WARN-005`
+- **Error Message:** `"NodeMapping weights for node '{nodeId}' sum to {actualSum}, expected 1.0. Reporting may be incomplete."`
+- **User action:** Adjust weights to sum to 1.0, or acknowledge the warning if intentional.
+
+**Examples:**
+- **Valid:** Two mappings with weights 0.6 and 0.4 (sum = 1.0).
+- **Warning:** Two mappings with weights 0.5 and 0.3 (sum = 0.8 — 20% unallocated).
+
+#### BR-COA-006: GL Account Ref Validity
+
+**Business Context:** NodeMappings reference `fi.gl` posting account codes. If a referenced account does not exist or is inactive, the mapping is unreliable for reporting purposes.
+
+**Rule Statement:** A `NodeMapping.glAccountRef` SHOULD reference an active GL account in `fi.gl`.
+
+**Applies To:**
+- Value Object: NodeMapping
+- Operations: Create, Update
+
+**Enforcement:** Async validation via consumed `fi.gl.account.created` and `fi.gl.account.statusChanged` events. Optionally validated synchronously via REST lookup (see OQ-COA-001).
+
+**Validation Logic:** `if !glAccountExists(glAccountRef) OR glAccountStatus != ACTIVE emit WARNING`
+
+**Error Handling:**
+- **Error Code:** `COA-WARN-006`
+- **Error Message:** `"GL account code '{glAccountRef}' could not be confirmed as active in fi.gl. Mapping may be invalid."`
+- **User action:** Verify the GL account code exists and is active in `fi.gl`.
+
+**Examples:**
+- **Valid:** Mapping to account code `"10100"` which is ACTIVE in `fi.gl`.
+- **Warning:** Mapping to account code `"99999"` which does not exist in `fi.gl`.
+
 ### 4.3 Data Validation Rules
+
+**Field-Level Validations:**
 
 | Field | Validation Rule | Error Code | Error Message |
 |-------|----------------|------------|---------------|
 | code (structure) | Required, max 50 chars, pattern `[A-Z0-9_-]+` | `COA-VAL-010` | `"Structure code is required (uppercase alphanumeric/dash/underscore, max 50)"` |
+| name (structure) | Required, max 255 chars | `COA-VAL-016` | `"Structure name is required (max 255 characters)"` |
 | validFrom | Required, ISO 8601 date | `COA-VAL-011` | `"Valid effective start date required"` |
 | validTo | Must be >= validFrom if provided | `COA-VAL-012` | `"Effective end date must be on or after start date"` |
 | framework | Required, valid enum | `COA-VAL-013` | `"Valid framework required (IFRS, GAAP, LOCAL, MGMT)"` |
 | nodeType | Required, valid enum | `COA-VAL-014` | `"Valid node type required (GROUP, SUMMARY, LEAF)"` |
 | code (node) | Required, max 50 chars, unique within structure | `COA-VAL-002` | `"Node code must be unique within the chart structure"` |
+| label (node) | Required, max 255 chars | `COA-VAL-017` | `"Node label is required (max 255 characters)"` |
+| glAccountRef | Required, max 50 chars | `COA-VAL-018` | `"GL account reference is required (max 50 characters)"` |
 | weight | 0 < weight <= 1.0 if provided | `COA-VAL-015` | `"Mapping weight must be between 0 (exclusive) and 1.0 (inclusive)"` |
+
+**Cross-Field Validations:**
+- `validTo` MUST be >= `validFrom` when both are provided (COA-VAL-012)
+- `code` + `framework` + overlapping `validFrom`/`validTo` MUST be unique per tenant (BR-COA-001)
+- `parentNodeId` MUST reference a node within the same `chartStructureId` (structural integrity)
+- NodeMappings SHOULD only be assigned to nodes with `nodeType = LEAF` (GROUP and SUMMARY nodes aggregate, not map directly)
 
 ### 4.4 Reference Data Dependencies
 
@@ -464,6 +662,34 @@ stateDiagram-v2
 | **Idempotency** | Client-supplied `Idempotency-Key` header; deduplicate on code+framework+validFrom per tenant |
 | **Errors** | 400 (validation), 409 (BR-COA-001 overlapping validity) |
 
+**Actor:** Finance Admin (FI_COA_EDITOR or FI_COA_ADMIN)
+
+**Preconditions:**
+- User has `fi.coa:write` scope
+- No existing ChartStructure with same code+framework has overlapping validity period
+
+**Main Flow:**
+1. Finance Admin submits POST request with code, framework, name, validFrom, and optional validTo
+2. System validates field-level rules (COA-VAL-010 through COA-VAL-013)
+3. Domain Service checks for overlapping validity periods (BR-COA-001)
+4. System creates ChartStructure in DRAFT state with `OlUuid.create()` as PK
+5. System publishes `ChartStructureCreated` event via outbox
+6. System returns 201 Created with the new ChartStructure
+
+**Postconditions:**
+- ChartStructure exists in DRAFT state
+- `ChartStructureCreated` event queued in outbox
+
+**Business Rules Applied:**
+- BR-COA-001: No Overlapping Validity
+
+**Alternative Flows:**
+- **Alt-1:** If validTo is omitted, the structure has an open-ended validity (no expiry)
+
+**Exception Flows:**
+- **Exc-1:** If overlapping validity detected, return 409 Conflict with COA-BIZ-001
+- **Exc-2:** If validation fails, return 400 Bad Request with COA-VAL-* codes
+
 #### UC-COA-002: Add / Update Chart Nodes
 
 | Field | Value |
@@ -479,6 +705,34 @@ stateDiagram-v2
 | **REST** | `POST /api/fi/coa/v1/chartStructures/{id}/nodes` → 201 Created |
 | **Idempotency** | Idempotency-Key header |
 | **Errors** | 404 (structure not found), 409 (BR-COA-004 published), 422 (BR-COA-002 duplicate node code) |
+
+**Actor:** Finance Admin (FI_COA_EDITOR or FI_COA_ADMIN)
+
+**Preconditions:**
+- Target ChartStructure exists and is in DRAFT state
+- User has `fi.coa:write` scope
+
+**Main Flow:**
+1. Finance Admin submits POST request with code, label, nodeType, optional parentNodeId and sortOrder
+2. System validates the target structure is in DRAFT state (BR-COA-004)
+3. System validates node code uniqueness within the structure (BR-COA-002)
+4. If parentNodeId is provided, system validates the parent node exists within the same structure
+5. System creates ChartNode under the target ChartStructure
+6. System returns 201 Created with the new ChartNode
+
+**Postconditions:**
+- ChartNode exists within the target structure's node tree
+
+**Business Rules Applied:**
+- BR-COA-002: Node Code Unique Within Structure
+- BR-COA-004: Published Structure Read-Only
+
+**Alternative Flows:**
+- **Alt-1:** If parentNodeId is null, the node becomes a root-level node in the structure
+
+**Exception Flows:**
+- **Exc-1:** If structure is PUBLISHED, return 409 Conflict with COA-BIZ-004
+- **Exc-2:** If duplicate node code, return 422 with COA-VAL-002
 
 #### UC-COA-003: Map Chart Nodes to GL Accounts
 
@@ -496,6 +750,35 @@ stateDiagram-v2
 | **Idempotency** | Idempotency-Key header |
 | **Errors** | 404 (structure or node not found), 409 (BR-COA-004 published), 422 (weight out of range, BR-COA-005 warning) |
 
+**Actor:** Finance Admin (FI_COA_EDITOR or FI_COA_ADMIN)
+
+**Preconditions:**
+- Target ChartStructure exists and is in DRAFT state
+- Target ChartNode exists and has nodeType LEAF
+
+**Main Flow:**
+1. Finance Admin submits POST request with glAccountRef and optional weight
+2. System validates the target structure is in DRAFT state (BR-COA-004)
+3. System validates weight range if provided (0 < weight <= 1.0)
+4. System creates NodeMapping on the target ChartNode
+5. System checks weight sum for the node and emits warning if not 1.0 (BR-COA-005)
+6. System validates glAccountRef against known `fi.gl` accounts (BR-COA-006, async)
+7. System publishes `NodeMappingChanged` event via outbox
+8. System returns 201 Created with the new NodeMapping
+
+**Postconditions:**
+- NodeMapping exists on the target ChartNode
+- `NodeMappingChanged` event queued in outbox
+
+**Business Rules Applied:**
+- BR-COA-004: Published Structure Read-Only
+- BR-COA-005: Mapping Weight Sum (warning)
+- BR-COA-006: GL Account Ref Validity (warning)
+
+**Exception Flows:**
+- **Exc-1:** If structure is PUBLISHED, return 409 Conflict with COA-BIZ-004
+- **Exc-2:** If weight out of range, return 422 with COA-VAL-015
+
 #### UC-COA-004: Publish Chart Structure Version
 
 | Field | Value |
@@ -511,6 +794,39 @@ stateDiagram-v2
 | **REST** | `POST /api/fi/coa/v1/chartStructures/{id}/publish` → 200 OK |
 | **Idempotency** | Idempotent (re-publish of PUBLISHED is no-op) |
 | **Errors** | 404, 403 (BR-COA-003 not ADMIN), 409 (not in DRAFT state, no nodes present) |
+
+**Actor:** Finance Admin (FI_COA_ADMIN only)
+
+**Preconditions:**
+- Target ChartStructure exists and is in DRAFT state
+- Structure contains at least one ChartNode
+- User has `fi.coa:admin` scope (BR-COA-003)
+
+**Main Flow:**
+1. Finance Admin submits POST request to publish the structure
+2. System validates the user has FI_COA_ADMIN role (BR-COA-003)
+3. System validates the structure is in DRAFT state
+4. System validates at least one ChartNode exists
+5. System transitions structure to PUBLISHED state
+6. System identifies any previous PUBLISHED structure with same code+framework and transitions it to SUPERSEDED
+7. System publishes `ChartStructurePublished` event; if supersession occurred, also `ChartStructureSuperseded`
+8. System returns 200 OK with the published ChartStructure
+
+**Postconditions:**
+- ChartStructure is in PUBLISHED state (immutable)
+- Previous active version (if any) is in SUPERSEDED state
+- Downstream consumers (`fi.rpt`, `bi`) are notified via events
+
+**Business Rules Applied:**
+- BR-COA-003: Admin-Only Publish
+- BR-COA-004: Published Structure Read-Only (enforced from this point forward)
+
+**Alternative Flows:**
+- **Alt-1:** If no previous PUBLISHED version exists, no supersession occurs
+
+**Exception Flows:**
+- **Exc-1:** If user lacks FI_COA_ADMIN role, return 403 Forbidden
+- **Exc-2:** If structure has no nodes, return 409 Conflict
 
 #### UC-COA-005: Submit GL Account Change Request
 
@@ -528,6 +844,32 @@ stateDiagram-v2
 | **Idempotency** | Idempotency-Key header |
 | **Errors** | 400 (validation), 404 (structure not found), 409 (PENDING request for same accountCode already exists) |
 
+**Actor:** Finance Admin (FI_COA_EDITOR or FI_COA_ADMIN)
+
+**Preconditions:**
+- Target ChartStructure exists
+- No PENDING AccountChangeRequest for the same accountCode already exists
+- User has `fi.coa:write` scope
+
+**Main Flow:**
+1. Finance Admin submits POST request with requestType, accountCode, and chartStructureId
+2. System validates no duplicate PENDING request exists for the same accountCode
+3. System creates AccountChangeRequest in PENDING state
+4. System publishes `AccountChangeRequestSubmitted` event via outbox
+5. `fi.gl` consumes the event and processes the request asynchronously
+6. System returns 201 Created with the new AccountChangeRequest
+
+**Postconditions:**
+- AccountChangeRequest exists in PENDING state
+- `fi.gl` has been notified via event to process the request
+
+**Business Rules Applied:**
+- No duplicate PENDING requests for the same accountCode
+
+**Exception Flows:**
+- **Exc-1:** If duplicate PENDING request exists, return 409 Conflict
+- **Exc-2:** If structure not found, return 404 Not Found
+
 #### UC-COA-006: Query Chart Structure for Reporting
 
 | Field | Value |
@@ -543,6 +885,22 @@ stateDiagram-v2
 | **REST** | `GET /api/fi/coa/v1/chartStructures?framework=IFRS&asOf=2026-01-01` → 200 OK |
 | **Idempotency** | Inherently idempotent (GET) |
 | **Errors** | 400 (invalid filter params) |
+
+**Actor:** Controller, Reporting Engineer, Auditor (FI_COA_VIEWER or above)
+
+**Preconditions:**
+- User has `fi.coa:read` scope
+
+**Main Flow:**
+1. Consumer submits GET request with optional filters (framework, asOf date, status)
+2. System queries read model with pagination
+3. System returns paginated list of ChartStructures with nested nodes and mappings
+
+**Postconditions:**
+- No state changes (read-only operation)
+
+**Business Rules Applied:**
+- None (read operation)
 
 ### 5.3 Process Flow Diagrams
 
@@ -569,6 +927,43 @@ sequenceDiagram
     COA-->>RPT: fi.coa.chartStructure.published
     RPT->>COA: GET /chartStructures?asOf=... (query mappings)
 ```
+
+### 5.4 Cross-Domain Workflows
+
+**Does this domain participate in multi-service workflows?** [X] YES
+
+#### Workflow: GL Account Change Request
+
+**Business Purpose:** Finance Admins request GL account lifecycle changes (create, update, deactivate) from `fi.coa`, which forwards the request to `fi.gl` for authoritative processing. This decouples chart structure maintenance from GL account lifecycle management.
+
+**Orchestration Pattern:** [X] Choreography (EDA)
+
+**Pattern Rationale:** The workflow involves two services (`fi.coa` and `fi.gl`) with a simple request-response pattern. `fi.gl` independently decides whether to accept or reject the request. No compensation or multi-step coordination is needed.
+
+**Participating Services:**
+
+| Service | Role | Responsibilities |
+|---------|------|------------------|
+| fi-coa-svc | Initiator | Creates AccountChangeRequest, publishes request event |
+| fi-gl-svc | Processor | Receives request, validates, creates/updates/deactivates GL account, publishes result event |
+
+**Workflow Steps:**
+1. **Step 1:** `fi.coa` creates AccountChangeRequest in PENDING state
+   - Success: Publishes `fi.coa.accountChangeRequest.submitted`
+   - Failure: Returns validation error to user
+
+2. **Step 2:** `fi.gl` consumes the request event and processes the GL account change
+   - Success: Publishes `fi.gl.account.created` or `fi.gl.account.statusChanged`
+   - Failure: Publishes rejection event (see OQ-COA-003)
+
+3. **Step 3:** `fi.coa` consumes the `fi.gl` response event
+   - Success: Updates AccountChangeRequest to ACCEPTED
+   - Rejection: Updates AccountChangeRequest to REJECTED
+
+**Business Implications:**
+- **Success Path:** GL account is created/updated/deactivated; NodeMappings referencing the account are confirmed valid
+- **Failure Path:** AccountChangeRequest remains PENDING until `fi.gl` responds; Finance Admin can check status
+- **Compensation:** None needed — `fi.gl` is authoritative; rejection is the final state
 
 ---
 
@@ -634,6 +1029,119 @@ sequenceDiagram
 | Add Chart Node | POST | `/chartStructures/{id}/nodes` | Add node to DRAFT structure | `FI_COA_EDITOR` | — |
 | List Chart Nodes | GET | `/chartStructures/{id}/nodes` | List all nodes in structure | `FI_COA_VIEWER` | — |
 | Get Node Mappings | GET | `/chartStructures/{id}/nodes/{nodeId}/mappings` | Get GL mappings for node | `FI_COA_VIEWER` | — |
+| Add Node Mapping | POST | `/chartStructures/{id}/nodes/{nodeId}/mappings` | Map LEAF node to GL account | `FI_COA_EDITOR` | `NodeMappingChanged` |
+
+**Add Chart Node — Request:**
+```http
+POST /api/fi/coa/v1/chartStructures/{id}/nodes
+Authorization: Bearer {token}
+Content-Type: application/json
+Idempotency-Key: {uuid}
+```
+
+```json
+{
+  "code": "1100",
+  "label": "Current Assets",
+  "nodeType": "SUMMARY",
+  "parentNodeId": "parent-uuid-or-null",
+  "sortOrder": 10
+}
+```
+
+**Add Chart Node — Response (201 Created):**
+```json
+{
+  "nodeId": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+  "chartStructureId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "code": "1100",
+  "label": "Current Assets",
+  "nodeType": "SUMMARY",
+  "parentNodeId": "parent-uuid",
+  "sortOrder": 10,
+  "_links": {
+    "self": { "href": "/api/fi/coa/v1/chartStructures/a1b2c3d4-.../nodes/b2c3d4e5-..." },
+    "mappings": { "href": "/api/fi/coa/v1/chartStructures/a1b2c3d4-.../nodes/b2c3d4e5-.../mappings" }
+  }
+}
+```
+
+**Business Rules Checked:**
+- BR-COA-002: Node Code Unique Within Structure
+- BR-COA-004: Published Structure Read-Only
+
+**Add Node Mapping — Request:**
+```http
+POST /api/fi/coa/v1/chartStructures/{id}/nodes/{nodeId}/mappings
+Authorization: Bearer {token}
+Content-Type: application/json
+Idempotency-Key: {uuid}
+```
+
+```json
+{
+  "glAccountRef": "10100",
+  "weight": 1.0
+}
+```
+
+**Add Node Mapping — Response (201 Created):**
+```json
+{
+  "mappingId": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+  "nodeId": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+  "glAccountRef": "10100",
+  "weight": 1.0,
+  "_links": {
+    "self": { "href": "/api/fi/coa/v1/chartStructures/.../nodes/.../mappings/c3d4e5f6-..." }
+  }
+}
+```
+
+**Business Rules Checked:**
+- BR-COA-004: Published Structure Read-Only
+- BR-COA-005: Mapping Weight Sum (warning)
+- BR-COA-006: GL Account Ref Validity (warning)
+
+**Events Published:**
+- `fi.coa.nodeMapping.changed`
+
+**Publish Chart Structure — Request:**
+```http
+POST /api/fi/coa/v1/chartStructures/{id}/publish
+Authorization: Bearer {token}
+```
+
+**Publish Chart Structure — Response (200 OK):**
+```json
+{
+  "chartStructureId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "code": "BS-IFRS",
+  "name": "IFRS Balance Sheet 2026",
+  "framework": "IFRS",
+  "status": "PUBLISHED",
+  "version": 2,
+  "updatedAt": "2026-01-15T14:00:00Z",
+  "_links": {
+    "self": { "href": "/api/fi/coa/v1/chartStructures/a1b2c3d4-..." }
+  }
+}
+```
+
+**Business Rules Checked:**
+- BR-COA-003: Admin-Only Publish
+- BR-COA-004: Published Structure Read-Only (enforced from this point)
+
+**Events Published:**
+- `fi.coa.chartStructure.published`
+- `fi.coa.chartStructure.superseded` (if previous version existed)
+
+**Response Headers:**
+- `ETag: "2"`
+
+**Error Responses:**
+- `403 Forbidden` — User lacks FI_COA_ADMIN role
+- `409 Conflict` — Structure not in DRAFT state or has no nodes
 
 #### Account Change Request Resource
 
@@ -641,8 +1149,58 @@ sequenceDiagram
 |----------|--------|------|---------|---------------|-----------------|
 | Submit Change Request | POST | `/accountChangeRequests` | Submit GL account change request | `FI_COA_EDITOR` | `AccountChangeRequestSubmitted` |
 | Get Change Request | GET | `/accountChangeRequests/{id}` | Retrieve request by ID | `FI_COA_VIEWER` | — |
+| List Change Requests | GET | `/accountChangeRequests` | List requests with filters | `FI_COA_VIEWER` | — |
 
-### 6.3 Error Responses
+**Submit Change Request — Request:**
+```http
+POST /api/fi/coa/v1/accountChangeRequests
+Authorization: Bearer {token}
+Content-Type: application/json
+Idempotency-Key: {uuid}
+```
+
+```json
+{
+  "chartStructureId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "requestType": "CREATE",
+  "accountCode": "10150"
+}
+```
+
+**Submit Change Request — Response (201 Created):**
+```json
+{
+  "requestId": "d4e5f6a7-b8c9-0123-def0-123456789abc",
+  "chartStructureId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "requestType": "CREATE",
+  "accountCode": "10150",
+  "requestedBy": "user-uuid-from-jwt",
+  "status": "PENDING",
+  "resolvedAt": null,
+  "_links": {
+    "self": { "href": "/api/fi/coa/v1/accountChangeRequests/d4e5f6a7-..." }
+  }
+}
+```
+
+**Business Rules Checked:**
+- No duplicate PENDING request for same accountCode
+
+**Events Published:**
+- `fi.coa.accountChangeRequest.submitted`
+
+**Error Responses:**
+- `400 Bad Request` — Validation error
+- `404 Not Found` — ChartStructure not found
+- `409 Conflict` — PENDING request for same accountCode already exists
+
+### 6.3 Business Operations
+
+**Beyond standard CRUD, this domain supports the following business operations:**
+
+- **Publish** (`POST /chartStructures/{id}/publish`): Transitions a DRAFT structure to PUBLISHED state. See Chart Structure Resource above.
+
+### 6.5 Error Responses
 
 | HTTP Status | Error Code | Description |
 |-------------|------------|-------------|
@@ -651,11 +1209,14 @@ sequenceDiagram
 | 403 | — | Insufficient role (e.g., non-ADMIN attempting publish) |
 | 404 | — | Resource not found |
 | 409 | `COA-BIZ-001`, `COA-BIZ-004` | Conflict (overlapping validity, published structure immutable) |
+| 412 | — | Precondition Failed — ETag mismatch (concurrent modification) |
 | 422 | `COA-BIZ-*` | Business rule violation |
 
-### 6.4 OpenAPI Specification
+### 6.6 OpenAPI Specification
+
 **Location:** `contracts/http/fi/coa/openapi.yaml`
-**OpenAPI Version:** 3.1.0
+**Version:** OpenAPI 3.1
+**Documentation URL:** `https://api.openleap.io/docs/fi/coa`
 
 ---
 
@@ -669,79 +1230,307 @@ sequenceDiagram
 
 **Exchange:** `fi.coa.events` (topic)
 
-#### ChartStructurePublished
-- **Routing Key:** `fi.coa.chartStructure.published`
-- **Business Meaning:** A chart structure version is now active and available for reporting use
-- **When Published:** DRAFT → PUBLISHED transition (UC-COA-004)
-- **Payload Schema:**
-```json
-{
-  "chartStructureId": "uuid",
-  "tenantId": "uuid",
-  "code": "BS-IFRS",
-  "framework": "IFRS",
-  "validFrom": "2026-01-01",
-  "validTo": "2026-12-31"
-}
-```
-- **Consumers:** fi.rpt (rebuild reporting model), bi (refresh dimension tables)
+#### Event: ChartStructure.Created
 
-#### ChartStructureSuperseded
-- **Routing Key:** `fi.coa.chartStructure.superseded`
-- **Business Meaning:** A previously active structure has been replaced by a newer version
-- **When Published:** PUBLISHED → SUPERSEDED transition (cascade from UC-COA-004)
-- **Payload Schema:**
-```json
-{
-  "chartStructureId": "uuid",
-  "tenantId": "uuid",
-  "code": "BS-IFRS",
-  "framework": "IFRS",
-  "supersededBy": "uuid"
-}
-```
-- **Consumers:** fi.rpt (archive old model), bi
+**Routing Key:** `fi.coa.chartStructure.created`
 
-#### NodeMappingChanged
-- **Routing Key:** `fi.coa.nodeMapping.changed`
-- **Business Meaning:** A LEAF node's GL account mapping has been added, updated, or removed
-- **When Published:** NodeMapping created/updated/deleted on DRAFT structure (UC-COA-003)
-- **Payload Schema:**
-```json
-{
-  "chartStructureId": "uuid",
-  "tenantId": "uuid",
-  "nodeId": "uuid",
-  "nodeCode": "string",
-  "glAccountRef": "string",
-  "changeType": "ADDED | UPDATED | REMOVED"
-}
-```
-- **Consumers:** fi.rpt (live mapping preview), validation monitors
+**Business Purpose:** Communicates that a new chart structure version has been created in DRAFT state.
 
-#### AccountChangeRequestSubmitted
-- **Routing Key:** `fi.coa.accountChangeRequest.submitted`
-- **Business Meaning:** Finance Admin has submitted a GL account create/update/deactivate request to fi.gl
-- **When Published:** AccountChangeRequest created in PENDING state (UC-COA-005)
-- **Payload Schema:**
+**When Published:** New ChartStructure created (UC-COA-001), after successful transaction commit.
+
+**Payload Structure:**
 ```json
 {
-  "requestId": "uuid",
-  "tenantId": "uuid",
-  "chartStructureId": "uuid",
-  "requestType": "CREATE | UPDATE | DEACTIVATE",
-  "accountCode": "string",
-  "requestedBy": "uuid"
+  "aggregateType": "fi.coa.chartStructure",
+  "changeType": "created",
+  "entityIds": ["chartStructureId-uuid"],
+  "version": 1,
+  "occurredAt": "2026-01-10T09:00:00Z"
 }
 ```
-- **Consumers:** fi.gl (process account change request)
+
+**Event Envelope:**
+```json
+{
+  "eventId": "evt-uuid",
+  "traceId": "trace-uuid",
+  "tenantId": "tenant-uuid",
+  "occurredAt": "2026-01-10T09:00:00Z",
+  "producer": "fi.coa",
+  "schemaRef": "https://schemas.openleap.io/fi/coa/chartStructure-created.schema.json",
+  "payload": {
+    "aggregateType": "fi.coa.chartStructure",
+    "changeType": "created",
+    "entityIds": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"],
+    "chartStructureId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "code": "BS-IFRS",
+    "framework": "IFRS",
+    "validFrom": "2026-01-01",
+    "version": 1,
+    "occurredAt": "2026-01-10T09:00:00Z"
+  }
+}
+```
+
+**Known Consumers:**
+
+| Consumer Service | Handler | Purpose | Processing Type |
+|-----------------|---------|---------|-----------------|
+| — | — | No known consumers for DRAFT creation events | — |
+
+#### Event: ChartStructure.Published
+
+**Routing Key:** `fi.coa.chartStructure.published`
+
+**Business Purpose:** Communicates that a chart structure version is now active and available for reporting use.
+
+**When Published:** DRAFT → PUBLISHED transition (UC-COA-004), after successful transaction commit.
+
+**Payload Structure:**
+```json
+{
+  "aggregateType": "fi.coa.chartStructure",
+  "changeType": "published",
+  "entityIds": ["chartStructureId-uuid"],
+  "version": 2,
+  "occurredAt": "2026-01-15T14:00:00Z"
+}
+```
+
+**Event Envelope:**
+```json
+{
+  "eventId": "evt-uuid",
+  "traceId": "trace-uuid",
+  "tenantId": "tenant-uuid",
+  "occurredAt": "2026-01-15T14:00:00Z",
+  "producer": "fi.coa",
+  "schemaRef": "https://schemas.openleap.io/fi/coa/chartStructure-published.schema.json",
+  "payload": {
+    "aggregateType": "fi.coa.chartStructure",
+    "changeType": "published",
+    "entityIds": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"],
+    "chartStructureId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "code": "BS-IFRS",
+    "framework": "IFRS",
+    "validFrom": "2026-01-01",
+    "validTo": "2026-12-31",
+    "version": 2,
+    "occurredAt": "2026-01-15T14:00:00Z"
+  }
+}
+```
+
+**Known Consumers:**
+
+| Consumer Service | Handler | Purpose | Processing Type |
+|-----------------|---------|---------|-----------------|
+| fi-rpt-svc | ChartStructurePublishedHandler | Rebuild reporting model from published structure | Async/Immediate |
+| bi-svc | CoaDimensionRefreshHandler | Refresh chart dimension tables for analytics | Async/Batch |
+
+#### Event: ChartStructure.Superseded
+
+**Routing Key:** `fi.coa.chartStructure.superseded`
+
+**Business Purpose:** Communicates that a previously active structure has been replaced by a newer published version.
+
+**When Published:** PUBLISHED → SUPERSEDED transition (cascade from UC-COA-004), after successful transaction commit.
+
+**Payload Structure:**
+```json
+{
+  "aggregateType": "fi.coa.chartStructure",
+  "changeType": "superseded",
+  "entityIds": ["chartStructureId-uuid"],
+  "version": 3,
+  "occurredAt": "2026-01-15T14:00:00Z"
+}
+```
+
+**Event Envelope:**
+```json
+{
+  "eventId": "evt-uuid",
+  "traceId": "trace-uuid",
+  "tenantId": "tenant-uuid",
+  "occurredAt": "2026-01-15T14:00:00Z",
+  "producer": "fi.coa",
+  "schemaRef": "https://schemas.openleap.io/fi/coa/chartStructure-superseded.schema.json",
+  "payload": {
+    "aggregateType": "fi.coa.chartStructure",
+    "changeType": "superseded",
+    "entityIds": ["old-structure-uuid"],
+    "chartStructureId": "old-structure-uuid",
+    "code": "BS-IFRS",
+    "framework": "IFRS",
+    "supersededBy": "new-structure-uuid",
+    "version": 3,
+    "occurredAt": "2026-01-15T14:00:00Z"
+  }
+}
+```
+
+**Known Consumers:**
+
+| Consumer Service | Handler | Purpose | Processing Type |
+|-----------------|---------|---------|-----------------|
+| fi-rpt-svc | ChartStructureSupersededHandler | Archive old reporting model version | Async/Immediate |
+| bi-svc | CoaDimensionArchiveHandler | Mark superseded dimension records | Async/Batch |
+
+#### Event: NodeMapping.Changed
+
+**Routing Key:** `fi.coa.nodeMapping.changed`
+
+**Business Purpose:** Communicates that a LEAF node's GL account mapping has been added, updated, or removed.
+
+**When Published:** NodeMapping created/updated/deleted on DRAFT structure (UC-COA-003), after successful transaction commit.
+
+**Payload Structure:**
+```json
+{
+  "aggregateType": "fi.coa.nodeMapping",
+  "changeType": "changed",
+  "entityIds": ["mappingId-uuid"],
+  "version": 1,
+  "occurredAt": "2026-01-12T11:00:00Z"
+}
+```
+
+**Event Envelope:**
+```json
+{
+  "eventId": "evt-uuid",
+  "traceId": "trace-uuid",
+  "tenantId": "tenant-uuid",
+  "occurredAt": "2026-01-12T11:00:00Z",
+  "producer": "fi.coa",
+  "schemaRef": "https://schemas.openleap.io/fi/coa/nodeMapping-changed.schema.json",
+  "payload": {
+    "aggregateType": "fi.coa.nodeMapping",
+    "changeType": "changed",
+    "entityIds": ["mapping-uuid"],
+    "chartStructureId": "structure-uuid",
+    "nodeId": "node-uuid",
+    "nodeCode": "1110",
+    "glAccountRef": "10100",
+    "mappingChangeType": "ADDED",
+    "version": 1,
+    "occurredAt": "2026-01-12T11:00:00Z"
+  }
+}
+```
+
+**Known Consumers:**
+
+| Consumer Service | Handler | Purpose | Processing Type |
+|-----------------|---------|---------|-----------------|
+| fi-rpt-svc | NodeMappingChangedHandler | Live mapping preview for draft structures | Async/Immediate |
+
+#### Event: AccountChangeRequest.Submitted
+
+**Routing Key:** `fi.coa.accountChangeRequest.submitted`
+
+**Business Purpose:** Communicates that a Finance Admin has submitted a GL account create/update/deactivate request to `fi.gl`.
+
+**When Published:** AccountChangeRequest created in PENDING state (UC-COA-005), after successful transaction commit.
+
+**Payload Structure:**
+```json
+{
+  "aggregateType": "fi.coa.accountChangeRequest",
+  "changeType": "submitted",
+  "entityIds": ["requestId-uuid"],
+  "version": 1,
+  "occurredAt": "2026-01-13T09:00:00Z"
+}
+```
+
+**Event Envelope:**
+```json
+{
+  "eventId": "evt-uuid",
+  "traceId": "trace-uuid",
+  "tenantId": "tenant-uuid",
+  "occurredAt": "2026-01-13T09:00:00Z",
+  "producer": "fi.coa",
+  "schemaRef": "https://schemas.openleap.io/fi/coa/accountChangeRequest-submitted.schema.json",
+  "payload": {
+    "aggregateType": "fi.coa.accountChangeRequest",
+    "changeType": "submitted",
+    "entityIds": ["request-uuid"],
+    "requestId": "request-uuid",
+    "chartStructureId": "structure-uuid",
+    "requestType": "CREATE",
+    "accountCode": "10150",
+    "requestedBy": "user-uuid",
+    "version": 1,
+    "occurredAt": "2026-01-13T09:00:00Z"
+  }
+}
+```
+
+**Known Consumers:**
+
+| Consumer Service | Handler | Purpose | Processing Type |
+|-----------------|---------|---------|-----------------|
+| fi-gl-svc | AccountChangeRequestHandler | Process GL account lifecycle change | Async/Immediate |
 
 ### 7.3 Consumed Events
 
-| Source Event | Source Service | Handler | Purpose | Queue |
-|-------------|---------------|---------|---------|-------|
-| `fi.gl.account.created` | fi-gl-svc | GlAccountCreatedHandler | Validate/confirm NodeMapping glAccountRef; mark pending mappings as confirmed | `fi.coa.in.gl.account` |
-| `fi.gl.account.statusChanged` | fi-gl-svc | GlAccountStatusChangedHandler | Detect if mapped GL accounts have been deactivated; emit warning or flag affected mappings | `fi.coa.in.gl.account` |
+#### Event: fi.gl.account.created
+
+**Source Service:** `fi.gl`
+
+**Routing Key:** `fi.gl.account.created`
+
+**Handler:** `GlAccountCreatedHandler`
+
+**Business Purpose:** Validates and confirms NodeMapping `glAccountRef` references. When `fi.gl` creates a new account (potentially in response to an AccountChangeRequest from `fi.coa`), this handler confirms the mapping reference is now valid and updates the corresponding AccountChangeRequest to ACCEPTED.
+
+**Processing Strategy:** [X] Background Enrichment [X] Read Model Update
+
+**Business Logic:**
+1. Look up all NodeMappings referencing the created `accountCode`
+2. Mark those mappings as "confirmed" (GL account exists)
+3. Look up any PENDING AccountChangeRequests with matching `accountCode` and `requestType = CREATE`
+4. Transition matching requests to ACCEPTED, set `resolvedAt`
+
+**Queue Configuration:**
+- Name: `fi.coa.in.fi.gl.account`
+- Durable: Yes
+- Auto-delete: No
+
+**Failure Handling:**
+- Retry: Up to 3 times with exponential backoff (1s, 2s, 4s)
+- Dead Letter: After max retries, move to `fi.coa.in.fi.gl.account.dlq` for manual intervention
+- Idempotency: Handler checks if request is already ACCEPTED before transitioning
+
+#### Event: fi.gl.account.statusChanged
+
+**Source Service:** `fi.gl`
+
+**Routing Key:** `fi.gl.account.statusChanged`
+
+**Handler:** `GlAccountStatusChangedHandler`
+
+**Business Purpose:** Detects if mapped GL accounts have been deactivated or blocked. Flags affected NodeMappings so Finance Admins can update their chart structures. Also resolves PENDING AccountChangeRequests for UPDATE/DEACTIVATE request types.
+
+**Processing Strategy:** [X] Background Enrichment
+
+**Business Logic:**
+1. Look up all NodeMappings referencing the changed `accountCode`
+2. If new status is DEACTIVATED or BLOCKED, flag affected mappings with a warning
+3. Look up any PENDING AccountChangeRequests with matching `accountCode`
+4. Transition matching requests to ACCEPTED or REJECTED based on the status change outcome
+
+**Queue Configuration:**
+- Name: `fi.coa.in.fi.gl.account`
+- Durable: Yes
+- Auto-delete: No
+
+**Failure Handling:**
+- Retry: Up to 3 times with exponential backoff (1s, 2s, 4s)
+- Dead Letter: After max retries, move to `fi.coa.in.fi.gl.account.dlq` for manual intervention
 
 ### 7.4 Event Flow Diagram
 
@@ -855,6 +1644,7 @@ erDiagram
 | valid_from | date | NOT NULL | — | Effective start date | — |
 | valid_to | date | NULL | — | Effective end date | CHECK(valid_to >= valid_from) |
 | status | text | NOT NULL | `'DRAFT'` | Lifecycle state | CHECK(status IN ('DRAFT','PUBLISHED','SUPERSEDED')) |
+| custom_fields | jsonb | NOT NULL | `'{}'` | Extensible custom fields (ADR-067) | GIN index |
 | version | integer | NOT NULL | 1 | Optimistic lock | — |
 | created_at | timestamptz | NOT NULL | `now()` | Creation timestamp | — |
 | updated_at | timestamptz | NOT NULL | `now()` | Last update | — |
@@ -866,12 +1656,25 @@ erDiagram
 | uq_coa_cs_tenant_code_fw_from | (tenant_id, code, framework, valid_from) | btree unique | — |
 | idx_coa_cs_tenant_status | (tenant_id, status) | btree | — |
 | idx_coa_cs_tenant_fw_valid | (tenant_id, framework, valid_from, valid_to) | btree | WHERE status = 'PUBLISHED' |
+| idx_coa_cs_custom_fields | (custom_fields) | GIN | — |
+
+**Relationships:**
+- To `coa_chart_nodes`: One-to-many via `chart_structure_id` FK
+- To `coa_account_change_requests`: One-to-many via `chart_structure_id` FK
+
+**Data Retention:**
+- PUBLISHED: Retained indefinitely (financial audit, regulatory compliance)
+- SUPERSEDED: 10 years, then archive and delete
+- DRAFT: May be deleted before publishing; no mandatory retention
 
 #### Table: `coa_chart_nodes`
+
+**Business Description:** Represents a single element in the reporting hierarchy (GROUP, SUMMARY, or LEAF node). Forms a tree via self-referencing `parent_node_id`.
 
 | Column | Type | Nullable | Default | Description | Constraints |
 |--------|------|----------|---------|-------------|-------------|
 | node_id | uuid | NOT NULL | `OlUuid.create()` | Primary key | PK |
+| tenant_id | uuid | NOT NULL | — | Tenant discriminator | RLS policy |
 | chart_structure_id | uuid | NOT NULL | — | Parent structure | FK to coa_chart_structures |
 | code | text | NOT NULL | — | Node code | Max 50; UNIQUE within structure |
 | label | text | NOT NULL | — | Display label | Max 255 |
@@ -886,11 +1689,22 @@ erDiagram
 | uq_coa_node_struct_code | (chart_structure_id, code) | btree unique | — |
 | idx_coa_node_struct_parent | (chart_structure_id, parent_node_id) | btree | — |
 
+**Relationships:**
+- To `coa_chart_structures`: Many-to-one via `chart_structure_id` FK
+- To `coa_chart_nodes` (self): Many-to-one via `parent_node_id` FK (tree structure)
+- To `coa_node_mappings`: One-to-many via `node_id` FK
+
+**Data Retention:**
+- Same as parent ChartStructure (cascade delete/archive)
+
 #### Table: `coa_node_mappings`
+
+**Business Description:** Maps a LEAF chart node to a `fi.gl` posting account code with optional proportional weight for split allocations.
 
 | Column | Type | Nullable | Default | Description | Constraints |
 |--------|------|----------|---------|-------------|-------------|
 | mapping_id | uuid | NOT NULL | `OlUuid.create()` | Primary key | PK |
+| tenant_id | uuid | NOT NULL | — | Tenant discriminator | RLS policy |
 | node_id | uuid | NOT NULL | — | Owning chart node | FK to coa_chart_nodes |
 | gl_account_ref | text | NOT NULL | — | GL account code reference | Max 50 |
 | weight | numeric(10,6) | NULL | NULL | Proportional weight | CHECK(weight > 0 AND weight <= 1.0) |
@@ -902,11 +1716,20 @@ erDiagram
 | idx_coa_map_node | (node_id) | btree | — |
 | uq_coa_map_node_glaccount | (node_id, gl_account_ref) | btree unique | — |
 
+**Relationships:**
+- To `coa_chart_nodes`: Many-to-one via `node_id` FK
+
+**Data Retention:**
+- Same as parent ChartNode/ChartStructure (cascade delete/archive)
+
 #### Table: `coa_account_change_requests`
+
+**Business Description:** Tracks GL account lifecycle change requests submitted by Finance Admins via `fi.coa` to `fi.gl` for authoritative processing.
 
 | Column | Type | Nullable | Default | Description | Constraints |
 |--------|------|----------|---------|-------------|-------------|
 | request_id | uuid | NOT NULL | `OlUuid.create()` | Primary key | PK |
+| tenant_id | uuid | NOT NULL | — | Tenant discriminator | RLS policy |
 | chart_structure_id | uuid | NOT NULL | — | Associated structure | FK to coa_chart_structures |
 | request_type | text | NOT NULL | — | GL change type | CHECK(request_type IN ('CREATE','UPDATE','DEACTIVATE')) |
 | account_code | text | NOT NULL | — | Target GL account code | Max 50 |
@@ -921,11 +1744,58 @@ erDiagram
 | idx_coa_acr_struct | (chart_structure_id) | btree | — |
 | idx_coa_acr_status | (status) | btree | WHERE status = 'PENDING' |
 
+**Relationships:**
+- To `coa_chart_structures`: Many-to-one via `chart_structure_id` FK
+
+**Data Retention:**
+- 7 years (financial audit compliance), then archive and delete
+
 #### Table: `coa_outbox_events`
 
-Standard outbox pattern per platform guidelines (ADR-013).
+**Business Description:** Transactional outbox for reliable event publishing per ADR-013. Events are written atomically with the business transaction and published asynchronously by the outbox poller.
 
-### 8.4 Data Retention
+| Column | Type | Nullable | Default | Description | Constraints |
+|--------|------|----------|---------|-------------|-------------|
+| event_id | uuid | NOT NULL | `OlUuid.create()` | Primary key | PK |
+| tenant_id | uuid | NOT NULL | — | Tenant discriminator | — |
+| aggregate_type | text | NOT NULL | — | Aggregate type (e.g., `fi.coa.chartStructure`) | — |
+| aggregate_id | uuid | NOT NULL | — | Aggregate instance ID | — |
+| event_type | text | NOT NULL | — | Event type (e.g., `published`) | — |
+| routing_key | text | NOT NULL | — | AMQP routing key | — |
+| payload | jsonb | NOT NULL | — | Event payload (thin: IDs + changeType per ADR-011) | — |
+| created_at | timestamptz | NOT NULL | `now()` | Event creation timestamp | — |
+| published_at | timestamptz | NULL | — | When event was published to broker | NULL = not yet published |
+
+**Indexes:**
+
+| Index Name | Columns | Type | Condition |
+|------------|---------|------|-----------|
+| idx_coa_outbox_unpublished | (created_at) | btree | WHERE published_at IS NULL |
+
+**Data Retention:**
+- 30 days after `published_at`, then delete
+
+### 8.4 Reference Data Dependencies
+
+**External Catalogs Required:**
+
+| Catalog | Source Service | Fields Referencing | Validation |
+|---------|----------------|-------------------|------------|
+| GL Account Codes | fi-gl-svc (T3) | `gl_account_ref` in `coa_node_mappings` | Code existence; active status preferred (eventual consistency) |
+| IAM Principals | iam-svc (T1) | `requested_by` in `coa_account_change_requests` | Principal existence via JWT claims |
+| Tenants | cfg-svc (T1) | `tenant_id` (all tables) | Tenant existence via RLS context |
+
+**Internal Code Lists:**
+
+| Catalog | Managed By | Usage |
+|---------|-----------|-------|
+| ChartStructureStatus | This service | Lifecycle states (DRAFT, PUBLISHED, SUPERSEDED) |
+| AccountingFramework | This service | Framework classification (IFRS, GAAP, LOCAL, MGMT) |
+| NodeType | This service | Node classification (GROUP, SUMMARY, LEAF) |
+| AccountChangeRequestType | This service | Request types (CREATE, UPDATE, DEACTIVATE) |
+| AccountChangeRequestStatus | This service | Request states (PENDING, ACCEPTED, REJECTED) |
+
+### 8.5 Data Retention
 
 | Entity | Retention Period | Legal Basis | Action After Expiry |
 |--------|-----------------|-------------|---------------------|
@@ -942,13 +1812,17 @@ Standard outbox pattern per platform guidelines (ADR-013).
 
 ### 9.1 Data Classification
 
-| Data Element | Classification | Protection |
-|--------------|----------------|------------|
-| Chart Structure ID / Code | Internal | Multi-tenancy isolation |
-| GL Account Ref | Internal | RLS, audit trail |
-| Node Labels / Structure Names | Internal | RLS |
-| AccountChangeRequest details | Confidential (Finance) | RLS, ADMIN access |
-| requestedBy (principal ID) | Confidential | RLS, IAM-managed |
+**Overall Classification:** Internal
+
+**Sensitivity Levels:**
+
+| Data Element | Classification | Rationale | Protection Measures |
+|--------------|----------------|-----------|---------------------|
+| Chart Structure ID / Code | Internal | Technical and business identifier | Multi-tenancy isolation (RLS) |
+| GL Account Ref | Internal | Reference to external GL account codes | RLS, audit trail |
+| Node Labels / Structure Names | Internal | Business naming of reporting groups | RLS |
+| AccountChangeRequest details | Confidential | Contains finance workflow data and principal references | RLS, role-based access (ADMIN), audit trail |
+| requestedBy (principal ID) | Confidential | Personal identifier reference | RLS, IAM-managed, not PII itself (UUID reference) |
 
 ### 9.2 Access Control
 
@@ -1009,12 +1883,21 @@ Standard outbox pattern per platform guidelines (ADR-013).
 | Chart structure writes/day | 1,000 (low-frequency admin operations) |
 | Peak concurrent reporting consumers | 200 |
 
-### 10.3 Availability
+### 10.3 Availability & Reliability
 
 | Metric | Target |
 |--------|--------|
-| Uptime SLA | 99.9% |
+| Uptime SLA | 99.9% (excludes planned maintenance) |
 | Planned maintenance window | Sunday 02:00–04:00 UTC |
+
+**Failure Scenarios:**
+
+| Scenario | Impact | Mitigation |
+|----------|--------|------------|
+| Database failure | Service unavailable; no reads or writes | Automatic failover to PostgreSQL replica; RTO < 15 min |
+| Message broker outage | Event publishing paused; chart publishes succeed but downstream notification delayed | Outbox pattern (ADR-013) retries when broker recovers; no data loss |
+| fi-gl-svc unavailable | GL account ref validation degraded; AccountChangeRequests remain PENDING | Allow mapping with warning (BR-COA-006); re-validate on next fi.gl event |
+| fi-rpt-svc unavailable | Reporting model not updated on publish | fi.rpt consumes events independently; catches up when available |
 
 ### 10.4 Recovery Objectives
 
@@ -1031,6 +1914,16 @@ Standard outbox pattern per platform guidelines (ADR-013).
 | Horizontal scaling | Stateless application instances behind load balancer |
 | Read scaling | Read replicas for reporting query load |
 | Event throughput | Partitioned topic by `tenantId` |
+
+**Capacity Planning:**
+
+| Metric | Estimate |
+|--------|----------|
+| Chart structures per tenant | 10–50 (across frameworks and periods) |
+| Nodes per structure | 50–500 (typical balance sheet: ~100; full P&L: ~300) |
+| Mappings per structure | 100–2,000 (one per LEAF node, sometimes multiple) |
+| Data growth | ~500 KB per structure version per tenant |
+| Event volume | < 100 events/day per tenant (low-frequency admin operations) |
 
 ### 10.6 Maintainability
 
@@ -1060,45 +1953,202 @@ This section answers: "Which features depend on this service?" It is the inverse
 | F-FI-TBD | Query Chart for Reporting | fi | core | sync_api | planned |
 | F-FI-TBD | Submit GL Account Change | fi | supporting | sync_api + async_event | planned |
 
+### 11.3 Endpoints Used per Feature
+
+> OPEN QUESTION: See Q-COA-005 in §14.3. Endpoint-to-feature mapping will be finalized when feature specs are authored.
+
+#### Feature: F-FI-TBD — Manage Chart Structures
+
+| Endpoint | Method | Purpose | Is Mutation | Failure Mode |
+|----------|--------|---------|-------------|-------------|
+| `/api/fi/coa/v1/chartStructures` | POST | Create DRAFT structure | Yes | Show error, allow retry |
+| `/api/fi/coa/v1/chartStructures/{id}` | GET | Retrieve structure detail | No | Show empty state |
+| `/api/fi/coa/v1/chartStructures/{id}` | PATCH | Update DRAFT structure fields | Yes | Show conflict resolution |
+| `/api/fi/coa/v1/chartStructures` | GET | List structures with filters | No | Show empty state |
+
+#### Feature: F-FI-TBD — Map Nodes to GL Accounts
+
+| Endpoint | Method | Purpose | Is Mutation | Failure Mode |
+|----------|--------|---------|-------------|-------------|
+| `/api/fi/coa/v1/chartStructures/{id}/nodes` | POST | Add chart node | Yes | Show error, allow retry |
+| `/api/fi/coa/v1/chartStructures/{id}/nodes` | GET | List nodes in structure | No | Show empty state |
+| `/api/fi/coa/v1/chartStructures/{id}/nodes/{nodeId}/mappings` | POST | Add GL mapping | Yes | Show error, allow retry |
+| `/api/fi/coa/v1/chartStructures/{id}/nodes/{nodeId}/mappings` | GET | List mappings for node | No | Show empty state |
+
+### 11.4 BFF Aggregation Hints
+
+| Feature ID | BFF View-Model Field | Source Endpoint | Caching | Notes |
+|------------|---------------------|-----------------|---------|-------|
+| F-FI-TBD (Manage) | `chartStructure` | `GET /api/fi/coa/v1/chartStructures/{id}` | 5 min | Combine with fi.gl account names for mapping display |
+| F-FI-TBD (Query) | `reportingStructure` | `GET /api/fi/coa/v1/chartStructures?framework=IFRS&asOf=...` | 10 min | Used by fi.rpt BFF for reporting tree |
+
+### 11.5 Impact Assessment
+
+| Endpoint / Event | Breaking Change Planned | Affected Features | Migration Plan |
+|-----------------|------------------------|-------------------|----------------|
+| — | None planned | — | — |
+
 ---
 
 ## 12. Extension Points
 
 ### 12.1 Purpose
-Extension points follow the Open-Closed Principle: the service is open for extension via events and hooks, closed for direct modification.
 
-### 12.2 Extension Events
+This section defines all hooks available for product-level customization of this service. Products can listen to extension events, register aggregate hooks, add custom fields, define extension rules, or add custom actions — all without modifying the core platform service. Extension points follow the Open-Closed Principle: the service is open for extension but closed for modification.
 
-| Event ID | Routing Key | Trigger | Payload | Purpose |
-|----------|-------------|---------|---------|---------|
-| EXT-COA-001 | `fi.coa.chartStructure.published` | Structure published | Full structure snapshot | External reporting systems, ERP sync, BI dimension refresh |
-| EXT-COA-002 | `fi.coa.nodeMapping.changed` | Mapping updated | Node + mapping delta | Live preview tools, BI pipeline incremental refresh |
-| EXT-COA-003 | `fi.coa.accountChangeRequest.submitted` | Change request created | Request details | Workflow notifications, GL approval queue integration |
+### 12.2 Custom Fields (extension-field)
 
-### 12.3 Aggregate Hooks
+#### Custom Fields: ChartStructure
+
+**Extensible:** Yes
+**Rationale:** ChartStructure is the primary aggregate and customer deployments may need to attach metadata such as regulatory reference codes, internal department codes, or ERP migration identifiers.
+
+**Storage:** `custom_fields JSONB` column on `coa_chart_structures`
+
+**API Contract:**
+- Custom fields included in aggregate REST responses under `customFields: { ... }`
+- Custom fields accepted in create/update request bodies under `customFields: { ... }`
+- Validation failures return HTTP 422
+
+**Field-Level Security:** Custom field definitions carry `readPermission` and `writePermission`. The BFF MUST filter custom fields based on the user's permissions.
+
+**Event Propagation:** Custom field values included in event payload under `customFields`.
+
+**Extension Candidates:**
+- Regulatory reference code (e.g., BaFin reporting code, SEC filing reference)
+- Internal department/cost center ownership code
+- ERP migration source system identifier
+- External audit firm reference code
+
+#### Custom Fields: ChartNode
+
+**Extensible:** No
+**Rationale:** ChartNode is a child entity within the aggregate boundary. Custom metadata at the node level adds complexity without clear product-level need. If needed in the future, this decision can be revisited.
+
+#### Custom Fields: AccountChangeRequest
+
+**Extensible:** No
+**Rationale:** AccountChangeRequest is a workflow entity with a short lifecycle (PENDING → ACCEPTED/REJECTED). Custom fields on transient workflow entities add complexity without benefit.
+
+### 12.3 Extension Events
+
+| Event ID | Routing Key | Trigger | Payload | Extension Purpose |
+|----------|-------------|---------|---------|-------------------|
+| EXT-COA-001 | `fi.coa.ext.post-publish` | Structure published | chartStructureId, code, framework, validFrom, validTo | External reporting systems, ERP sync, BI dimension refresh |
+| EXT-COA-002 | `fi.coa.ext.post-mapping-change` | Mapping updated | chartStructureId, nodeId, glAccountRef, changeType | Live preview tools, BI pipeline incremental refresh |
+| EXT-COA-003 | `fi.coa.ext.post-change-request` | Change request created | requestId, requestType, accountCode | Workflow notifications, GL approval queue integration |
+
+**Extension Event Contract:**
+```json
+{
+  "eventId": "uuid",
+  "extensionPoint": "post-publish",
+  "tenantId": "uuid",
+  "occurredAt": "2026-01-15T14:00:00Z",
+  "producer": "fi.coa",
+  "payload": {
+    "aggregateId": "uuid",
+    "aggregateType": "ChartStructure",
+    "context": {
+      "code": "BS-IFRS",
+      "framework": "IFRS",
+      "validFrom": "2026-01-01",
+      "validTo": "2026-12-31"
+    }
+  }
+}
+```
+
+**Design Rules:**
+- Extension events MUST be fire-and-forget (no blocking the core flow)
+- Extension events SHOULD include enough context for the consumer to act without callbacks
+- Extension events MUST NOT carry sensitive data beyond what the consumer role can access
+
+### 12.4 Extension Rules
+
+| Rule Slot ID | Aggregate | Lifecycle Point | Default Behavior | Product Override |
+|-------------|-----------|----------------|-----------------|-----------------|
+| RULE-COA-001 | ChartStructure | Pre-Publish validation | Platform validates: at least one node, ADMIN role, DRAFT state | Product can add: mandatory GL account coverage checks, minimum node count, framework-specific validation |
+| RULE-COA-002 | NodeMapping | Pre-Create validation | Platform validates: weight range, DRAFT state | Product can add: GL account whitelist/blacklist per framework, mandatory weight specification |
+
+### 12.5 Extension Actions
+
+| Action ID | Aggregate | Action Name | Description | Surface |
+|-----------|-----------|-------------|-------------|---------|
+| ACT-COA-001 | ChartStructure | Export to Legacy | Export structure to CSV/Excel for legacy ERP import | Button on structure detail screen |
+| ACT-COA-002 | ChartStructure | Compare Versions | Side-by-side comparison of two structure versions | Button on structure list screen |
+| ACT-COA-003 | ChartStructure | Clone Structure | Create a new DRAFT structure by copying an existing one | Button on structure detail screen |
+
+### 12.6 Aggregate Hooks
 
 | Hook ID | Aggregate | Lifecycle Point | Hook Type | Description |
 |---------|-----------|-----------------|-----------|-------------|
-| HOOK-COA-001 | ChartStructure | Pre-Publish | validation | Custom tenant-specific validation rules (e.g., mandatory node coverage for specific accounts) |
-| HOOK-COA-002 | ChartStructure | Post-Publish | notification | Notify reporting stakeholders via preferred channel (email, Slack) |
+| HOOK-COA-001 | ChartStructure | Pre-Publish | validation | Custom tenant-specific validation rules (e.g., mandatory node coverage for specific accounts, minimum depth requirements) |
+| HOOK-COA-002 | ChartStructure | Post-Publish | notification | Notify reporting stakeholders via preferred channel (email, Slack, Teams) |
 | HOOK-COA-003 | AccountChangeRequest | Post-Submit | notification | Notify GL Admin of pending account change request |
+| HOOK-COA-004 | ChartStructure | Pre-Create | enrichment | Auto-populate default node template based on framework (e.g., standard IFRS balance sheet skeleton) |
+
+**Hook Contract:**
+
+```
+Hook ID:       HOOK-COA-001
+Aggregate:     ChartStructure
+Trigger:       pre-publish
+Input:         ChartStructure aggregate (id, code, framework, nodes[], mappings[])
+Output:        List<ValidationError> (empty = pass)
+Timeout:       2000ms
+Failure Mode:  fail-closed (block publish on timeout)
+```
+
+```
+Hook ID:       HOOK-COA-002
+Aggregate:     ChartStructure
+Trigger:       post-publish
+Input:         ChartStructure aggregate (id, code, framework, validFrom, validTo)
+Output:        void
+Timeout:       5000ms
+Failure Mode:  fail-open (log and continue)
+```
 
 **Design Rules:**
-- Hooks are fire-and-forget (notification) or bounded-timeout (validation: 2s)
-- Validation hooks fail-closed (block on timeout)
-- Notification hooks fail-open (log and continue)
-- Hooks MUST NOT modify aggregate state directly
+- Hooks MUST have a bounded timeout to prevent degrading core service performance
+- `fail-open` hooks: failure is logged but does not block the operation
+- `fail-closed` hooks: failure aborts the operation and returns an error
+- Hooks MUST NOT modify aggregate state directly; they return instructions to the core
 
-### 12.4 Extension Points Summary
+### 12.7 Extension API Endpoints
+
+| Endpoint | Method | Purpose | Auth Scope | Notes |
+|----------|--------|---------|------------|-------|
+| `/api/fi/coa/v1/extensions/{hook-name}` | POST | Register extension handler | `fi.coa:admin` | Product registers its callback URL |
+| `/api/fi/coa/v1/extensions/{hook-name}/config` | GET/PUT | Extension configuration | `fi.coa:admin` | Per-tenant extension settings |
+
+### 12.8 Extension Points Summary & Guidelines
 
 | ID | Type | Aggregate | Lifecycle Point | Fail Mode | Timeout |
 |----|------|-----------|-----------------|-----------|---------|
-| EXT-COA-001 | event | ChartStructure | published | n/a | n/a |
-| EXT-COA-002 | event | ChartNode | mapping changed | n/a | n/a |
-| EXT-COA-003 | event | AccountChangeRequest | submitted | n/a | n/a |
-| HOOK-COA-001 | validation | ChartStructure | pre-publish | fail-closed | 2s |
-| HOOK-COA-002 | notification | ChartStructure | post-publish | fail-open | 5s |
-| HOOK-COA-003 | notification | AccountChangeRequest | post-submit | fail-open | 5s |
+| EXT-COA-001 | extension-event | ChartStructure | post-publish | fire-and-forget | N/A |
+| EXT-COA-002 | extension-event | ChartNode | post-mapping-change | fire-and-forget | N/A |
+| EXT-COA-003 | extension-event | AccountChangeRequest | post-change-request | fire-and-forget | N/A |
+| RULE-COA-001 | extension-rule | ChartStructure | pre-publish | fail-closed | 2s |
+| RULE-COA-002 | extension-rule | NodeMapping | pre-create | fail-closed | 1s |
+| ACT-COA-001 | extension-action | ChartStructure | user-initiated | fire-and-forget | N/A |
+| ACT-COA-002 | extension-action | ChartStructure | user-initiated | fire-and-forget | N/A |
+| ACT-COA-003 | extension-action | ChartStructure | user-initiated | fire-and-forget | N/A |
+| HOOK-COA-001 | aggregate-hook | ChartStructure | pre-publish | fail-closed | 2s |
+| HOOK-COA-002 | aggregate-hook | ChartStructure | post-publish | fail-open | 5s |
+| HOOK-COA-003 | aggregate-hook | AccountChangeRequest | post-submit | fail-open | 5s |
+| HOOK-COA-004 | aggregate-hook | ChartStructure | pre-create | fail-open | 3s |
+| CF-COA-001 | extension-field | ChartStructure | all operations | N/A | N/A |
+
+**Guidelines for Product Teams:**
+1. **Prefer extension events** for asynchronous reactions that do not need to influence the core operation result.
+2. **Use aggregate hooks** when the product needs to validate, enrich, or gate a core operation.
+3. **Use extension rules** for product-specific business validations beyond platform defaults.
+4. **Register via extension API** to enable/disable extensions per tenant at runtime.
+5. **Test extensions in isolation** using the extension event contracts and hook contracts defined above.
+6. **Version your extensions** — when the core service publishes a new extension event schema version, adapt accordingly.
+7. **Custom fields MUST NOT store business-critical data** — they are for product-specific additions only.
 
 ---
 
@@ -1131,10 +2181,13 @@ If migrating from an existing CoA system, structures MUST be imported in DRAFT s
 
 | Check | Status | Notes |
 |-------|--------|-------|
-| Every WRITE endpoint maps to exactly one use case | Yes | UC-COA-001 through UC-COA-005 |
-| Events in use cases appear in section 7 with schema refs | Yes | All events documented |
-| Business rules referenced in aggregate invariants | Yes | BR-COA-001 through BR-COA-006 |
-| All aggregates have lifecycle states + transitions | Yes | ChartStructure, ChartNode, AccountChangeRequest |
+| Every REST WRITE endpoint maps to exactly one WRITE use case | Pass | POST /chartStructures → UC-COA-001; POST .../nodes → UC-COA-002; POST .../mappings → UC-COA-003; POST .../publish → UC-COA-004; POST /accountChangeRequests → UC-COA-005 |
+| Every WRITE use case maps to exactly one domain operation | Pass | Each UC maps to a single aggregate method |
+| Events listed in use cases appear in §7 with schema refs | Pass | ChartStructureCreated, ChartStructurePublished, ChartStructureSuperseded, NodeMappingChanged, AccountChangeRequestSubmitted — all in §7.2 with envelope format |
+| Persistence and multitenancy assumptions consistent | Pass | All tables have tenant_id, RLS enforced, dual-key pattern (UUID PK + business key UK) |
+| No chapter contradicts another | Pass | Choreography pattern consistent across §5.4 and §7.1 |
+| Feature dependencies (§11) align with feature spec SS5 refs | N/A | Feature specs not yet authored (Phase 3); §11 uses TBD placeholders |
+| Extension points (§12) do not duplicate integration events (§7) | Pass | §12.3 extension events use distinct `ext.*` routing keys; §7.2 integration events use standard routing keys |
 
 ### 14.2 Decisions & Conflicts
 
@@ -1152,6 +2205,9 @@ If migrating from an existing CoA system, structures MUST be imported in DRAFT s
 | OQ-COA-002 | Port assignment for fi-coa-svc | Deployment | Follow platform port registry | Architecture Team |
 | OQ-COA-003 | Should AccountChangeRequest resolution (ACCEPTED/REJECTED) be driven by fi.gl publishing an event or by a REST callback? | Determines integration pattern | 1) Event-driven (fi.gl.account.created implies ACCEPTED), 2) REST callback from fi.gl | FI Domain Team |
 | OQ-COA-004 | Should NodeMapping weight validation (sum to 1.0) be MUST or SHOULD? | Strictness affects Finance Admin UX | 1) Hard validation (MUST), 2) Warning only (SHOULD, current) | Finance Product Owner |
+| OQ-COA-005 | Which feature IDs depend on fi-coa-svc endpoints? | Feature dependency register (§11) incomplete until Phase 3 feature specs are authored | Populate during FI feature spec authoring | FI Feature Team |
+| OQ-COA-006 | Should ChartNode be extensible with custom_fields? | Some deployments may need extra metadata on nodes (e.g., regulatory tag, department code) | 1) Keep non-extensible (current), 2) Add custom_fields to coa_chart_nodes | Architecture Team |
+| OQ-COA-007 | Should fi.coa support bulk import of chart nodes from CSV/Excel? | Initial setup of large chart structures is labor-intensive | 1) REST-only (current), 2) Add bulk import endpoint, 3) Offline tool + REST | Finance Product Owner |
 
 ### 14.4 Architecture Decision Records
 
@@ -1170,6 +2226,13 @@ If migrating from an existing CoA system, structures MUST be imported in DRAFT s
 **Consequences:**
 - Positive: Loose coupling, independent deployability, clear audit trail
 - Negative: GL account ref validation is eventually consistent (not transactional)
+
+### 14.5 Suite-Level ADR References
+
+| Suite ADR | Title | Relevance to This Service |
+|-----------|-------|---------------------------|
+| ADR-FI-001 | GL Owns Posting Accounts | fi.coa references GL accounts by code, not UUID FK; fi.gl is authoritative |
+| ADR-FI-002 | Choreography for FI Inter-Domain Events | fi.coa publishes events; consumers react independently (no saga orchestration needed for chart lifecycle) |
 
 ---
 
@@ -1196,14 +2259,27 @@ If migrating from an existing CoA system, structures MUST be imported in DRAFT s
 | External | IFRS Foundation (chart of accounts standards), HGB/German GAAP (Kontenrahmen SKR03/SKR04) |
 | Schema | `contracts/http/fi/coa/openapi.yaml`, `contracts/events/fi/coa/*.schema.json` |
 
-### 15.3 Change Log
+### 15.3 Status Output Requirements
+
+> When this spec is updated, the following artifacts MUST be produced:
+
+**Required Output Files:**
+
+| File | Purpose | When Required |
+|------|---------|---------------|
+| Updated spec file | The modified specification | Always |
+| `status/fi_coa-spec-changelog.md` | Structured change log | Always |
+| `status/fi_coa-spec-open-questions.md` | Open questions list | If any open questions exist |
+
+### 15.4 Change Log
 
 | Date | Version | Author | Changes |
 |------|---------|--------|---------|
+| 2026-04-04 | 3.0 | Architecture Team | Full TPL-SVC v1.0.0 compliance upgrade: expanded §3.4 enumerations with per-value tables, added §3.5 Shared Types, added detailed BR definitions (BR-COA-002/003/005/006), added cross-field validations, added UC detail flows (Actor/Preconditions/Main Flow/Postconditions), added §5.4 Cross-Domain Workflows, expanded §6 REST with full request/response for all endpoints and §6.3 Business Operations, added event envelope format to all §7.2 events, expanded §7.3 consumed events with queue config and failure handling, added tenant_id + custom_fields to tables, expanded outbox table definition, added §8.4 Reference Data Dependencies, added §10 failure scenarios and capacity planning, expanded §11 with endpoint mapping and BFF hints, expanded §12 to cover all 5 extension types (custom fields, events, rules, actions, hooks), added §14.5 Suite-Level ADR References, added §15.3 Status Output Requirements; compliance raised to ~95% |
 | 2026-04-04 | 2.0 | Architecture Team | Full upgrade to TPL-SVC v1.0.0 compliance — added §2 Service Identity, §4 Business Rules (catalog + detailed definitions), §5 Use Cases (6 canonical UCs), expanded §6 REST API with endpoint tables + request/response examples, §7 Events with full payload schemas, §8 Data Model (table-level with columns, constraints, indexes), §9 Security with permission matrix, §10 Quality Attributes, §11 Feature Dependencies, §12 Extension Points, §13 Migration Notes, §14 Decisions & Open Questions (incl. ADRs); compliance raised to ~92% |
 | 2026-01-19 | 1.0 | Architecture Team | Initial draft (~35% compliance) |
 
-### 15.4 Document Review & Approval
+### 15.5 Document Review & Approval
 
 | Role | Name | Date | Status |
 |------|------|------|--------|
