@@ -8,8 +8,8 @@
 
 > **CAPABILITY MOVES (2026-04-18):** The following CRM-owned domains are being promoted to the platform tier because they are consumed cross-suite (see `T3_Domains/TKS/_tks_suite.md` ADR-TKS-005):
 >
-> - `crm.ntf` → `shared.ntf` (T2) — see `T2_SharedBusiness/domain-specs/shared_ntf-spec.md`
-> - `crm.wf` → `shared.wf` (T2) — see `T2_SharedBusiness/domain-specs/shared_wf-spec.md`
+> - `crm.ntf` → `auto.ntf` (T2) — see `T2_Common/domain-specs/auto_ntf-spec.md`
+> - `crm.wf` → `auto.wf` (T2) — see `T2_Common/domain-specs/auto_wf-spec.md`
 > - `crm.search` → `tech.search` (T1) — see `T1_Platform/tech/domain-specs/tech_search-spec.md`
 > - `crm.email` → `tech.email` (T1) — see `T1_Platform/tech/domain-specs/tech_email-spec.md`
 > - `crm.sup` is superseded by `tks-tkt-svc` + `tks-kb-svc`; see its `§13 Migration`.

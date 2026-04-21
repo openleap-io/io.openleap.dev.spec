@@ -14,7 +14,7 @@
 > - **Version:** 2026-04-18
 > - **Template:** `domain-service-spec.md` v1.0.0
 > - **Template Compliance:** 95%+
-> - **Status:** DEPRECATED — superseded by `shared-ntf-svc` (see `T2_SharedBusiness/domain-specs/shared_ntf-spec.md`). Routing-key bridge `crm.ntf.*` active for 60 days; API path `/api/crm/ntf/v1` returns HTTP 308 during grace period.
+> - **Status:** DEPRECATED — superseded by `auto-ntf-svc` (see `T2_Common/domain-specs/auto_ntf-spec.md`). Routing-key bridge `crm.ntf.*` active for 60 days; API path `/api/crm/ntf/v1` returns HTTP 308 during grace period.
 > - **Service ID:** `crm-ntf-svc`
 > - **Suite:** `crm`
 > - **Domain:** `ntf`

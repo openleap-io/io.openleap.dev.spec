@@ -163,7 +163,7 @@ paths:
 
   /tickets/{id}/escalate:
     post:
-      summary: Escalate (idempotent; typically called by shared-wf-svc)
+      summary: Escalate (idempotent; typically called by auto-wf-svc)
       operationId: escalateTicket
       tags: [Tickets]
       parameters:

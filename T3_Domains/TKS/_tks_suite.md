@@ -60,7 +60,7 @@
 
 ### 0.2 Business Purpose
 
-TKS provides the platform's **work-item tracking fabric**. Every interaction that needs to be routed, assigned, triaged, time-tracked and resolved becomes a *ticket*. Sources range from customer-support emails to web-form submissions, chat messages, internal IT issues, incident reports, and programmatic webhooks. TKS owns the lifecycle of tickets, the ingestion channels that produce them, the knowledge base that agents and customers self-serve, and the configuration-management database (CMDB) that records what assets a ticket is about. TKS does **not** own customer master data (→ `shared.bp`), notifications (→ `shared.ntf`), or workflow automation (→ `shared.wf`) — it composes them.
+TKS provides the platform's **work-item tracking fabric**. Every interaction that needs to be routed, assigned, triaged, time-tracked and resolved becomes a *ticket*. Sources range from customer-support emails to web-form submissions, chat messages, internal IT issues, incident reports, and programmatic webhooks. TKS owns the lifecycle of tickets, the ingestion channels that produce them, the knowledge base that agents and customers self-serve, and the configuration-management database (CMDB) that records what assets a ticket is about. TKS does **not** own customer master data (→ `shared.bp`), notifications (→ `auto.ntf`), or workflow automation (→ `auto.wf`) — it composes them.
 
 ### 0.3 In Scope
 
@@ -69,14 +69,14 @@ TKS provides the platform's **work-item tracking fabric**. Every interaction tha
 - Multi-channel intake: email (via `tech.email`), web form, chat, webhook, API; unified conversation model; inbound-to-ticket conversion
 - Knowledge base: articles, versions, categories, tags, approval workflow, visibility scopes (internal / customer / public), suggest-on-create
 - Configuration-management database: configuration items with typed attributes, relationships, impact analysis, ticket ↔ CI linkage
-- Workflow automation specs that rely on `shared.wf` (assignment rules, escalation rules, macros, triggers)
+- Workflow automation specs that rely on `auto.wf` (assignment rules, escalation rules, macros, triggers)
 - AI feature specs (summary, auto-triage, writing assistant) that call `tech.ai`
 
 ### 0.4 Out of Scope
 
 - Customer / account master data (→ `shared.bp`)
-- Notification delivery (→ `shared.ntf`)
-- Rule-engine runtime (→ `shared.wf`)
+- Notification delivery (→ `auto.ntf`)
+- Rule-engine runtime (→ `auto.wf`)
 - Email transport (→ `tech.email`); TKS.ch owns the *channel adapter* semantics only
 - Search / typeahead / saved views (→ `tech.search`); TKS declares indexable aggregates
 - LLM providers + safety (→ `tech.ai`); TKS declares AI tasks + prompts inside feature specs
@@ -95,7 +95,7 @@ TKS provides the platform's **work-item tracking fabric**. Every interaction tha
 | End Customer / Requester | Submit tickets, reply via channel, self-serve via public KB |
 | ITSM Operator | Register CIs, manage relationships, link tickets to affected CIs, run impact analysis |
 | KB Author / Reviewer | Draft / approve / publish articles |
-| Automation Designer | Build triggers, macros, assignment + escalation rules using `shared.wf` |
+| Automation Designer | Build triggers, macros, assignment + escalation rules using `auto.wf` |
 | Platform / Tenant Admin | Configure channels, provider credentials, tenant defaults |
 
 ### 0.6 Business Value
@@ -105,7 +105,7 @@ TKS provides the platform's **work-item tracking fabric**. Every interaction tha
 - Knowledge reuse: public/customer/internal KB drives first-response deflection and agent productivity (suggest-on-create)
 - CMDB links tie tickets to affected assets — impact analysis and change-management coordination become possible
 - AI features (summary, auto-triage, writing assist) compose a platform-wide `tech.ai` abstraction, giving tenants provider choice without feature rewrite
-- Reuses platform capabilities (`shared.ntf`, `shared.wf`, `tech.email`, `tech.search`, `tech.dms`, `tech.ai`) rather than duplicating them inside a CRM-only stack
+- Reuses platform capabilities (`auto.ntf`, `auto.wf`, `tech.email`, `tech.search`, `tech.dms`, `tech.ai`) rather than duplicating them inside a CRM-only stack
 
 ---
 
@@ -123,8 +123,8 @@ TKS provides the platform's **work-item tracking fabric**. Every interaction tha
 | tks:glossary:comment | Comment | Note (INTERNAL), Reply (PUBLIC) | A message attached to a ticket. Visibility is one of INTERNAL (agents only) or PUBLIC (visible to reporter). Immutable after publish. |
 | tks:glossary:sla-clock | SLA Clock | Response Clock | Accumulated elapsed time against an SLA target. Pauses in `WAITING_*` statuses; resumes on transition back. Business-hours-aware via `shared.cap`. |
 | tks:glossary:sla-policy | SLA Policy | Service Level Policy | Per-tenant configuration of first-response and resolution targets by priority + category, with escalation thresholds. |
-| tks:glossary:escalation | Escalation | Breach Alert | A signal fired when SLA consumption crosses a threshold (typically 80%) or after breach. Triggers workflow automation via `shared.wf`. |
-| tks:glossary:macro | Macro | Canned Action | A named bundle of ticket field updates + outbound reply template. Applied by an agent in one click. Authored in TKS, executed by `shared.wf`. |
+| tks:glossary:escalation | Escalation | Breach Alert | A signal fired when SLA consumption crosses a threshold (typically 80%) or after breach. Triggers workflow automation via `auto.wf`. |
+| tks:glossary:macro | Macro | Canned Action | A named bundle of ticket field updates + outbound reply template. Applied by an agent in one click. Authored in TKS, executed by `auto.wf`. |
 | tks:glossary:triage | Triage | Auto-Categorization | The act of assigning category, priority, and queue to a newly-arrived ticket. May be manual (agent) or AI-assisted (→ `tech.ai`). |
 | tks:glossary:queue | Queue | Bucket | A filtered list of unassigned tickets grouped by routing criteria (category, skill, tenant). Input to assignment rules. |
 | tks:glossary:article | Article | KB Article, Help Article | A versioned knowledge document with an owner, category, tags, and visibility. Published only after review approval. |
@@ -259,8 +259,8 @@ graph TD
 | "Who holds CI graph?" | `tks-cmdb-svc` |
 | "Who computes SLA clock?" | `tks-tkt-svc` (clock pause/resume); `shared.cap` supplies business-hours profile |
 | "Who delivers email?" | `tech-email-svc` (not in TKS) |
-| "Who runs triggers + macros?" | `shared-wf-svc` (not in TKS); TKS authors the rule specs |
-| "Who sends notifications?" | `shared-ntf-svc` (not in TKS) |
+| "Who runs triggers + macros?" | `auto-wf-svc` (not in TKS); TKS authors the rule specs |
+| "Who sends notifications?" | `auto-ntf-svc` (not in TKS) |
 
 ### 3.3 Service Dependency Diagram
 
@@ -276,8 +276,8 @@ graph TD
     subgraph "T2 — Shared Business"
         BP["shared-bp-svc"]
         CAP["shared-cap-svc"]
-        NTF["shared-ntf-svc"]
-        WF["shared-wf-svc"]
+        NTF["auto-ntf-svc"]
+        WF["auto-wf-svc"]
     end
 
     subgraph "T1 — Platform"
@@ -320,7 +320,7 @@ graph TD
 **Rationale:**
 
 - Inbound channels produce events, not synchronous requests; ticket creation must tolerate retries / deduplication.
-- SLA-breach detection is time-based; scheduler publishes events that `shared.wf` consumes.
+- SLA-breach detection is time-based; scheduler publishes events that `auto.wf` consumes.
 - CMDB impact analysis is a read-side query; writes happen via events from operational tickets.
 - Knowledge base operates asynchronously (approval flow) except for the interactive `suggest-on-create` call which is synchronous.
 
@@ -336,7 +336,7 @@ sequenceDiagram
     participant B as Event Bus
     participant C as tks-ch-svc
     participant T as tks-tkt-svc
-    participant N as shared-ntf-svc
+    participant N as auto-ntf-svc
 
     E->>B: tech.email.email.received
     B->>C: deliver
@@ -356,8 +356,8 @@ sequenceDiagram
 sequenceDiagram
     participant T as tks-tkt-svc
     participant B as Event Bus
-    participant W as shared-wf-svc
-    participant N as shared-ntf-svc
+    participant W as auto-wf-svc
+    participant N as auto-ntf-svc
 
     T->>B: tks.tkt.sla.approaching-breach
     B->>W: deliver → matching EscalationRule fires
@@ -397,7 +397,7 @@ sequenceDiagram
 
 | Scenario | Handling |
 |----------|---------|
-| Event consumer fails | Retry 3× exp; move to DLQ; operator alert via `shared.ntf` (severity=CRITICAL). |
+| Event consumer fails | Retry 3× exp; move to DLQ; operator alert via `auto.ntf` (severity=CRITICAL). |
 | Inbound duplicate (same providerMessageId) | Dedupe at `tks-ch-svc`; publish once. |
 | AI provider unavailable | Ticket created untriaged + flag `aiTriageFailed=true`; downstream rule fills in. |
 | KB suggest timeout | Agent UI shows "no suggestions"; ticket proceeds. |
@@ -445,26 +445,26 @@ sequenceDiagram
 
 | Routing Key | Producer | Consumer(s) | Description |
 |------------|----------|-------------|-------------|
-| `tks.tkt.ticket.created` | `tks-tkt-svc` | `shared-ntf-svc`, `shared-wf-svc`, `tech-search-svc`, T4 BI | New ticket |
-| `tks.tkt.ticket.assigned` | `tks-tkt-svc` | `shared-ntf-svc`, T4 BI | Assignee change |
-| `tks.tkt.ticket.commented` | `tks-tkt-svc` | `shared-ntf-svc`, `tech-search-svc`, T4 BI | New comment |
-| `tks.tkt.ticket.status-changed` | `tks-tkt-svc` | `shared-wf-svc`, T4 BI | Status transition |
-| `tks.tkt.ticket.resolved` | `tks-tkt-svc` | `shared-ntf-svc`, `tks-cmdb-svc` (archive link), T4 BI | Resolved |
-| `tks.tkt.ticket.reopened` | `tks-tkt-svc` | `shared-ntf-svc`, T4 BI | Reopened |
-| `tks.tkt.ticket.escalated` | `tks-tkt-svc` | `shared-ntf-svc`, T4 BI | Escalation fired |
-| `tks.tkt.sla.approaching-breach` | `tks-tkt-svc` | `shared-wf-svc`, `shared-ntf-svc` | SLA 80 % consumed |
-| `tks.tkt.sla.breached` | `tks-tkt-svc` | `shared-wf-svc`, `shared-ntf-svc` | SLA breached |
+| `tks.tkt.ticket.created` | `tks-tkt-svc` | `auto-ntf-svc`, `auto-wf-svc`, `tech-search-svc`, T4 BI | New ticket |
+| `tks.tkt.ticket.assigned` | `tks-tkt-svc` | `auto-ntf-svc`, T4 BI | Assignee change |
+| `tks.tkt.ticket.commented` | `tks-tkt-svc` | `auto-ntf-svc`, `tech-search-svc`, T4 BI | New comment |
+| `tks.tkt.ticket.status-changed` | `tks-tkt-svc` | `auto-wf-svc`, T4 BI | Status transition |
+| `tks.tkt.ticket.resolved` | `tks-tkt-svc` | `auto-ntf-svc`, `tks-cmdb-svc` (archive link), T4 BI | Resolved |
+| `tks.tkt.ticket.reopened` | `tks-tkt-svc` | `auto-ntf-svc`, T4 BI | Reopened |
+| `tks.tkt.ticket.escalated` | `tks-tkt-svc` | `auto-ntf-svc`, T4 BI | Escalation fired |
+| `tks.tkt.sla.approaching-breach` | `tks-tkt-svc` | `auto-wf-svc`, `auto-ntf-svc` | SLA 80 % consumed |
+| `tks.tkt.sla.breached` | `tks-tkt-svc` | `auto-wf-svc`, `auto-ntf-svc` | SLA breached |
 | `tks.ch.channel.created` | `tks-ch-svc` | T4 BI | Channel registered |
-| `tks.ch.channel.disabled` | `tks-ch-svc` | `shared-ntf-svc` | Channel disabled |
+| `tks.ch.channel.disabled` | `tks-ch-svc` | `auto-ntf-svc` | Channel disabled |
 | `tks.ch.conversation.started` | `tks-ch-svc` | `tks-tkt-svc`, T4 BI | New conversation |
 | `tks.ch.conversation.message-received` | `tks-ch-svc` | `tks-tkt-svc`, `tech-ai-svc` (triage) | Inbound message |
 | `tks.ch.conversation.message-sent` | `tks-ch-svc` | T4 BI | Outbound message |
 | `tks.kb.article.drafted` | `tks-kb-svc` | T4 BI | Article draft created |
-| `tks.kb.article.submitted` | `tks-kb-svc` | `shared-ntf-svc` (notify reviewer) | Submitted for review |
+| `tks.kb.article.submitted` | `tks-kb-svc` | `auto-ntf-svc` (notify reviewer) | Submitted for review |
 | `tks.kb.article.approved` | `tks-kb-svc` | T4 BI | Approved |
 | `tks.kb.article.published` | `tks-kb-svc` | `tech-search-svc`, T4 BI | Published |
 | `tks.kb.article.archived` | `tks-kb-svc` | `tech-search-svc`, T4 BI | Archived |
-| `tks.kb.review.requested` | `tks-kb-svc` | `shared-ntf-svc` | Review requested |
+| `tks.kb.review.requested` | `tks-kb-svc` | `auto-ntf-svc` | Review requested |
 | `tks.kb.review.completed` | `tks-kb-svc` | T4 BI | Review decision |
 | `tks.cmdb.ci.created` | `tks-cmdb-svc` | `tech-search-svc`, T4 BI | New CI |
 | `tks.cmdb.ci.updated` | `tks-cmdb-svc` | `tech-search-svc`, T4 BI | CI updated |
@@ -525,14 +525,14 @@ TKS Suite
 | `F-TKS-100` | IAM principal + audit | `iam` (T1) | Authentication and audit of all ticket changes |
 | `F-TKS-110` | Business Partner | `shared.bp` (T2) | Resolving reporter / commenter parties |
 | `F-TKS-120` | Calendar | `shared.cap` (T2) | Business-hours-aware SLA clock |
-| `F-TKS-120` | Workflow engine | `shared.wf` (T2) | Runs escalation rules |
-| `F-TKS-130` | Workflow engine | `shared.wf` (T2) | Assignment rules |
+| `F-TKS-120` | Workflow engine | `auto.wf` (T2) | Runs escalation rules |
+| `F-TKS-130` | Workflow engine | `auto.wf` (T2) | Assignment rules |
 | `F-TKS-140` | Document mgmt | `tech.dms` (T1) | Attachment storage |
 | `F-TKS-210` | Email transport | `tech.email` (T1) | SMTP / IMAP |
 | `F-TKS-320` | Search | `tech.search` (T1) | Article retrieval |
 | `F-TKS-320` | AI | `tech.ai` (T1) | Suggest-on-create |
 | `F-TKS-500` | AI | `tech.ai` (T1) | Summary task |
-| `F-TKS-510` | AI + Workflow | `tech.ai`, `shared.wf` | Triage + assignment |
+| `F-TKS-510` | AI + Workflow | `tech.ai`, `auto.wf` | Triage + assignment |
 | `F-TKS-520` | AI | `tech.ai` (T1) | Draft assistance |
 
 ### 6.4 Feature Register
@@ -671,8 +671,8 @@ TKS Suite
 | Target | Interface Type | Interface Name | Description |
 |-------------|---------------|----------------|-------------|
 | T4 BI | `event` | `tks.*` | All domain events consumed by analytics |
-| `shared.ntf` | `event` | `tks.tkt.*`, `tks.kb.*`, `tks.ch.*` | Notification delivery triggers |
-| `shared.wf` | `event` | `tks.tkt.ticket.*`, `tks.tkt.sla.*` | Triggers for rules/escalation |
+| `auto.ntf` | `event` | `tks.tkt.*`, `tks.kb.*`, `tks.ch.*` | Notification delivery triggers |
+| `auto.wf` | `event` | `tks.tkt.ticket.*`, `tks.tkt.sla.*` | Triggers for rules/escalation |
 | `tech.search` | `event` | `tks.tkt.*`, `tks.kb.*`, `tks.cmdb.ci.*` | Index projection |
 | `shared.bp` | `api` | `GET /api/shared/bp/v1/parties/{id}` | Read reporter/contact master |
 | `tech.dms` | `api` | `POST /api/tech/dms/v1/documents` | Attachment upload |
@@ -684,14 +684,14 @@ TKS Suite
 | `tech.email` | `event` | `tech.email.email.received` | Inbound mail becomes ticket message |
 | `iam.principal` | `event` | `iam.principal.principal.deleted` | GDPR cleanup |
 | `shared.bp` | `event` | `shared.bp.party.created / updated / merged / erased` | Reporter resolution + GDPR |
-| `shared.wf` | `api` | `POST /api/tks/tkt/v1/tickets/{id}/{action}` | Rule-engine-driven actions (assign, escalate, resolve) |
+| `auto.wf` | `api` | `POST /api/tks/tkt/v1/tickets/{id}/{action}` | Rule-engine-driven actions (assign, escalate, resolve) |
 | `tech.ai` | `api` | `POST /api/tech/ai/v1/tasks/.../invoke` (outbound from TKS) | Used by TKS AI features; not inbound strictly |
 
 ### 8.3 External Context Mapping
 
 | Upstream | Downstream | Pattern | Description |
 |----------|-----------|---------|-------------|
-| `tks` | `shared.ntf`, `shared.wf`, `tech.search`, T4 BI | `published_language` | Events use platform canonical envelope |
+| `tks` | `auto.ntf`, `auto.wf`, `tech.search`, T4 BI | `published_language` | Events use platform canonical envelope |
 | `tech.email`, `shared.bp`, `iam.principal` | `tks` | `conformist` | TKS adapts to upstream event schemas |
 | `tks` | `crm` (during migration) | `anticorruption_layer` | Routing-key bridge `tks.tkt.*` → legacy `crm.sup.*` while `crm.sup` remains live |
 
@@ -822,6 +822,6 @@ graph LR
 
 - Plan: `/home/soeren/.claude/plans/fluffy-tickling-stonebraker.md`
 - Domain specs: `domain-specs/tks_{tkt,ch,kb,cmdb}-spec.md`
-- Promotion specs: `T2_SharedBusiness/domain-specs/shared_{ntf,wf}-spec.md`; `T1_Platform/tech/domain-specs/tech_{search,email,ai}-spec.md`
+- Promotion specs: `T2_Common/domain-specs/shared_{ntf,wf}-spec.md`; `T1_Platform/tech/domain-specs/tech_{search,email,ai}-spec.md`
 - Migration: `T3_Domains/CRM/domain-specs/crm_sup-spec.md` (deprecated + §13 migration)
 - Companion UVL: `tks.catalog.uvl`

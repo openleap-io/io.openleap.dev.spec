@@ -40,7 +40,7 @@ This document specifies the **Knowledge Base Service** (`tks-kb-svc`): versioned
 
 ### 1.1 Purpose & Responsibility
 
-Own authoring, versioning, approval, and publishing of knowledge articles. Serve agents (all visibility) and end customers (CUSTOMER + PUBLIC) via tenant-scoped reads. Notify reviewers on submission; notify readers (via `shared.ntf`) on publish.
+Own authoring, versioning, approval, and publishing of knowledge articles. Serve agents (all visibility) and end customers (CUSTOMER + PUBLIC) via tenant-scoped reads. Notify reviewers on submission; notify readers (via `auto.ntf`) on publish.
 
 **Owns:** `Article`, `ArticleVersion`, `Category`, `Tag`, `ReviewRequest`.
 

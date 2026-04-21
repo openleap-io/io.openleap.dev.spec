@@ -92,7 +92,7 @@
 | Session Service | `T3_Domains/SRV/srv_ses-spec.md` | Sibling domain |
 | Entitlement Service | `T3_Domains/SRV/srv_ent-spec.md` | Sibling domain |
 | Billing Intent Service | `T3_Domains/SRV/srv_bil-spec.md` | Sibling domain |
-| Business Partner (shared) | `T2_SharedBusiness/bp/` | Upstream reference |
+| Business Partner (shared) | `T2_Common/bp/` | Upstream reference |
 
 ---
 

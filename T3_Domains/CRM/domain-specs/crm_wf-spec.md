@@ -14,7 +14,7 @@
 > - **Version:** 2026-04-18
 > - **Template:** `domain-service-spec.md` v1.0.0
 > - **Template Compliance:** 95%+
-> - **Status:** DEPRECATED — superseded by `shared-wf-svc` (see `T2_SharedBusiness/domain-specs/shared_wf-spec.md`). Routing-key bridge `crm.wf.*` active for 60 days; API path `/api/crm/wf/v1` returns HTTP 308 during grace period.
+> - **Status:** DEPRECATED — superseded by `auto-wf-svc` (see `T2_Common/domain-specs/auto_wf-spec.md`). Routing-key bridge `crm.wf.*` active for 60 days; API path `/api/crm/wf/v1` returns HTTP 308 during grace period.
 > - **Service ID:** `crm-wf-svc`
 > - **Suite:** `crm`
 > - **Domain:** `wf`

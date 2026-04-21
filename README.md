@@ -12,9 +12,9 @@ Specifications are organized by the four-tier architecture:
 
 | Tier | Path | Contents |
 |------|------|----------|
-| **T1** Platform | `T1_Platform/` | IAM (principal, authz, tenant, audit), PARAM (cfg, i18n, ref), TECH (dms, jc, nfs, rpt, zugferd) |
-| **T2** Shared Business | `T2_SharedBusiness/` | bp (Business Partner), cal (Calendar) |
-| **T3** Core Business | `T3_Domains/` | CO, COM, CRM, FAC, FI, HR, OPS, PPS, PS, SD, SRV |
+| **T1** Platform | `T1_Platform/` | IAM (principal, authz, tenant, audit), PARAM (cfg, i18n, ref), TECH (dms, jc, nfs, rpt, zugferd, search, email, ai) |
+| **T2** Common | `T2_Common/` | two cross-suite suites: **shared** (bp, cap) — master data; **auto** (ntf, wf) — automation fabric (← promoted from crm.ntf, crm.wf) |
+| **T3** Core Business | `T3_Domains/` | CO, COM, CRM, FAC, FI, HR, OPS, PPS, PS, SD, SRV, TKS |
 | **T4** Data & Analytics | `T4_Data/` | bi (Data Platform) |
 | Products | `products/` | Product-specific specifications |
 
@@ -36,11 +36,12 @@ Each domain directory follows this layout:
 
 | Aspect | Pattern | Example |
 |--------|---------|---------|
-| Exchange | `<suite>.<domain>.events` | `pps.pd.events` |
-| Routing key | `<suite>.<domain>.<aggregate>.<event>` | `pps.pd.product.released` |
-| API path | `/api/<suite>/<domain>/v1` | `/api/fi/gl/v1` |
-| DB schema | `<suite>_<domain>` | `pps_pd` |
-| Feature ID | `F-{SUITE}-{NNN}[-{NN}]` | `F-PPS-012-01` |
+| Exchange | `<suite>.<domain>.events` | `pps.pd.events`, `shared.bp.events`, `auto.ntf.events` |
+| Routing key | `<suite>.<domain>.<aggregate>.<event>` | `pps.pd.product.released`, `shared.bp.party.created`, `auto.wf.workflow.triggered` |
+| API path | `/api/<suite>/<domain>/v1` | `/api/fi/gl/v1`, `/api/shared/bp/v1`, `/api/auto/ntf/v1` |
+| DB schema | `<suite>_<domain>` | `pps_pd`, `shared_bp`, `auto_notification` |
+| Feature ID (T3 flat) | `F-{SUITE}-{NNN}[-{NN}]` | `F-PPS-012-01` |
+| Feature ID (T1/T2 hierarchical) | `F-{SUITE}-{DOMAIN}-{NNN}[-{NN}]` | `F-SHARED-BP-001-02`, `F-AUTO-NTF-001` |
 
 Domain codes are uppercase in directory names (e.g., `FI`, `CRM`), lowercase in API paths and event exchanges.
 

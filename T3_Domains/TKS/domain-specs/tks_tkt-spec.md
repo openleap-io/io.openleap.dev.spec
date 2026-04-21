@@ -34,7 +34,7 @@ This document specifies the **Ticket Service** (`tks-tkt-svc`) within the TKS Su
 **Audience:** backend developers, frontend/BFF developers, QA engineers, architects, product owners.
 
 **In scope:** Ticket aggregate lifecycle, `TicketComment` (internal/public), `SLAPolicy` + `SLAClock` pause/resume semantics, assignment tracking, escalation events, extension hooks.
-**Out of scope:** UI (see feature specs under `features/`), infrastructure, inbound channel parsing (→ `tks-ch-svc`), KB (→ `tks-kb-svc`), CI graph (→ `tks-cmdb-svc`), notification delivery (→ `shared-ntf-svc`), rule execution (→ `shared-wf-svc`).
+**Out of scope:** UI (see feature specs under `features/`), infrastructure, inbound channel parsing (→ `tks-ch-svc`), KB (→ `tks-kb-svc`), CI graph (→ `tks-cmdb-svc`), notification delivery (→ `auto-ntf-svc`), rule execution (→ `auto-wf-svc`).
 
 **Related documents:**
 - Suite Spec: `T3_Domains/TKS/_tks_suite.md`
@@ -47,7 +47,7 @@ This document specifies the **Ticket Service** (`tks-tkt-svc`) within the TKS Su
 
 ### 1.1 Purpose & Responsibility
 
-Own the ticket as the atomic unit of tracked work for customer support, IT service management, and issue triage. Accept create-and-update operations from agents (REST), from channels (events via `tks-ch-svc`), and from workflow actions (REST callbacks from `shared-wf-svc`). Maintain SLA clocks that pause during `WAITING_*` statuses and resume on transition back, business-hours-aware via `shared.cap`. Emit domain events for every state change.
+Own the ticket as the atomic unit of tracked work for customer support, IT service management, and issue triage. Accept create-and-update operations from agents (REST), from channels (events via `tks-ch-svc`), and from workflow actions (REST callbacks from `auto-wf-svc`). Maintain SLA clocks that pause during `WAITING_*` statuses and resume on transition back, business-hours-aware via `shared.cap`. Emit domain events for every state change.
 
 **Owns:**
 - `Ticket` (root) — lifecycle, priority, status, assignment, SLA clock state
@@ -210,7 +210,7 @@ See attribute tables above (`TicketStatus`, `Priority`, `Severity`, `Source`, `V
 | ChangeStatus | WRITE | REST | Ticket | `Ticket.transitionTo` | `tks.tkt.ticket.status-changed` | `POST /tickets/{id}/transition` |
 | ResolveTicket | WRITE | REST / Message | Ticket | `Ticket.resolve` | `tks.tkt.ticket.resolved` | `POST /tickets/{id}/resolve` |
 | ReopenTicket | WRITE | REST / Message | Ticket | `Ticket.reopen` | `tks.tkt.ticket.reopened` | `POST /tickets/{id}/reopen` |
-| EscalateTicket | WRITE | Message (from `shared.wf`) / REST | Ticket | `Ticket.escalate` | `tks.tkt.ticket.escalated` | `POST /tickets/{id}/escalate` |
+| EscalateTicket | WRITE | Message (from `auto.wf`) / REST | Ticket | `Ticket.escalate` | `tks.tkt.ticket.escalated` | `POST /tickets/{id}/escalate` |
 | LinkAttachment | WRITE | REST | Ticket | `Ticket.linkAttachment` | `tks.tkt.ticket.updated` | `POST /tickets/{id}/attachments` |
 | CreateSLAPolicy | WRITE | REST | SLAPolicy | `SLAPolicy.create` | `tks.tkt.sla-policy.created` | `POST /sla-policies` |
 | UpdateSLAPolicy | WRITE | REST | SLAPolicy | `SLAPolicy.update` | `tks.tkt.sla-policy.updated` | `PATCH /sla-policies/{id}` |
@@ -224,8 +224,8 @@ See attribute tables above (`TicketStatus`, `Priority`, `Severity`, `Source`, `V
 |------------|-----------|
 | Aggregate invariants, state transitions | Ticket aggregate root |
 | SLA clock math (pause/resume + business hours) | Ticket domain service (reads `shared.cap`) |
-| Cross-aggregate orchestration (rule-driven actions) | External: `shared-wf-svc` calls back via REST |
-| Notification dispatch | External: `shared-ntf-svc` subscribes to events |
+| Cross-aggregate orchestration (rule-driven actions) | External: `auto-wf-svc` calls back via REST |
+| Notification dispatch | External: `auto-ntf-svc` subscribes to events |
 
 ---
 
@@ -246,7 +246,7 @@ See attribute tables above (`TicketStatus`, `Priority`, `Severity`, `Source`, `V
 | `POST` | `/tickets/{id}/transition` | Change status |
 | `POST` | `/tickets/{id}/resolve` | Resolve |
 | `POST` | `/tickets/{id}/reopen` | Reopen |
-| `POST` | `/tickets/{id}/escalate` | Escalate (idempotent; called by `shared.wf`) |
+| `POST` | `/tickets/{id}/escalate` | Escalate (idempotent; called by `auto.wf`) |
 | `POST` | `/tickets/{id}/comments` | Add comment (internal or public) |
 | `GET` | `/tickets/{id}/comments` | List comments (filtered by visibility scope) |
 | `POST` | `/tickets/{id}/attachments` | Link a `tech.dms` document |
@@ -341,7 +341,7 @@ Confidential — tickets contain PII, business data. Logs MUST NOT include body 
 | Risk ID | Title | Treatment |
 |---|---|---|
 | `RISK-TKS-TKT-001` | SLA breach inflates support cost + SLAs penalties | Mitigate: escalation automation + management dashboards |
-| `RISK-TKS-TKT-002` | Storm of inbound escalates via SLA clocks and paginates workflow queue | Mitigate: rate-limiting escalation publishes; circuit breaker on `shared.wf` callbacks |
+| `RISK-TKS-TKT-002` | Storm of inbound escalates via SLA clocks and paginates workflow queue | Mitigate: rate-limiting escalation publishes; circuit breaker on `auto.wf` callbacks |
 
 ### 9.5 SBOM Requirements
 
