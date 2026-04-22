@@ -55,6 +55,8 @@ All specifications must follow the consolidated templates in [dev.concepts](http
 - Domain/service specs: `templates/platform/domain-service-spec.md`
 - Feature specs: `templates/platform/feature-spec.md`
 
+The **spec authoring lifecycle, gates, and RACI** are defined by the Operating Doctrine [GOV-OM-001](https://github.com/openleap-io/io.openleap.dev.concepts/blob/main/operating-model/L0-operating-doctrine.md) — §4.1 phases Conceive → Specify → Design, and §6.4 Intent-Gate / Spec-Gate / Design-Gate. Every spec traces back to an Intent (`templates/operating-model/intent-template.md`) and forward to Task-List, Contracts, and ADRs per §5.4.
+
 ---
 
 ## Related Repositories
