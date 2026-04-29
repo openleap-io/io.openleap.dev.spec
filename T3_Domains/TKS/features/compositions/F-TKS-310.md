@@ -8,7 +8,7 @@
 > **Primary service:** `tks.kb`
 > **Bounded context:** `bc:knowledge`
 > **Companion UVL:** `F-TKS-310.uvl`
-> **Cross-suite deps:** iam.authz, shared.wf
+> **Cross-suite deps:** iam.authz, auto.wf
 
 ---
 

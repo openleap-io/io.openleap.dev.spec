@@ -8,7 +8,7 @@
 > **Primary service:** `tks.tkt + tks.ch`
 > **Bounded context:** `bc:tickets × bc:channels`
 > **Companion UVL:** `F-TKS-510.uvl`
-> **Cross-suite deps:** tech.ai, shared.wf
+> **Cross-suite deps:** tech.ai, auto.wf
 
 ---
 
