@@ -8,7 +8,7 @@
 > **Primary service:** `tks.tkt`
 > **Bounded context:** `bc:tickets`
 > **Companion UVL:** `F-TKS-120.uvl`
-> **Cross-suite deps:** shared.cap, shared.wf
+> **Cross-suite deps:** shared.cap, auto.wf
 
 ---
 

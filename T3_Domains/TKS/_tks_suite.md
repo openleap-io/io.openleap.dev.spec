@@ -698,7 +698,7 @@ TKS Suite
 ```mermaid
 graph LR
     TKS["TKS"]
-    SH["shared.ntf / shared.wf"]
+    AUTO["auto.ntf / auto.wf"]
     TE["tech.email"]
     TS["tech.search"]
     BP["shared.bp"]
@@ -706,7 +706,7 @@ graph LR
     BI["T4 BI"]
     CRM["CRM (sunset)"]
 
-    TKS -->|published_language| SH
+    TKS -->|published_language| AUTO
     TKS -->|published_language| TS
     TKS -->|published_language| BI
     TE -->|conformist| TKS
@@ -779,7 +779,7 @@ graph LR
 
 | Phase | Timeframe | Items |
 |-------|-----------|-------|
-| Foundation | Q2 2026 | T1 restructure; promotion specs (shared.ntf, shared.wf, tech.search, tech.email, tech.ai); `_tks_suite.md` + 4 domain specs + core contracts |
+| Foundation | Q2 2026 | T1 restructure; promotion specs (auto.ntf, auto.wf, tech.search, tech.email, tech.ai); `_tks_suite.md` + 4 domain specs + core contracts |
 | Core TKS v1.0 | Q3 2026 | Ship `tks-tkt-svc` + `tks-ch-svc` (email + webform + webhook adapters); F-TKS-100/110/120/130/140/200 + first channel leaves |
 | Knowledge + Search | Q4 2026 | `tks-kb-svc`; F-TKS-300/310/320 + tech.search integration |
 | CMDB + Automation + AI | Q1 2027 | `tks-cmdb-svc`; F-TKS-400/410/420; F-TKS-500/510/520 |
